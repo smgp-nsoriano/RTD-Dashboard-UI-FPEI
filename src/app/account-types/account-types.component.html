@@ -1,0 +1,233 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 offset-lg-1">
+      <div class="col-sm-12 col-lg-10 offset-lg-1">
+        <div class="card">
+          <div class="card-header maindivheader">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h4>Admin/Trader</h4>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <button class="btn btn-sm btn-outline-light" (click)="openModal(newAccount, false, 0, null, 0, false,'New Account Type (Admin/Trader)')">
+                        <fa-icon [icon]="faPlus"></fa-icon>
+                        New Account Type
+                      </button>
+                </div>
+            </div>
+          </div>
+          <div class="card-body">
+
+          <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+            <div class="table-responsive">
+              <table class="table table-bordered table table-striped">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Permissions</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let type of types; let i = index">
+                    <td>{{ type.AccountType }}</td>
+                    <td>{{ type.UserPermissions }}</td>
+                    <td class="text-center w-10">
+                        <input type="button" class="btn btn-sm btn-outline-secondary btn-xs font-sm" value="Update"
+                        (click) = "openModal(newAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, false,'Update Account Type (Admin/Trader)')">
+                        <input type="button" class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" value="Delete"
+                        (click)="otherModal(delete, type, false)">
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header maindivheader">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h4>Operator</h4>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <button class="btn btn-sm btn-outline-light" (click)="openModal(newOperatorAccount, false, 0, null, 0, true, 'New Account Type (Operator)')">
+                        <fa-icon [icon]="faPlus"></fa-icon>
+                        New Account Type
+                      </button>
+                </div>
+            </div>
+          </div>
+          <div class="card-body">
+
+          <ngb-alert *ngIf="alertOperator.type === 'success'" [type]="alertOperator.type" (close)="clearAlert()">{{ alertOperator.message }}</ngb-alert>
+            <div class="table-responsive">
+              <table class="table table-bordered table table-striped">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Permissions</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let type of operatorTypes; let i = index">
+                    <td>{{ type.AccountType }}</td>
+                    <td>{{ type.UserPermissions }}</td>
+                    <td class="text-center w-10">
+                        <input type="button" class="btn btn-sm btn-outline-secondary btn-xs font-sm" value="Update"
+                        (click) = "openModal(newOperatorAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, true,'Update Account Type (Operator)')">
+                        <input type="button" class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" value="Delete"
+                        (click)="otherModal(delete, type ,true)">
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #newAccount let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup] = "form">
+        <div class="form-group">
+            <label for = "accountType">Account Type</label>
+            <input type="text" class="form-control" placeholder="Account Type..." formControlName = "accountType" id = "accountType">
+            <div class="card mt-3">
+              <div class="card-header maindivheader">
+                <h5>Permissions</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped ">
+                    <thead>
+                      <tr>
+                        <th class="w-5 text-center">Tag</th>
+                        <th>Permission</th>
+                        <th style="display:none">SiteID</th>
+                        <th style="display:none">AccessID</th>
+                        <th style="display:none">Config</th>
+                        <th style="display:none">IsSite</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let rec of sites, let i = index">
+                        <td class="text-center">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input bg-warning" id="{{i}}"  (click)= "tagpermission(i)" [checked]="rec.Tag">
+                                <label class="custom-control-label" for="{{i}}"></label>
+                            </div>
+                        </td>
+                        <td>{{ rec.SiteName }}</td>
+                        <td style="display:none">{{ rec.SiteID }}</td>
+                        <td style="display:none">{{ rec.AccessID }}</td>
+                        <td style="display:none">{{ rec.Config }}</td>
+                        <td style="display:none">{{ rec.IsSite }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+    </form>
+    <ngb-alert *ngIf="alert.type === 'warning'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="!isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="savepermission(sites)">Save</button>
+    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="updatePermission(sites)">Update</button>
+    <button *ngIf="isLoading" type="button" class="btn btn-sm btn-info" disabled>Please wait..</button>
+  </div>
+</ng-template>
+
+<ng-template #newOperatorAccount let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup] = "form">
+        <div class="form-group">
+            <label for = "accountType">Account Type</label>
+            <input type="text" class="form-control" placeholder="Account Type..." formControlName = "accountType" id = "accountType">
+            <div class="card mt-3">
+              <div class="card-header maindivheader">
+                <h5>Permissions</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped ">
+                    <thead>
+                      <tr>
+                        <th class="w-5 text-center">Tag</th>
+                        <th>Permission</th>
+                        <th style="display:none">SiteID</th>
+                        <th style="display:none">AccessID</th>
+                        <th style="display:none">Config</th>
+                        <th style="display:none">IsSite</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let rec of sites, let i = index">
+                        <td class="text-center">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input bg-warning" id="{{i}}" (change)="tagOperatorPermission(rec,sites)" [checked]="rec.Tag">
+                                <label class="custom-control-label" for="{{i}}"></label>
+                            </div>
+                        </td>
+                        <td>{{ rec.SiteName }}</td>
+                        <td style="display:none">{{ rec.SiteID }}</td>
+                        <td style="display:none">{{ rec.AccessID }}</td>
+                        <td style="display:none">{{ rec.Config }}</td>
+                        <td style="display:none">{{ rec.IsSite }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+    </form>
+    <ngb-alert *ngIf="alertOperator.type === 'warning'" [type]="alertOperator.type" (close)="clearAlert()">{{ alertOperator.message }}</ngb-alert>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="!isEditing && !isLoading" type="button" class="btn  btn-sm btn-info" (click)="savepermission(sites)">Save</button>
+    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="updatePermission(sites)">Update</button>
+    <button *ngIf="isLoading" type="button" class="btn btn-sm btn-info" disabled>Please wait..</button>
+  </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">Account Type Deletion</h6>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <strong>Are you sure you want to delete "<span class="text-danger">{{ selectedRec.AccountType }}</span>"?</strong>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button class="btn btn-sm btn-danger" (click)="deleteAccountType(selectedRec)">Delete</button>
+    </div>
+</ng-template>

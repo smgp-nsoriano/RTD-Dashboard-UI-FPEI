@@ -1,0 +1,294 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid">
+  <div class="row">
+    <div class="col-12 text-right text-light">
+      <a class="text-warning font-weight-bold mr-1" [routerLink]="['/trading']">Trading Dashboard</a> | <span class="badge badge-pill badge-light" style="padding : 5px 5px !important; font-size: 14px; ">Portfolio</span> | <a class="text-warning font-weight-bold ml-1 mr-5" [routerLink]="['/pbreason']">PB Reason</a>
+    </div>
+    <div class="col-lg-12">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row">
+            <div class="col-8">
+              <div class="row">
+                <div class="col-4">
+                  <div class="row">
+                    <div class="current-time text-warning">
+                      {{ now }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-danger text-light font-weight-bold" style="font-size: 18px;">INTERVAL </span>
+                      </div>
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-dark text-warning font-weight-bold" style="font-size: 24px;">12:00</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="row">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered">
+                        <thead>
+                          <tr >
+                            <th style="width: 30%; "></th>
+                            <th class="text-warning">PH</th>
+                            <th class="text-warning">LUZ</th>
+                            <th class="text-warning">VIZ</th>
+                            <th class="text-warning">MIN</th>
+                          </tr>
+                          <tr>
+                            <th>DEMAND,MW</th>
+                            <th class="text-center">1,234</th>
+                            <th>1,234</th>
+                            <th>1,234</th>
+                            <th>1,234</th>
+                          </tr>
+                          <tr>
+                            <th>FREQUENCY, Hz</th>
+                            <th>00</th>
+                            <th>00</th>
+                            <th>00</th>
+                            <th>00</th>
+                          </tr>
+                          <tr>
+                            <th>TOTAL SCHED GEN (SMC)</th>
+                            <th class="text-center">1,234</th>
+                            <th>1,234</th>
+                            <th>1,234</th>
+                            <th>1,234</th>
+                          </tr>
+                          <tr>
+                            <th>TOTAL ACTUAL GEN (SMC)</th>
+                            <th>00</th>
+                            <th>00</th>
+                            <th>00</th>
+                            <th>00</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="table-responsive">
+                  <table class="table table-sm table-bordered">
+                    <thead>
+                      <tr class="bg-danger">
+                        <th style="width: 6%;">REGION</th>
+                        <th style="width: 15%;">GENERATING UNIT</th>
+                        <th style="width: 8%;">RTD, MW</th>
+                        <th style="width: 8%;">ACTUAL, MW</th>
+                        <th style="width: 8%;">%</th>
+                        <th style="width: 8%;">LMP, PHP/MWh</th>
+                        <th>REMARKS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td rowspan="14">LUZ</td>
+                        <td class="text-warning">SUAL 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">SUAL 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">SAN ROQUE 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">SAN ROQUE 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">SAN ROQUE 3</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">ILIJAN 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">ILIJAN 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">LIMAY 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">LIMAY 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">LIMAY 3</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">LIMAY 4</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">MASINLOC 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">MASINLOC 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">MASINLOC 3</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>VIZ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td rowspan="2">MIN</td>
+                        <td class="text-warning">MALITA 1</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-warning">MALITA 2</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td>00</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="col-sm-12 border border-white p-2 border-1">
+                <h4 class="text-warning font-weight-bold">DEMANDS</h4>
+
+                <highcharts-chart
+                [Highcharts]="Highcharts"
+                [constructorType]="'chart'"
+                [options]="HADOptions"
+                [(update)]="updateFlag"
+                [oneToOne]="true"
+                style="width: 100%; height: 185px; display: block;"></highcharts-chart>
+              </div>
+
+              <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                <h4 class="text-warning font-weight-bold">
+                  DAP
+
+                  <!--<div class="btn-group float-right">
+                    <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                    <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                  </div>-->
+                </h4>
+
+                <highcharts-chart
+                [Highcharts]="Highcharts"
+                [constructorType]="'chart'"
+                [options]="DAHOptions"
+                [(update)]="updateFlag"
+                [oneToOne]="true"
+                style="width: 100%; height: 185px; display: block;"></highcharts-chart>
+              </div>
+              
+              <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                <h4 class="text-warning font-weight-bold">
+                  DAP
+
+                  <!--<div class="btn-group float-right">
+                    <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                    <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                  </div>-->
+                </h4>
+
+                <highcharts-chart
+                [Highcharts]="Highcharts"
+                [constructorType]="'chart'"
+                [options]="DAHOptions"
+                [(update)]="updateFlag"
+                [oneToOne]="true"
+                style="width: 100%; height: 185px; display: block;"></highcharts-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

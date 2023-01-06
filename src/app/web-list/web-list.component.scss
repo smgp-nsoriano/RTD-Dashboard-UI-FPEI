@@ -1,0 +1,28 @@
+.w-40 {
+  width: 40% !important;
+}
+
+.w-10 {
+  width: 10% !important;
+}
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #ffd40e !important;
+  background-color: #ffd40e !important;
+}
+
+table > thead > tr > th ,table > tbody > tr > td {
+	padding : 4px 4px;
+	vertical-align: middle;
+	font-size: 13px;
+	/*text-align: center;*/
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	padding : 5px 5px !important;
+	vertical-align: middle;
+}
+
+.header-text{
+  font-size: 15px;
+}

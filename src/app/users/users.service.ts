@@ -1,0 +1,82 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { EnvService } from '../env.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersService {
+
+  constructor(
+    private http: HttpClient,
+    private env: EnvService
+  ) { }
+
+  getCurrentUserInfo() {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
+  }
+
+  changePassword(data) {
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data);
+  }
+
+  getUsers() {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`);
+  }
+
+  getAccountType() {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`);
+  }
+
+  getUserList() {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserList`, {
+      withCredentials: true
+    });
+  }
+
+  getPermissions() {
+    return this.http.get(`${this.env.apiUrl}/Admin/GetAccountTypeAndPermission`, {
+      withCredentials: true
+    });
+  }
+
+  insertuser(data) {
+    return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data);
+  }
+
+  updateuser(data) {
+    return this.http.put(`${this.env.apiUrl}/UserManagement/Update/${data.UserID}`, data);
+  }
+
+  deleteuser(data) {
+    return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`);
+  }
+
+  resetpassword(data) {
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data);
+  }
+
+  getCompanySetting() {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`);
+  }
+
+  saveCompanySetting(data) {
+    return this.http.post(`${this.env.apiUrl}/UserManagement/SaveCompanySetting`, data);
+  }
+
+  decrypt(data) {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`);
+  }
+
+  updateUser(user: string, type: number) {
+    return this.http.post(`${this.env.apiUrl}/Admin/SetAccountType`, {
+      Username: user,
+      AccountTypeID: type
+    }, {
+      withCredentials: true
+    });
+  }
+}

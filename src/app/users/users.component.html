@@ -1,0 +1,130 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-sm-12 col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>User Account List</h4>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-sm btn-outline-light" (click)="modal(user,false,null)">
+                    <fa-icon [icon]="faPlus"></fa-icon>
+                    New Account
+                  </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+        
+          <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+
+          <div class="col-lg-12 ">
+            <input type="text" class="form-control wd pull-right" [(ngModel)]="src" placeholder="Search">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th style="display:none">TypeID</th>
+                  <th>Type</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email Address</th>
+                  <th class="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rec of users | filter:src;">
+                  <td>{{ rec.UserName }}</td>
+                  <td style="display:none">{{ rec.UserTypeID }}</td>
+                  <td>{{ rec.UserType }}</td>
+                  <td>{{ rec.FirstName }}</td>
+                  <td>{{ rec.LastName }}</td>
+                  <td>{{ rec.EmailAddress }}</td>
+                  <td class="w-10 text-center">
+                    <button class="btn btn-sm btn-outline-secondary btn-xs font-sm"  (click)="modal(user, true, rec)">Update</button>
+                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1"
+                    (click)="otherModal(delete, true ,rec)">Delete</button>
+                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" (click)="otherModal(delete, false ,rec)">Reset Password</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #user let-modal>
+    <div class="modal-header">
+      <h6 class="modal-title">{{ modalTitle }}</h6>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <ngb-alert *ngIf="alert.type === 'danger'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+      <form [formGroup]="form">
+        <div class="form-group">
+          <label for="userName">Username</label>
+          <input type="text" class="form-control" formControlName="userName" id="userName">
+        </div>
+        <div class="form-group">
+          <label for="accountType">Type</label>
+          <select class="form-control" formControlName="accountType" id="accountType">
+              <option [ngValue]="null">Select Type</option>
+              <option *ngFor="let rec of accountType" [ngValue]="rec.AccountTypeID">{{ rec.AccountType }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" class="form-control" formControlName="firstName" id="firstName">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" class="form-control" formControlName="lastName" id="lastName">
+        </div>
+        <div class="form-group">
+          <label for="emailAddress">Email Address</label>
+          <input type="text" class="form-control" formControlName="emailAddress" id="emailAddress">
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button *ngIf="!isEdit && !isLoading" class="btn btn-sm btn-info" (click)="save()">Save</button>
+      <button *ngIf="isEdit && !isLoading" class="btn btn-sm btn-info" (click)="update(selectedRec)">Update</button>
+      <button *ngIf="isLoading" class="btn btn-sm btn-info" (click)="save()" disabled>Please wait..</button>
+    </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+    <div class="modal-header">
+      <h6 *ngIf="isDeleting" class="modal-title">Account Deletion</h6>
+      <h6 *ngIf="!isDeleting" class="modal-title">Reset Password</h6>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <strong *ngIf="isDeleting">Are you sure you want to delete "<span class="text-danger">{{ selectedRec.UserName }}</span>"?</strong>
+      <strong *ngIf="!isDeleting">Are you sure you want to reset password "<span class="text-danger">{{ selectedRec.UserName }}</span>"?</strong>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+      <button *ngIf="isDeleting" class="btn btn-sm btn-danger" (click)="deleteuser(selectedRec)">Delete</button>
+      <button *ngIf="!isDeleting" class="btn btn-sm btn-danger" (click)="resetpassword(selectedRec)">Reset</button>
+    </div>
+</ng-template>

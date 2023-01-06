@@ -1,0 +1,32 @@
+[
+    {
+        "interval": "21:35",
+        "dispatch_unit_1": 315.0,
+        "actual_unit_1": 314.5,
+        "price": 2380.00
+    },
+    {
+        "interval": "21:30",
+        "dispatch_unit_1": 315.0,
+        "actual_unit_1": 315.2,
+        "price": 2380.00
+    },
+    {
+        "interval": "21:25",
+        "dispatch_unit_1": 315.0,
+        "actual_unit_1": 314.8,
+        "price": 2320.80
+    },
+    {
+        "interval": "21:20",
+        "dispatch_unit_1": 315.0,
+        "actual_unit_1": 314.9,
+        "price": 2340.45
+    },
+    {
+        "interval": "21:15",
+        "dispatch_unit_1": 315.0,
+        "actual_unit_1": 315.1,
+        "price": 2460.25
+    }
+]

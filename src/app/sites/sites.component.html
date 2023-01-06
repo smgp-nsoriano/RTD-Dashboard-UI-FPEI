@@ -1,0 +1,158 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>Site List</h4>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-sm btn-outline-light" (click)="openModal(addNewSiteModal)">
+                    <fa-icon [icon]="faPlus"></fa-icon>
+                    Add New Site
+                  </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Site Name</th>
+                  <th>Site Code</th>
+                  <th>Address</th>
+                  <th>Region</th>
+                  <th>FTP Path</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let site of sites; let i = index">
+                  <td>{{ site.SiteName }}</td>
+                  <td>{{ site.SiteCode }}</td>
+                  <td>{{ site.Address }}</td>
+                  <td>{{ site.Region }}</td>
+                  <td>{{ site.FtpPath }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-secondary btn-xs font-sm" (click)="updateModal(updateSiteModal, site)">Update</button>
+                    <button class="btn btn-outline-warning btn-xs font-sm ml-1" (click)="DeleteModal(delete, site)" >Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #addNewSiteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add New Site</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Site Name</label>
+      <input type="text" class="form-control" #name placeholder="Site Name">
+    </div>
+
+    <div class="form-group">
+      <label>Site Code</label>
+      <input type="text" class="form-control" #code placeholder="Site Code">
+    </div>
+
+    <div class="form-group">
+      <label>Address</label>
+      <textarea class="form-control" #address placeholder="Address..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Region</label>
+      <input type="text" class="form-control" #region placeholder="Region">
+    </div>
+
+    <div class="form-group">
+      <label>FTP Path</label>
+      <input type="text" class="form-control" #path placeholder="FTP Path">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="createSite(0, name.value, code.value, address.value, region.value, path.value)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #updateSiteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Updating Site: {{ selectedSite.SiteName }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Site Name</label>
+      <input type="text" class="form-control" #name placeholder="Site Name" value="{{ selectedSite?.SiteName }}">
+    </div>
+
+    <div class="form-group">
+      <label>Site Code</label>
+      <input type="text" class="form-control" #code placeholder="Site Code" value="{{ selectedSite?.SiteCode }}">
+    </div>
+
+    <div class="form-group">
+      <label>Address</label>
+      <textarea class="form-control" #address placeholder="Address...">{{ selectedSite.Address }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Region</label>
+      <input type="text" class="form-control" #region placeholder="Region" value="{{ selectedSite?.Region }}">
+    </div>
+
+    <div class="form-group">
+      <label>FTP Path</label>
+      <input type="text" class="form-control" #path placeholder="FTP Path" value="{{ selectedSite?.FtpPath }}">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="createSite(selectedSite.SiteID, name.value, code.value, address.value, region.value, path.value)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Site Deletion</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <strong>Are you sure you want to delete?</strong>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-danger" (click)="deleteSite(selectedSite.SiteID)">Delete</button>
+  </div>
+</ng-template>

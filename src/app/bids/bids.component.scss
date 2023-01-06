@@ -1,0 +1,89 @@
+.table {
+  thead {
+    th {
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
+}
+
+.custom-file-input:lang(en) ~ .custom-file-label::after {
+  display: none;
+  content: "";
+}
+
+.w-40 {
+  width: 40% !important;
+}
+
+.w-10 {
+  width: 10% !important;
+}
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #ffd40e !important;
+  background-color: #ffd40e !important;
+}
+
+table > thead > tr > th ,table > tbody > tr > td {
+	padding : 3px 3px;
+	vertical-align: middle;
+	font-size: 12px;
+	/*text-align: center;*/
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	padding : 2px 2px !important;
+	vertical-align: middle;
+}
+
+.header-text{
+  font-size: 15px;
+}
+
+.not-valid{
+  background-color: red;
+  color: white;
+}
+
+.text-borderless{
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 12px;
+}
+
+@media print {
+  .hide-print {
+    display: none !important;
+  }
+}
+
+@page {size: A4 landscape !important;max-height:100% !important; max-width:100% !important}
+
+.copied-offer{
+  background-color: #f0e6b5 !important ;
+}
+
+.invalid-value{
+  background-color: rgb(224, 43, 43) !important;
+  color: white !important;
+}
+
+.myAlert-top{
+  position: fixed;
+  top: 0px; 
+  left:25%;
+  width: 50%;
+  z-index: 999;
+}
+
+.hover-paste{
+  float: center;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0px 0px;
+  //width: 23px !important;
+  //height: 23px !important;
+  z-index: 999;
+}

@@ -1,0 +1,101 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <h4>RTD Manual Entry</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-header card-hbg"><b>Site List</b></div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-borderless">
+                    <tbody>
+                      <tr *ngFor="let site of sites; let i = index">
+                        <td><button class="btn btn-outline-secondary btn-xs font-sm font-weight-bold" style="width: 100% !important;" (click)="LoadUnit(site.SiteID)">{{ site.SiteName }}</button>  </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-9">
+            <div class="card">
+              <div class="card-header card-hbg">
+                <b>Data Entry</b>
+              </div>
+              <div class="card-body">
+                <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+                <ngb-alert *ngIf="alert.type === 'danger'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+
+                <div class="row">
+                  <div class="col-sm-3 ml-5">
+                    <div class="row">
+                      <div class="col-sm-12 ">
+                        <div class="form-group">
+                          <label class="font-weight-bold" >Date</label>
+                          <input type="date" class="form-control form-control-sm" style = "width:160px" value="{{currentDate}}" [(ngModel)]="currentDate" >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12 ">
+                        <div class="form-group">
+                          <label class="font-weight-bold">Time</label>
+                          <table>
+                            <tbody>
+                              <tr>
+                                <td><input type="number" min="0" max="23" placeholder="23" class="form-control form-control-sm" style="width:60px" value="{{currentHour}}"  [(ngModel)]="currentHour" ></td>
+                                <td><input type="number" min="0" max="59" placeholder="00" class="form-control form-control-sm" style="width:60px" value="{{currentMin}}"  [(ngModel)]="currentMin" ></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-5 ml-30">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover">
+                        <thead>
+                          <tr>
+                            <th>Unit Number</th>
+                            <th style="width:30%">RTD</th>
+                            <th style="width:30%">Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr  *ngFor="let unit of units; let i = index">
+                            <td>{{ unit.UnitNumber }}</td>
+                            <td><input type="number" class="form-control form-control-sm" placeholder="0.00" [(ngModel)]="unit.Value"></td>
+                            <td><input type="number" class="form-control form-control-sm" placeholder="0.00" [(ngModel)]="unit.PriceValue"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-sm-12 text-right">
+                        <button class="btn btn-outline-success btn-sm font-sm font-weight-bold" *ngIf="!loading" (click)="saveValue()">Submit</button>
+                        <button class="btn btn-outline-success btn-sm font-sm font-weight-bold" *ngIf="loading" disabled>Please wait..</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

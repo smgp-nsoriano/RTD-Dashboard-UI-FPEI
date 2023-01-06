@@ -1,0 +1,775 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+
+<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alertMessage!=null">
+  <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
+  <h5 class="text-danger">{{alertMessage}}</h5>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="KillAlarm()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="alert alert-success alert-dismissible fade show myAlert-top" role="alert" *ngIf="successMessage!=null">
+  <strong>{{successMessage}}</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="successMessage=null">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
+
+<main class="container-fluid" >
+   <div class="row">
+     <div class="col-lg-6 col-md-6 col-sm-12">
+      <div class="current-time text-warning ml-3">
+        {{ FormatClock() }}
+        <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRecycle" size="lg"></fa-icon></button>
+        <button class="btn btn-outline-danger text-white ml-2" (click)="DisableAlarm()" *ngIf="!isAlarmDisable && isWithAlarmDisable == 'true'"><fa-icon [icon]="faBellSlash" size="lg" ></fa-icon></button>
+        <button class="btn btn-danger text-white ml-2" (click)="EnableAlarm()" *ngIf="isAlarmDisable && isWithAlarmDisable == 'true'"><fa-icon [icon]="faBellSlash" size="lg" ></fa-icon></button>
+      </div>
+     </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 text-right text-warning">
+      <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'trader'">Trading Dashboard</button>
+      <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'trader'" (click)="TabActive('trader')" [disabled]="isPortfolioOnly == 'true'">Trading Dashboard</button> | 
+      <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'portfolio'">Portfolio</button>
+      <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'portfolio'" (click)="TabActive('portfolio')">Portfolio</button> | 
+      <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'pbreason'">PB Reason</button>
+      <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'pbreason'" (click)="TabActive('pbreason')" [disabled]="isPortfolioOnly == 'true'">PB Reason</button>
+    </div>
+    <div class="col-lg-12" *ngIf="this.dashboardType == 'trader'">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row">
+            <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12">
+              <div class="row">
+                <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 mt-2">
+                  <div class="col-12">
+                    <div class="row ">
+                      <div class="col-12">
+                        <h6>LEGEND :</h6> 
+                      </div>
+                      <div class="col-4">
+                        <div class="border border-1 border-white text-center bg-warning text-danger font-weight-bold" style="font-size: 18px;">NC</div>
+                        <div class="border border-1 border-white text-center text-warning font-weight-bold" style="font-size: 18px;">ACTUAL</div>
+                      </div>
+                      <div class="col-8">
+                        <span class="badge bg-light text-danger legend-status" >R</span> - RTD in use  <span class="badge bg-light text-danger legend-status ml-1" >H</span> - HAP in use
+                        <p><span class="badge bg-light text-danger legend-status" >O</span> - Override in use</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12 mt-2">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered">
+                        <thead>
+                          <tr >
+                            <th style="width: 30%; ">CURRENT</th>
+                            <th class="text-warning">PH</th>
+                            <th class="text-warning">LUZ</th>
+                            <th class="text-warning">VIZ</th>
+                            <th class="text-warning">MIN</th>
+                          </tr>
+                          <tr>
+                            <th>DEMAND, MW</th>
+                            <th>{{PhilDemand | number: '1.0-0'}}</th>
+                            <th>{{luzDemand | number: '1.0-0'}}</th>
+                            <th>{{visDemand | number: '1.0-0'}}</th>
+                            <th>{{minDemand | number: '1.0-0'}}</th>
+                          </tr>
+                          <!--<tr>
+                            <th>FREQUENCY, Hz</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                          </tr>-->
+                        </thead>
+                      </table>
+                    </div>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                      <thead>
+                        <tr>
+                          <th colspan="2" rowspan="3">INTERVAL</th>
+                          <th rowspan="2">PRICE Php/MWh</th>
+                          <th colspan="2">
+                            <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name == ''">
+                                SELECT UNIT
+                              </button>
+          
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name !== ''">
+                                {{ currentUnit1.name }}
+                              </button>
+
+                              <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                                <button class="dropdown-item font-weight-bold"
+                                  ngbDropdownItem
+                                  *ngFor="let unit of unit1; let i = index"
+                                  (click)="selectedUnit(unit.UnitID,unit1, currentUnit1,'U1')"
+                                  [class.active]="unit.UnitID === currentUnit1.id">
+                                  {{ unit.UnitNumber }}
+                                </button>
+                              </div>
+                            </div>
+                            
+                          </th>
+                          <th colspan="2">
+                            <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name === ''">
+                                SELECT UNIT
+                              </button>
+            
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name !== ''">
+                                {{ currentUnit2.name }}
+                              </button>
+            
+                              <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                                <button class="dropdown-item font-weight-bold"
+                                  ngbDropdownItem
+                                  *ngFor="let unit of unit2; let i = index"
+                                  (click)="selectedUnit(unit.UnitID,unit2, currentUnit2,'U2')"
+                                  [class.active]="unit.UnitID === currentUnit2.id">
+                                  {{ unit.UnitNumber }}
+                                </button>
+                              </div>
+                            </div>
+                          </th>
+                          <th colspan="2">
+                            <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name === ''">
+                                SELECT UNIT
+                              </button>
+            
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name !== ''">
+                                {{ currentUnit3.name }}
+                              </button>
+            
+                              <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                                <button class="dropdown-item font-weight-bold"
+                                  ngbDropdownItem
+                                  *ngFor="let unit of unit3; let i = index"
+                                  (click)="selectedUnit(unit.UnitID,unit3, currentUnit3,'U3')"
+                                  [class.active]="unit.UnitID === currentUnit3.id">
+                                  {{ unit.UnitNumber }}
+                                </button>
+                              </div>
+                            </div>
+                          </th>
+                          <th colspan="2">
+                            <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name === ''">
+                                SELECT UNIT
+                              </button>
+            
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name !== ''">
+                                {{ currentUnit4.name }}
+                              </button>
+            
+                              <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                                <button class="dropdown-item font-weight-bold"
+                                  ngbDropdownItem
+                                  *ngFor="let unit of unit4; let i = index"
+                                  (click)="selectedUnit(unit.UnitID,unit4, currentUnit4,'U4')"
+                                  [class.active]="unit.UnitID === currentUnit4.id">
+                                  {{ unit.UnitNumber }}
+                                </button>
+                              </div>
+                            </div>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <button class="btn btn-sm btn-primary" style="width: 100%;" (click)="OpenOverridModal(Override,currentUnit1.name)" [disabled]="isOverrideShow == 'false' || currentUnit1.name=='' || currentUnit1.name=='SELECT UNIT'">OVERRIDE</button>
+                          </th>
+                          <th>
+                            <a [routerLink]="['/bids', currentUnit1.id, currentUnit1.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && currentUnit1.name!='' && currentUnit1.name!='SELECT UNIT'" style="width: 100%;">
+                              BID
+                            </a>
+                            <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit1.name=='' || currentUnit1.name=='SELECT UNIT'">BID</button>
+                          </th>
+                          <th>
+                            <button class="btn btn-sm btn-primary" style="width: 100%;" (click)="OpenOverridModal(Override,currentUnit2.name)" [disabled]="isOverrideShow == 'false' || currentUnit2.name=='' || currentUnit2.name=='SELECT UNIT'">OVERRIDE</button>
+                          </th>
+                          <th>
+                            <a [routerLink]="['/bids', currentUnit2.id, currentUnit2.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && currentUnit2.name!='' && currentUnit2.name!='SELECT UNIT'" style="width: 100%;">
+                              BID
+                            </a>
+                            <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit2.name=='' || currentUnit2.name=='SELECT UNIT'">BID</button>
+                          </th>
+                          <th>
+                            <button class="btn btn-sm btn-primary" style="width: 100%;" (click)="OpenOverridModal(Override,currentUnit3.name)" [disabled]="isOverrideShow == 'false' || currentUnit3.name=='' || currentUnit3.name=='SELECT UNIT'">OVERRIDE</button>
+                          </th>
+                          <th>
+                            <a [routerLink]="['/bids', currentUnit3.id, currentUnit3.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && currentUnit3.name!='' && currentUnit3.name!='SELECT UNIT'" style="width: 100%;">
+                              BID
+                            </a>
+                            <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit3.name=='' || currentUnit3.name=='SELECT UNIT'">BID</button>
+                          </th>
+                          <th>
+                            <button class="btn btn-sm btn-primary" style="width: 100%;" (click)="OpenOverridModal(Override,currentUnit4.name)" [disabled]="isOverrideShow == 'false' || currentUnit4.name=='' || currentUnit4.name=='SELECT UNIT'">OVERRIDE</button>
+                          </th>
+                          <th>
+                            <a [routerLink]="['/bids', currentUnit4.id, currentUnit4.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && currentUnit4.name!='' && currentUnit4.name!='SELECT UNIT'" style="width: 100%;">
+                              BID
+                            </a>
+                            <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit4.name=='' || currentUnit4.name=='SELECT UNIT'">BID</button>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <div class="btn-group" style="width: 100% !important" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''">
+                                SELECT UNIT
+                              </button>
+            
+                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name !== ''">
+                                {{ currentUnitPrice.name }}
+                              </button>
+            
+                              <div class="dropdown-menu scrollable-menu" ngbDropdownMenu >
+                                <button class="dropdown-item font-weight-bold"
+                                  ngbDropdownItem
+                                  *ngFor="let unit of unitPrice; let i = index"
+                                  (click)="selectedUnit(unit.UnitID, unitPrice,currentUnitPrice,'Price')"
+                                  [class.active]="unit.UnitID === currentUnitPrice.id">
+                                  {{ unit.UnitNumber }}
+                                </button>
+                              </div>
+                            </div> 
+                          </th>
+                          <th>SCHED,MW</th>
+                          <th class="text-warning">ACTUAL,MW</th>
+                          <th>SCHED,MW</th>
+                          <th class="text-warning">ACTUAL,MW</th>
+                          <th>SCHED,MW</th>
+                          <th class="text-warning">ACTUAL,MW</th>
+                          <th>SCHED,MW</th>
+                          <th class="text-warning">ACTUAL,MW</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let data of dbValues; let i = index">
+                          <td *ngIf="i==0" class="text-center" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">HAP</td>
+                          <td *ngIf="i==4" class="text-center bg-danger" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
+                          
+                          <td *ngIf="i&lt;4" class="text-center">{{data.TimestampLabel}}</td>
+                          <td *ngIf="i&lt;4" class="text-center">{{data.PriceSched | number: '1.0-0'}}</td>
+                          <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.U1Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U2Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U3Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U4Sched | number: '1.0-0'}}</td>
+  
+                          <td *ngIf="i==4" class="current-interval">{{ getCurrentInterval(data.TimestampLabel) }}</td>
+                          <td *ngIf="i==4" class="current-interval">{{data.PriceSched | number: '1.0-0'}}</td>
+                          <td *ngIf="i==4" colspan="2" class="current-interval">
+                            {{data.U1Sched | number: '1.0-0'}}
+                            <div class="badge bg-light text-danger data-status" *ngIf="currentUnit1.name!='' && currentUnit1.name!='SELECT UNIT'">
+                              {{data.U1Status}}
+                            </div>
+                          </td>
+                          <td *ngIf="i==4" colspan="2" class="current-interval">
+                            {{data.U2Sched | number: '1.0-0'}}
+                            <div class="badge bg-light text-danger data-status" *ngIf="currentUnit2.name!='' && currentUnit2.name!='SELECT UNIT'">
+                              {{data.U2Status}}
+                            </div>
+                          </td>
+                          <td *ngIf="i==4" colspan="2" class="current-interval">
+                            {{data.U3Sched | number: '1.0-0'}}
+                            <div class="badge bg-light text-danger data-status" *ngIf="currentUnit3.name!='' && currentUnit3.name!='SELECT UNIT'">
+                              {{data.U3Status}}
+                            </div>
+                          </td>
+                          <td *ngIf="i==4" colspan="2" class="current-interval">
+                            {{data.U4Sched | number: '1.0-0'}}
+                            <div class="badge bg-light text-danger data-status" *ngIf="currentUnit4.name!='' && currentUnit4.name!='SELECT UNIT'">
+                              {{data.U4Status}}
+                            </div>
+                          </td>
+                          
+                          <td *ngIf="i==5" class="text-center" rowspan="10" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">COMPLIANCE</td>
+                          <td *ngIf="i>4" class="text-center">{{data.TimestampLabel}}</td>
+                          <td *ngIf="i>4" class="text-center">{{data.PriceSched | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4">{{data.U1Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4" [class.actual]="data.U1IsLimit" [class.flagged]="data.U1IsLimit==false">{{data.U1Actual | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4">{{data.U2Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4" [class.actual]="data.U2IsLimit" [class.flagged]="data.U2IsLimit==false">{{data.U2Actual | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4">{{data.U3Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false">{{data.U3Actual | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4">{{data.U4Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4" [class.actual]="data.U4IsLimit" [class.flagged]="data.U4IsLimit==false">{{data.U4Actual | number: '1.0-0'}}</td>
+                        </tr>
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 mt-2">
+                <div class="col-sm-12 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">DEMAND</h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DEMANDPOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+
+                <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">
+                    HAP
+
+                    <!--<div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>-->
+                  </h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="HADOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+                
+                <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">
+                    DAP
+
+                    <!--<div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>-->
+                  </h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DAHOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12" *ngIf="this.dashboardType == 'portfolio'">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row">
+            <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12">
+              <div class="row">
+                <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 mt-2">
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text bg-danger text-light font-weight-bold" style="font-size: 18px;">INTERVAL </span>
+                    </div>
+                    <div class="input-group-prepend">
+                      <span class="input-group-text bg-dark text-warning font-weight-bold" style="font-size: 24px;">{{portfolioCurrentInterval}}</span>
+                    </div>
+                  </div> 
+                </div>
+                <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 mt-2">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered">
+                        <thead>
+                          <tr >
+                            <th style="width: 45%; ">CURRENT</th>
+                            <th class="text-warning">PH</th>
+                            <th class="text-warning">LUZ</th>
+                            <th class="text-warning">VIZ</th>
+                            <th class="text-warning">MIN</th>
+                          </tr>
+                          <tr>
+                            <th>DEMAND, MW</th>
+                            <th>{{PhilDemand | number: '1.0-0'}}</th>
+                            <th>{{luzDemand | number: '1.0-0'}}</th>
+                            <th>{{visDemand | number: '1.0-0'}}</th>
+                            <th>{{minDemand | number: '1.0-0'}}</th>
+                          </tr>
+                          <!--<tr>
+                            <th>FREQUENCY, Hz</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                          </tr>-->
+                          <tr>
+                           <th>TOTAL SCHED GEN (SMC)</th>
+                           <th>{{totalSchedGen.ph | number: '1.0-0'}}</th>
+                           <th>{{totalSchedGen.luz | number: '1.0-0'}}</th>
+                           <th>{{totalSchedGen.vis | number: '1.0-0'}}</th>
+                           <th>{{totalSchedGen.min | number: '1.0-0'}}</th>
+                         </tr>
+                         <tr>
+                           <th>TOTAL ACTUAL GEN (SMC)</th>
+                           <th>{{totalSchedActual.ph | number: '1.0-0'}}</th>
+                           <th>{{totalSchedActual.luz | number: '1.0-0'}}</th>
+                           <th>{{totalSchedActual.vis | number: '1.0-0'}}</th>
+                           <th>{{totalSchedActual.min | number: '1.0-0'}}</th>
+                         </tr>
+                        </thead>
+                      </table>
+                    </div>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                 <div class="table-responsive">
+                   <table class="table table-sm table-bordered">
+                     <thead>
+                       <tr class="bg-danger">
+                         <th style="width: 6%;">REGION</th>
+                         <th style="width: 15%;">GENERATING UNIT</th>
+                         <th style="width: 8%;">RTD, MW</th>
+                         <th style="width: 8%;">ACTUAL, MW</th>
+                         <th style="width: 8%;">%</th>
+                         <th style="width: 8%;">LMP, PHP/MWh</th>
+                         <th>REMARKS</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       <tr *ngFor="let data of unitLuz; let i = index">
+                         <td *ngIf="i==0" [attr.rowspan]="unitLuz.length">LUZ</td>
+                         <td class="text-warning">{{data.UnitNumber}}</td>
+                         <td>{{data.RTD | number: '1.0-0'}}</td>
+                         <td [class.actual]="data.IsLimit" [class.flagged]="data.IsLimit==false">{{data.Actual | number: '1.0-0'}}</td>
+                         <td>{{data.Percentage | number: '1.2-2'}}%</td>
+                         <td>{{data.Price | number: '1.2-2'}}</td>
+                         <td>{{data.Remarks}}</td>
+                       </tr>
+                       <tr *ngFor="let data of unitViz; let i = index">
+                        <td *ngIf="i==0" [attr.rowspan]="unitViz.length">VIS</td>
+                        <td class="text-warning">{{data.UnitNumber}}</td>
+                        <td>{{data.RTD | number: '1.0-0'}}</td>
+                         <td [class.actual]="data.IsLimit" [class.flagged]="data.IsLimit==false">{{data.Actual | number: '1.0-0'}}</td>
+                         <td>{{data.Percentage | number: '1.2-2'}}%</td>
+                         <td>{{data.Price | number: '1.2-2'}}</td>
+                         <td>{{data.Remarks}}</td>
+                      </tr>
+                      <tr *ngFor="let data of unitMin; let i = index">
+                        <td *ngIf="i==0" [attr.rowspan]="unitMin.length">MIN</td>
+                        <td class="text-warning">{{data.UnitNumber}}</td>
+                        <td>{{data.RTD | number: '1.0-0'}}</td>
+                         <td [class.actual]="data.IsLimit" [class.flagged]="data.IsLimit==false">{{data.Actual | number: '1.0-0'}}</td>
+                         <td>{{data.Percentage | number: '1.2-2'}}%</td>
+                         <td>{{data.Price | number: '1.2-2'}}</td>
+                         <td>{{data.Remarks}}</td>
+                      </tr>
+                     </tbody>
+                   </table>
+                 </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 mt-2">
+                <div class="col-sm-12 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">DEMAND</h4>
+ 
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DEMANDPOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+ 
+                <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">
+                    DAP (Portfolio)
+ 
+                    <!--<div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>-->
+                  </h4>
+ 
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DAPAllUnitOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+                
+                <div class="col-sm-12 mt-2 border border-white p-2 border-1">
+                  <h4 class="text-warning font-weight-bold">
+                    DAP 
+ 
+                    <!--<div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>-->
+                  </h4>
+ 
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DAHOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 175px; display: block;"></highcharts-chart>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12" *ngIf="this.dashboardType == 'pbreason'">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row">
+            <div class="col-12">
+              <h3>COMPLIANCE MONITORING</h3>
+              <h6 class="text-warning">REASONS FOR PROBABLE BREACH</h6>
+            </div>
+            <div class="col-12">
+              <div class="input-group mt-5 mb-2">
+                <div class="input-group-prepend">
+                 
+                </div>
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary font-weight-bold mr-3" (click)="LessPBDate()"> &lt; </button>
+                </div>
+                <div class="input-group-prepend ">
+                  <h5 class="text-warning p-1 font-weight-bold"> {{pbDateDisplay}} {{pbHr}}H </h5>
+                </div>
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary font-weight-bold ml-3" (click)="AddPBDate()"> &gt; </button>
+                </div>
+              </div> 
+            </div>
+            <div class="col-12">
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="width:12% !important" class="bg-danger">INTERVAL</th>
+                      <th colspan="2" style="width:22% !important">
+                        <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name == ''">
+                            SELECT UNIT
+                          </button>
+      
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name !== ''">
+                            {{ currentUnit1PB.name }}
+                          </button>
+
+                          <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let unit of unit1PB; let i = index"
+                              (click)="selectedPBUnit(unit.UnitID,unit1PB, currentUnit1PB,'U1')"
+                              [class.active]="unit.UnitID === currentUnit1PB.id">
+                              {{ unit.UnitNumber }}
+                            </button>
+                          </div>
+                        </div>
+                        
+                      </th>
+                      <th colspan="2" style="width:22% !important">
+                        <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name == ''">
+                            SELECT UNIT
+                          </button>
+      
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name !== ''">
+                            {{ currentUnit2PB.name }}
+                          </button>
+
+                          <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let unit of unit2PB; let i = index"
+                              (click)="selectedPBUnit(unit.UnitID,unit2PB, currentUnit2PB,'U2')"
+                              [class.active]="unit.UnitID === currentUnit2PB.id">
+                              {{ unit.UnitNumber }}
+                            </button>
+                          </div>
+                        </div>
+                        
+                      </th>
+                      <th colspan="2" style="width:22% !important">
+                        <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3PB.name == ''">
+                            SELECT UNIT
+                          </button>
+      
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3PB.name !== ''">
+                            {{ currentUnit3PB.name }}
+                          </button>
+
+                          <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let unit of unit3PB; let i = index"
+                              (click)="selectedPBUnit(unit.UnitID,unit3PB, currentUnit3PB,'U3')"
+                              [class.active]="unit.UnitID === currentUnit3PB.id">
+                              {{ unit.UnitNumber }}
+                            </button>
+                          </div>
+                        </div>
+                        
+                      </th>
+                      <th colspan="2" style="width:22% !important">
+                        <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4PB.name == ''">
+                            SELECT UNIT
+                          </button>
+      
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4PB.name !== ''">
+                            {{ currentUnit4PB.name }}
+                          </button>
+
+                          <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let unit of unit4PB; let i = index"
+                              (click)="selectedPBUnit(unit.UnitID,unit4PB, currentUnit4PB,'U4')"
+                              [class.active]="unit.UnitID === currentUnit4PB.id">
+                              {{ unit.UnitNumber }}
+                            </button>
+                          </div>
+                        </div>
+                        
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of pbValues; let i = index" >
+                      <td>{{data.TimestampLabel}}</td>
+                      <td style="width:5% !important" [class.actual]="data.U1IsLimit" [class.flagged]="data.U1IsLimit==false && data.U1Actual != null">{{data.U1Actual}}</td>
+                      <td (mouseover)="data.U1IsHideEdit=false" (mouseleave)="data.U1IsHideEdit=true"  [class.flagged]="data.U1IsLimit==false && data.U1Actual != null">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U1Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U1IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit1PB.name,data.TimestampLabel,data.U1Remarks,false,'U1',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td style="width:5% !important" [class.actual]="data.U2IsLimit" [class.flagged]="data.U2IsLimit==false && data.U2Actual != null">{{data.U2Actual}}</td>
+                      <td (mouseover)="data.U2IsHideEdit=false" (mouseleave)="data.U2IsHideEdit=true"   [class.flagged]="data.U2IsLimit==false && data.U2Actual != null">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U2Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U2IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit2PB.name,data.TimestampLabel,data.U2Remarks,false,'U2',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td style="width:5% !important" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">{{data.U3Actual}}</td>
+                      <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true"   [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U3Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,data.TimestampLabel,data.U3Remarks,false,'U3',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td style="width:5% !important" [class.actual]="data.U4IsLimit" [class.flagged]="data.U4IsLimit==false && data.U4Actual != null">{{data.U4Actual}}</td>
+                      <td (mouseover)="data.U4IsHideEdit=false" (mouseleave)="data.U4IsHideEdit=true"   [class.flagged]="data.U4IsLimit==false && data.U4Actual != null">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U4Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,data.TimestampLabel,data.U4Remarks,false,'U4',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngFor="let data of genRemarks; let i = index" class="bg-danger">
+                      <td>General Remarks</td>
+                      <td (mouseover)="data.U1IsHideEdit=false" (mouseleave)="data.U1IsHideEdit=true" colspan="2">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U1Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U1IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit1PB.name,'',data.U1Remarks,true,'U1',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td (mouseover)="data.U2IsHideEdit=false" (mouseleave)="data.U2IsHideEdit=true" colspan="2">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U2Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U2IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit2PB.name,'',data.U2Remarks,true,'U2',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true" colspan="2">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U3Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,'',data.U3Remarks,true,'U3',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                      <td (mouseover)="data.U4IsHideEdit=false" (mouseleave)="data.U4IsHideEdit=true" colspan="2">
+                        <span style="font-size: small !important; font-weight: normal !important;">{{data.U4Remarks}}</span>
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit4PB.name,'',data.U4Remarks,true,'U4',i)">
+                        <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<ng-template #Override let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Override RTD,MW <strong>{{selectedUnitNumber}}</strong></h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="chbOverride" [(ngModel)]="isOverride">
+        <label class="custom-control-label" for="chbOverride">Override Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="rtdValue" [disabled]="!isOverride">
+    </div>
+
+    
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-warning" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-success" (click)="OverrideValue()">OK</button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #PbRemarks let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Update Remarks <strong>{{selectedUnitNumber}}</strong></h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="font-weight-bold" *ngIf="!isGenRemarks">{{pbDateDisplay}} {{pbHr}}:{{selectedPBInterval}} </label>
+      <label class="font-weight-bold" *ngIf="isGenRemarks">General Remarks </label>
+      <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="selectedPBRemarks"></textarea>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-warning" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-success" (click)="SaveRemarks()">Save</button>
+  </div>
+</ng-template>

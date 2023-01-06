@@ -1,0 +1,278 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>Unit List</h4>
+            </div>
+            <div class="col-sm-6 text-right">
+              <div ngbDropdown>
+              <button class="btn btn-sm btn-outline-light" ngbDropdownToggle *ngIf="currentSite.name === ''">
+                  SELECT PLANT
+                </button>
+
+                <button class="btn btn-sm btn-outline-light" ngbDropdownToggle *ngIf="currentSite.name !== ''">
+                  {{ currentSite.name }}
+                </button>
+
+                <div class="dropdown-menu" ngbDropdownMenu>
+                  <button class="dropdown-item"
+                    ngbDropdownItem
+                    *ngFor="let site of sites; let i = index"
+                    (click)="selectedSite(site.SiteID)"
+                    [class.active]="site.SiteID === currentSite.id">
+                    {{ site.SiteName }}
+                  </button>
+              </div>
+              <button class="btn btn-sm btn-outline-light ml-2" (click)="createModal(createNewUnitModal)" *ngIf="currentUserInfo?.IsShowConfig">
+                  <fa-icon [icon]="faPlus"></fa-icon>
+                  Add New Unit
+                </button>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>UnitID</th>
+                  <th>Unit</th>
+                  <th>Color</th>
+                  <th class="text-center w-40">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let unit of units; let i = index">
+                  <td>{{ unit.UnitID }}</td>
+                  <td>{{ unit.UnitNumber }}</td>
+                  <td [style.backgroundColor]="unit.BColor" [style.color]="unit.FColor">{{ unit.UnitNumber }}</td>
+                  <td class="w-10 text-center">
+                    <button class="btn btn-xs font-sm btn-outline-secondary mr-1" (click)="updateModal(updateUnitModal, unit)" *ngIf="currentUserInfo?.IsShowConfig">
+                      Update
+                    </button>
+
+                    <button class="btn btn-xs font-sm btn-outline-warning mr-1"  (click)="openModal(webServiceModal, unit)" *ngIf="currentUserInfo?.IsShowConfig">
+                      Web Service Settings
+                    </button>
+
+                    <button class="btn btn-xs font-sm btn-outline-danger mr-1" (click)="deleteModal(delete, unit)" *ngIf="currentUserInfo?.IsShowConfig">
+                      Delete
+                    </button>
+                    <a [routerLink]="['/bids', unit.UnitID, unit.UnitNumber]" target="_blank" class="btn btn-xs font-sm btn-secondary" *ngIf="currentUserInfo?.IsShowBid">
+                      Upload Bids
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #webServiceModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Updating: {{ selectedUnit.UnitNumber }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Operation</label>
+      <input type="text" class="form-control" placeholder="Operation" #operation value="{{ selectedUnitWebSettings?.Operation }}">
+    </div>
+
+    <div class="form-group">
+      <label>Certificate URL</label>
+      <input type="file" class="form-control-file" #certificateUrl>
+      <small class="text-muted" *ngIf="selectedUnitWebSettings !== null">
+        Current File Location: {{ selectedUnitWebSettings?.CertificateURL }}
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-control" placeholder="Password" #password value="{{ selectedUnitWebSettings?.Password }}">
+    </div>
+
+    <div class="form-group">
+      <label>Friendly Name</label>
+      <input type="text" class="form-control" placeholder="Friendly Name" #friendlyName value="{{ selectedUnitWebSettings?.FriendlyName }}">
+    </div>
+
+    <div class="form-group">
+      <label>TP User</label>
+      <input type="text" class="form-control" placeholder="TP User" #tpUser value="{{ selectedUnitWebSettings?.TpUser }}">
+    </div>
+
+    <div class="form-group">
+      <label>Bid Type</label>
+      <select class="form-control" #bidType>
+        <option selected disabled>Select Type</option>
+        <option value="Offer" [selected]="selectedUnitWebSettings?.BidType === 'Offer'">Offer</option>
+        <option value="BatteryOffer" [selected]="selectedUnitWebSettings?.BidType === 'BatteryOffer'">BatteryOffer</option>
+        <option value="Nomination" [selected]="selectedUnitWebSettings?.BidType === 'Nomination'">Nomination</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Sheet Name</label>
+      <input type="text" class="form-control" placeholder="Sheet Name" #sheetName value="{{ selectedUnitWebSettings?.SheetName }}">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="saveUnitConfiguration(operation.value, certificateUrl, password.value, friendlyName.value, tpUser.value, bidType.value, sheetName.value, selectedUnit)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #uploadBidsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Bids Uploading: {{ selectedUnit.UnitNumber }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Bids File</label>
+      <input type="file" class="form-control-file" #bidsFile>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="saveBids(bidsFile, selectedUnit, selectedUnitWebSettings)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #createNewUnitModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add New Unit</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Unit Number</label>
+      <input type="text" class="form-control" placeholder="Unit Number" #unit>
+    </div>
+
+    <div class="form-group">
+      <label>Site</label>
+      <select class="form-control" #site>
+        <option *ngFor="let site of sites; let i = index" value="{{ site.SiteID }}">{{ site.SiteName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Type ID</label>
+      <input type="text" class="form-control" placeholder="Type ID" #type>
+    </div>
+
+    <div class="form-group">
+      <label>Unit Header Background Color</label>
+      <input type="color" class="form-control" [(ngModel)]="bColor"  value="{{bColor}}">
+    </div>
+    <div class="form-group">
+      <label>Unit Header Font Color</label>
+      <input type="color" class="form-control" [(ngModel)]="fColor" value="{{fColor}}">
+    </div>
+    <div class="form-group">
+      <label>Sample Unit Header Output</label>
+      <label class="form-control text-center font-weight-bold" [style.backgroundColor]="bColor" [style.color]="fColor">{{unit.value}}</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="createUnit(0, unit.value, site.value, type.value)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #updateUnitModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Update Unit</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Unit Number</label>
+      <input type="text" class="form-control" placeholder="Unit Number" #unit value="{{ selectedUnit?.UnitNumber }}">
+    </div>
+
+    <div class="form-group">
+      <label>Site</label>
+      <select class="form-control" #site>
+        <option *ngFor="let site of sites; let i = index" value="{{ site.SiteID }}" [selected]="selectedUnit?.SiteID === site.SiteID">{{ site.SiteName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Type ID</label>
+      <input type="text" class="form-control" placeholder="Type ID" #type value="{{ selectedUnit.TypeID }}">
+    </div>
+
+    
+    <div class="form-group">
+      <label>Unit Header Background Color</label>
+      <input type="color" class="form-control" [(ngModel)]="bColor"  value="{{bColor}}">
+    </div>
+    <div class="form-group">
+      <label>Unit Header Font Color</label>
+      <input type="color" class="form-control" [(ngModel)]="fColor" value="{{fColor}}">
+    </div>
+    <div class="form-group">
+      <label>Sample Unit Header Output</label>
+      <label class="form-control text-center font-weight-bold" [style.backgroundColor]="bColor" [style.color]="fColor">{{unit.value}}</label>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="createUnit(selectedUnit.UnitID, unit.value, site.value, type.value)">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Unit Deletion</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <strong>Are you sure you want to delete?</strong>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-danger" (click)="deleteUnit(selectedUnit.UnitID)">Delete</button>
+  </div>
+</ng-template>

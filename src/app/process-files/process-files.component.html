@@ -1,0 +1,53 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <h4>Processed Files</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <label class="sr-only" for="inlineFormInputGroup">Username</label>
+              <div class="input-group mb-2 wd">
+                <input type="date" class="form-control " id="inlineFormInputGroup" [(ngModel)]="dt">
+                <div class="input-group-prepend">
+                  <button class="btn btn-secondary text-center" type="button" (click)="getLogs()" *ngIf="!isLoading">Filter</button>
+                  <button class="btn btn-secondary text-center" type="button" (click)="getLogs()" *ngIf="isLoading">Loading..</button>
+              </div>
+              </div>
+            </div>
+            <div class="col-lg-6 ">
+              <input type="text" class="form-control wd pull-right" [(ngModel)]="src" placeholder="Search">
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Status</th>
+                  <th>Message</th>
+                  <th>Date Logged</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ftp of logs | filter:src; let i = index">
+                  <td>{{ ftp.FileName }}</td>
+                  <td>{{ ftp.Type }}</td>
+                  <td>{{ ftp.Message }}</td>
+                  <td>{{ ftp.LoggedDate }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

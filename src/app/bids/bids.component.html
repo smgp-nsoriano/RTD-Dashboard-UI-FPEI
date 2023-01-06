@@ -1,0 +1,648 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="mt-1">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card" id="sectionToPrint">
+        <div class="card-header maindivheader">
+            <h5>BIDS <span class="ml-2 text-warning">{{unitNumber}}</span></h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            
+          </div>
+          <div class="row mb-3">
+            <div class="col-lg-5 col-sm-12 col-md-12 mb-1">
+              <div class="input-group">
+                <div class="input-group-append" >
+                  <input type="text" readonly class="form-control-plaintext form-control-sm" value="Trading Date" style="width: 100px;font-weight: bold;">
+                </div>
+                <input type="date" class="form-control form-control-sm" [(ngModel)]="dateFormatted" (change)="getOfferByDate()">
+                <div class="input-group-append hide-print" >
+                  <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="BlankBidModal(blankoffer)" *ngIf="isInvalidFile" >Create Bid</button>
+                  <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="CopyBidModal(copyoffer)" *ngIf="!isInvalidFile" >Copy To</button>
+                  <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="PQValidation()" [disabled]="isInvalidFile">Validate</button>
+                  <!--<button class="btn btn-outline-secondary btn-sm ml-1" *ngIf="isValidatingFile" type="button" disabled>Validating..</button>-->
+                  <button class="btn btn-outline-warning btn-sm ml-1" type="button" (click)="ShowRRStandard(rrStandard)">RR Standard</button>
+                  <button class="btn btn-outline-warning btn-sm ml-1" type="button" id="uploadFile" (click)="print('sectionToPrint')" [disabled]="isInvalidFile">Print PDF</button>
+                  <!--<button class="btn btn-success btn-sm ml-1" type="button" id="uploadFile" (click)="print('sectionToPrint')" [disabled]="isInvalidFile">Export Excel</button>-->
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-sm-12">
+
+            </div>
+            <div class="col-lg-5 col-sm-12 hide-print">
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="bidsFile" #bidsFile (change)="getFileName(bidsFile)">
+                  <label class="custom-file-label" for="bidsFile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-warning btn-sm" type="button" id="uploadFile" (click)="saveBids(bidsFile)" *ngIf="!loading" [disabled]="isInvalidFile">Upload file</button>
+                  <button class="btn btn-outline-warning btn-sm" type="button" id="uploadFile" (click)="saveBids(bidsFile)" *ngIf="loading" disabled>Uploading file...</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ngb-alert type="danger" class="mt-2 myAlert-top"  *ngIf="errorCounts > 0" >
+            <span class="text-danger ml-2 mr-2"><fa-icon [icon]="faExclamationCircle" size="lg"></fa-icon></span>
+            <b>Detected invalid values!</b> 
+            <button class="btn btn-danger btn-sm ml-5" type="button" (click)="ShowValidation(validation)">view details</button>
+          </ngb-alert>
+          <ngb-alert *ngIf="successUploadMessage" type="success" (close)="successUploadMessage = null">{{ successUploadMessage }}</ngb-alert>
+          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+          <div class="col-12 text-right mt-3">
+            <button class="btn btn-default text-warning btn-sm" type="button"  ngbTooltip="Copy" *ngIf="!isCopy" (click)="isCopy=true" >
+              <fa-icon [icon]="faCopy" size="md"></fa-icon>
+            </button>
+            <!--<button class="btn btn-default text-success btn-sm" type="button"  ngbTooltip="Paste" *ngIf="!isCopy" (click)="isPaste=true" [disabled]="!isPasteActive">
+              <fa-icon [icon]="faPaste" size="md"></fa-icon>
+            </button>-->
+
+            <button class="btn btn-default text-danger btn-sm " type="button" ngbTooltip="Clear" *ngIf="isCopy" (click)="ClearCopy()">
+              <fa-icon [icon]="faTimesCircle" size="md"></fa-icon>
+            </button>
+            <button class="btn btn-default text-success btn-sm" type="button" ngbTooltip="Ok" *ngIf="isCopy" (click)="CopySchedule()">
+              <fa-icon [icon]="faCheck" size="md"></fa-icon>
+            </button>
+            
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>HOURS</th>
+                  <th>P1</th>
+                  <th>Q1</th>
+                  <th>P2</th>
+                  <th>Q2</th>
+                  <th>P3</th>
+                  <th>Q3</th>
+                  <th>P4</th>
+                  <th>Q4</th>
+                  <th>P5</th>
+                  <th>Q5</th>
+                  <th>P6</th>
+                  <th>Q6</th>
+                  <th>P7</th>
+                  <th>Q7</th>
+                  <th>P8</th>
+                  <th>Q8</th>
+                  <th>P9</th>
+                  <th>Q9</th>
+                  <th>P10</th>
+                  <th>Q10</th>
+                  <th>P11</th>
+                  <th>Q11</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let offer of offers; index as i">
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">{{ offer.Interval }}</td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.P1">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.1" [(ngModel)]="offer.Q1">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P2,offer.P3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P2">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q2 &lt; pmax && offer.Q2 != null && offer.Q3 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q2,offer.Q3)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q2">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P3,offer.P4)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P3">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q3 &lt; pmax && offer.Q3 != null && offer.Q4 == null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q3,offer.Q4)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q3">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P4,offer.P5)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P4">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q4 &lt; pmax && offer.Q4 != null && offer.Q5 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q4,offer.Q5)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q4">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P5,offer.P6)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P5">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q5 &lt; pmax && offer.Q5 != null && offer.Q6 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q5,offer.Q6)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q5">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P6,offer.P7)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P6">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy"  >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q6 &lt; pmax && offer.Q6 != null && offer.Q7 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q6,offer.Q7)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q6">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P7,offer.P8)" (keydown)="PQValidation()" step="0.01"  [(ngModel)]="offer.P7">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q7 &lt; pmax && offer.Q7 != null && offer.Q8 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q7,offer.Q8)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q7">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P8,offer.P9)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P8">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q8 &lt; pmax && offer.Q8 != null && offer.Q9 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q8,offer.Q9)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q8">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P9,offer.P10)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P9">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q9 &lt; pmax && offer.Q9 != null && offer.Q10 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q9,offer.Q10)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q9">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P10,offer.P11)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P10">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q10 &lt; pmax && offer.Q10 != null && offer.Q11 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q10,offer.Q11)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q10">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
+                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P11,null)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P11">
+                  </td>
+                  <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q11 &lt; pmax && offer.Q11 != null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q11,null)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q11">
+                  </td>
+                  <td [class.copied-offer]="offer.IsCopied == true && isCopy" class="text-center"
+                  (mouseover)="offer.IsHovered=true" (mouseleave)="offer.IsHovered=false">
+                    <div class="form-check" *ngIf="isCopy">
+                      <input class="form-check-input" type="checkbox" id="chk{{i}}" [checked]="offer.IsCopied" [(ngModel)]="offer.IsCopied">
+                      <label class="form-check-label"></label>
+                    </div>
+                    <!--<div class="form-check" *ngIf="!isCopy">
+                      <input class="form-check-input" type="radio" id="rd{{i}}" name="enums" [value]="offer.Interval" [disabled]="!isPaste">
+                      <label class="form-check-label"></label>
+                    </div>-->
+
+                    <button class="btn btn-default text-success btn-sm hover-paste" ngbTooltip="Paste" placement="left" type="button" *ngIf="!isCopy && offer.IsHovered" (click)="PasteSchedule(i)" [disabled]="!isPasteActive">
+                      <fa-icon [icon]="faPaste" size="md"></fa-icon>
+                    </button>
+                    <!--<button class="btn btn-default text-warning btn-sm ml-1" type="button" *ngIf="offer.IsCopied == null" ngbTooltip="Copy" (click)="CopyOffer(i,offer,'copy')" >
+                      <fa-icon [icon]="faCopy" size="md"></fa-icon>
+                    </button>
+
+                    <button class="btn btn-default text-danger btn-sm ml-1" type="button" *ngIf="offer.IsCopied == true" ngbTooltip="Cancel" (click)="CopyOffer(i,offer,'cancel')">
+                      <fa-icon [icon]="faTimesCircle" size="md"></fa-icon>
+                    </button>
+
+                    <button class="btn btn-default text-success btn-sm ml-1" type="button" *ngIf="offer.IsCopied == false" ngbTooltip="Paste" (click)="CopyOffer(i,offer,'paste')">
+                      <fa-icon [icon]="faPaste" size="md"></fa-icon>
+                    </button>-->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-responsive mt-3 hide-print">
+            <table class="table table-bordered table-sm table-hover">
+              <thead>
+                <tr>
+                  <th class="text-center">HOURS</th>
+                  <th>AS_RU_Q1</th>
+                  <th>AS_RU_P1</th>
+                  <th>AS_RU_Q2</th>
+                  <th>AS_RU_P2</th>
+                  <th>AS_RU_Q3</th>
+                  <th>AS_RU_P3</th>
+                  <th>AS_RU_Q4</th>
+                  <th>AS_RU_P4</th>
+                  <th>AS_RU_Q5</th>
+                  <th>AS_RU_P5</th>
+                  <th>AS_RD_Q1</th>
+                  <th>AS_RD_P1</th>
+                  <th>AS_RD_Q2</th>
+                  <th>AS_RD_P2</th>
+                  <th>AS_RD_Q3</th>
+                  <th>AS_RD_P3</th>
+                  <th>AS_RD_Q4</th>
+                  <th>AS_RD_P4</th>
+                  <th>AS_RD_Q5</th>
+                  <th>AS_RD_P5</th>
+                  <th>AS_FR_Q1</th>
+                  <th>AS_FR_P1</th>
+                  <th>AS_FR_Q2</th>
+                  <th>AS_FR_P2</th>
+                  <th>AS_FR_Q3</th>
+                  <th>AS_FR_P3</th>
+                  <th>AS_FR_Q4</th>
+                  <th>AS_FR_P4</th>
+                  <th>AS_FR_Q5</th>
+                  <th>AS_FR_P5</th>
+                  <th>AS_DR_Q1</th>
+                  <th>AS_DR_P1</th>
+                  <th>AS_DR_Q2</th>
+                  <th>AS_DR_P2</th>
+                  <th>AS_DR_Q3</th>
+                  <th>AS_DR_P3</th>
+                  <th>AS_DR_Q4</th>
+                  <th>AS_DR_P4</th>
+                  <th>AS_DR_Q5</th>
+                  <th>AS_DR_P5</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let offer of offers; index as i">
+                  <!--<td class="text-center text-nowrap">{{ formatDate(offer.Date) }}</td>-->
+                  <td class="text-center">{{ offer.Interval }}</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P5">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+          <div class="table-responsive mt-4">
+            <table class="table table-bordered table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>Ramp Rate</th>
+                  <th>MW</th>
+                  <th>RU</th>
+                  <th>RD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center">Breakpoint 1</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU1)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU1">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD1)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD1">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-center">Breakpoint 2</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU2)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU2">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD2)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD2">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-center">Breakpoint 3</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU3)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU3">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD3)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD3">
+                  </td>
+                </tr>
+                <!--<tr>
+                  <td class="text-center">Breakpoint 4</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RRU4">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RRD4">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-center">Breakpoint 5</td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RRU5">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RRD5">
+                  </td>
+                </tr>-->
+              </tbody>
+            </table>
+
+          </div>
+
+          <p style="font-weight: bold">
+            <label>Transaction ID: <span style="font-size: 15px;">{{transID}}</span></label>
+            <label class="ml-5">Date Uploaded: <span style="font-size: 15px;">{{dateUploaded}}</span></label>
+            <label class="ml-5">Uploaded By: <span style="font-size: 15px;">{{uploadedBy}}</span></label>
+          </p>
+
+          <div class="mt-3 float-right hide-print">
+            <button class="btn btn-warning btn-sm mr-2" (click)="ShowSaveChanges(saveChanges)" [disabled]="isInvalidFile || isPreviousDate">
+              Save Changes
+            </button>
+            <button class="btn btn-secondary btn-sm" (click)="ShowBidUpload(confirmationBid)"  [disabled]="isInvalidFile || errorCounts > 0">
+              UPLOAD BID
+            </button>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #validation let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">BID Validation Details</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-header">
+        <b>OFFERS</b> 
+      </div>
+      <div class="card-body" style="height: 25vh; overflow-y: auto;">
+        <p *ngIf="offersValidation.length == 0">All values are valid.</p>
+        <div *ngIf="offersValidation.length &gt; 0">
+          <ul *ngFor="let data of offersValidation" >
+            <li>
+              <b>Interval {{data.interval}}</b> 
+              <ul *ngFor="let msg of data.messages">
+                <li class="text-danger">
+                  {{msg.msg}}
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-2">
+      <div class="card-header">
+        <b>RAMP RATE</b> 
+      </div>
+      <div class="card-body" style="height: 25vh; overflow-y: auto;">
+        <p *ngIf="ramprateValidation.length == 0">All values are valid.</p>
+        <div *ngIf="ramprateValidation.length &gt; 0">
+          <ul *ngFor="let data of ramprateValidation">
+            <li class="text-danger">{{data.msg}}</li>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Close</button>
+  </div>
+</ng-template>
+
+<ng-template #blankoffer let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Blank BID</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p>Create Blank BID?</p>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="BlankOffer()" *ngIf="!isCreateBid">Continue</button>
+    <button class="btn btn-sm btn-success" *ngIf="isCreateBid" disabled>Saving..</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #copyoffer let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Copy BID</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="dt">Copy to Date</label>
+      <input type="date" class="form-control" id="dt" [(ngModel)]="dateCopyTo">
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="ckOffer" [(ngModel)]="isUseOffer">
+          <label class="form-check-label" for="ckOffer">Use Offer</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="ckrr" [(ngModel)]="isUseRR">
+          <label class="form-check-label" for="ckrr">Use RampRate</label>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="CopyOfferRR()" *ngIf="!isCreateBid">Continue</button>
+    <button class="btn btn-sm btn-success" *ngIf="isCreateBid" disabled>Continue</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+
+<ng-template #rrStandard let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Ramprate Standards</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Ramprate Up</label>
+      <input type="number" class="form-control form-control-sm text-right col-6" [(ngModel)]="rrUp" >
+    </div>
+    <div class="form-group">  
+      <label>Ramprate Down</label>
+      <input type="number" class="form-control form-control-sm text-right col-6" [(ngModel)]="rrDown" >
+    </div>
+    <ngb-alert *ngIf="rrError" type="danger" (close)="rrError = null">{{ rrError }}</ngb-alert>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="SaveRRStandard()">Save</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #saveChanges let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Save</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p>Are you sure you want to save changes?</p>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="SaveOfferChages()">Save</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #confirmationBid let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Upload Offer</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p>Are you sure you want to Upload offer 
+    for the date of <b [class.text-danger]="dateToday!=dateFormatted" [class.text-success]="dateToday==dateFormatted">{{dateFormatted}}</b>?</p>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" *ngIf="!bidLoading" (click)="upload()">Upload</button>
+    <button class="btn btn-sm btn-success" *ngIf="bidLoading" disabled>Uploading..</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>

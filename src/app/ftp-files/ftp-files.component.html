@@ -1,0 +1,162 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>FTP File List</h4>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-sm btn-outline-light" (click)="openModal(FtpModal,null)">
+                  <fa-icon [icon]="faPlus"></fa-icon>
+                    Add New FTP File
+                  </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+          
+          <input type="text" class="form-control wd" [(ngModel)]="src" placeholder="Search">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>FTP IP Address</th>
+                  <th>File Path</th>
+                  <th>File Name Prefix</th>
+                  <th>Date Format</th>
+                  <th>File Name Suffix</th>
+                  <th>File Extension</th>
+                  <th>File Per Day</th>
+                  <th>Service Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ftp of ftpFiles | filter:src; let i = index">
+                  <td *ngIf="ftp.IsActive">{{ ftp.IPAddress }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.FilePath }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.FilePrefix }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.FileFormat }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.FileSuffix }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.ExtensionName }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.FileperDay }}</td> 
+                  <td *ngIf="ftp.IsActive">{{ ftp.ServiceName }}</td> 
+                  <td *ngIf="ftp.IsActive" class="text-center">
+                    <button class="btn btn-outline-secondary btn-xs font-sm" (click)="openModal(FtpModal,ftp)" >Update</button>
+                    <button class="btn btn-outline-warning btn-xs font-sm ml-1" (click)="openDeleteModal(delete,ftp)">Delete</button>
+                    <a class="btn btn-outline-secondary btn-xs font-sm ml-1" [routerLink]="['/filesheet',ftp.ID,ftp.FilePrefix+ftp.FileFormat+ftp.FileSuffix+ftp.ExtensionName]" target="_blank">Sheet</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #FtpModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalTransact }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label>FTP Configuration</label>
+      <select class="form-control selType" [(ngModel)]="selectedftpConfig">
+        <option [value]="0" disabled default>--Select FTP Configuration--</option>
+        <option *ngFor="let ftp of ftpConfig" [value]="ftp.ID">{{ftp.IPAddress}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>File Path</label>
+      <input type="text" class="form-control" [(ngModel)]="filePath">
+    </div>
+
+    <div class="form-group">
+      <label>UFL Folder</label>
+      <select class="form-control selType" [(ngModel)]="selectedUFLFolder">
+        <option disabled>--Select UFL Folder--</option>
+        <option>MarketMapDecimals\</option>
+        <option>MarketMapString\</option>
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label>File Name Prefix</label>
+      <input type="text" class="form-control" [(ngModel)]="fileNamePre">
+    </div>
+
+    <div class="form-group">
+      <label>Date Format</label>
+      <input type="text" class="form-control" [(ngModel)]="fileFormat">
+    </div>
+
+    <div class="form-group">
+      <label>File Name Suffix</label>
+      <input type="text" class="form-control" [(ngModel)]="fileNameSuf">
+    </div>
+
+    <div class="form-group">
+      <label>Extension File Name</label>
+      <input type="text" class="form-control" [(ngModel)]="fileExtension">
+    </div>
+
+    <div class="form-group">
+      <label>File Per Day</label>
+      <input type="text" class="form-control" [(ngModel)]="filePerDay">
+    </div>
+
+    <div class="form-group">
+      <label>Service Name</label>
+      <select class="form-control selType" [(ngModel)]="selectedService">
+        <option [value]="0" disabled>--Select Service Name--</option>
+        <option *ngFor="let ftp of ftpServices" [value]="ftp.ID">{{ftp.ServiceName}}</option>
+      </select>
+    </div>
+    <ngb-alert *ngIf="errorMessage" type="warning" (close)="errorMessage = null">{{ errorMessage }}</ngb-alert>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" *ngIf="!isLoading"
+      class="btn btn-outline-dark"
+      (click)="saveFtp()">
+      Save
+    </button>
+    <button type="button"  *ngIf="isLoading"
+      class="btn btn-outline-dark"
+      disabled>
+      Saving..
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #filter let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Filter Record</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-success" (click)="modal.dismiss()">Fetch</button>
+    <button class="btn btn-sm btn-danger" (click)="deleteFtp()">Close</button>
+  </div>
+</ng-template>

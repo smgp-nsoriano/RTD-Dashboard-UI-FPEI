@@ -1,0 +1,245 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+
+<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alarmRTDMessage!=null">
+  <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
+  <h5 class="text-danger">{{alarmRTDMessage}}</h5>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="stopAlarm()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<main class="container-fluid">
+  <!--<ngb-alert *ngIf="errorMessage" type="danger" (close)="errorMessage = null">{{ errorMessage }}</ngb-alert>-->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row">
+            <div class="col-8">
+              <div class="row">
+                <div class="col-4 mt-5">
+                  <div class="row">
+                    <div class="col-12 current-time text-warning">
+                      {{ FormatClock() }}
+                      <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRetweet" size="lg"></fa-icon></button>
+                      <!--<button (click)="OpenAlarmModal()" class="btn btn-sm btn-success"> <fa-icon [icon]="faClock" size="sm" ></fa-icon> Open alarm</button>-->
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 mt-3">
+                      <div class="btn-group mr-3" *ngIf ="!isOperator">
+                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                          <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name === ''">
+                            SELECT PLANT
+                          </button>
+        
+                          <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name !== ''">
+                            {{ currentSite.name }}
+                          </button>
+        
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let site of sites; let i = index"
+                              (click)="selectedSite(site.SiteID, false)"
+                              [class.active]="site.SiteID === currentSite.id">
+                              {{ site.SiteName }}
+                            </button>
+                          </div>
+                        </div>
+        
+                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" *ngIf="units !== 'undefined'">
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name === ''">
+                            SELECT UNIT
+                          </button>
+        
+                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name !== ''">
+                            {{ currentUnit.name }}
+                          </button>
+        
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <button class="dropdown-item font-weight-bold"
+                              ngbDropdownItem
+                              *ngFor="let unit of units; let i = index"
+                              (click)="selectedUnit(unit.UnitID, false, null)"
+                              [class.active]="unit.UnitID === currentUnit.id">
+                              {{ unit.UnitNumber }}
+                            </button>
+                          </div>
+                        </div> 
+                      </div>
+                      <div class="btn-group mr-3" *ngIf="isOperator">
+                        <h3 class="text-warning font-weight-bold">UNIT : {{ operatorUnit?.UnitNumber }}</h3>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mt-5">
+                    <div class="col-sm-12 mb-1">
+                      LEGEND:
+                    </div>
+  
+                    <div class="col-12 mt-1">
+                      <div class="p-2 mb-1 text-center font-weight-bold bg-danger" style="font-size: 18px;">
+                        CURRENT INTERVAL
+                      </div>
+                    </div>
+                    <div class="col-12 mt-1">
+                      <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger" style="font-size: 18px;">
+                        ACTUAL MW OUTSIDE LIMITS
+                      </div>
+                    </div>
+                    <div class="col-12 mt-1">
+                      <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white" style="font-size: 18px;">
+                        ACTUAL MW WITHIN LIMITS
+                      </div>
+                    </div>
+                    <div class="col-12 ml-2 mt-3">
+                      <h5><span class="badge bg-light text-danger legend-status" >R</span> - RTD in use</h5>
+                      <h5><span class="badge bg-light text-danger legend-status" >H</span> - HAP in use</h5>
+                      <h5><span class="badge bg-light text-danger legend-status" >O</span> - Override in use</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="border border-white text-center font-weight-bold bg-danger border-4" style="height: 130px; vertical-align:middle; font-size: 85px; font-family: 'Open Sans', sans-serif">
+                    {{ formatDate(current?.TimeStamp) }}
+                  </div>
+                  <div class="border border-white text-center font-weight-bold border-4" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 457px; font-size: 315px; font-family: 'Open Sans', sans-serif">
+                    {{ current?.RTDValue | number: '1.0-0' }}
+                    <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                      {{ current?.DataStatus }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+              <!--
+              <div class="table-responsive mt-3">
+                <table class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name === ''"></th>
+                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name !== ''" [style.backgroundColor]="currentUnit.bColor" [style.color]="currentUnit.fColor" >{{ currentUnit.name }}</th>
+                      <th class="text-center" style="width: 5%" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE</th>
+                    </tr>
+                    <tr>
+                      <th class="text-center" colspan="2">RTD, MW</th>
+                      <th class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">Php/MWh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let forecast of forecasts; let i = index">
+                      <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                      <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
+                    </tr>
+
+                    <tr class="current-interval">
+                      <td class="text-center">{{ formatDate(current?.TimeStamp) }}</td>
+                      <td class="text-center" colspan="2">{{ current?.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ current?.PriceValue | number: '1.0-0' }}</td>
+                    </tr>
+
+                    <tr *ngFor="let past of pasts; let i = index">
+                      <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                      <td class="text-center w-50">{{ past.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
+                        {{ past.PriceValue | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              -->
+
+            </div>
+            <div class="col-4">
+              <div class="row">
+                <div class="col-sm-12 border border-white p-2 border-4">
+                  <h4 class="text-warning font-weight-bold">HOUR AHEAD</h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="HADOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 230px; display: block;"></highcharts-chart>
+                </div>
+
+                <div class="col-sm-12 mt-2 border border-white p-2 border-4">
+                  <h4 class="text-warning font-weight-bold">
+                    DAY AHEAD
+
+                    <!--<div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>-->
+                  </h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DAHOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 230px; display: block;"></highcharts-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row align-items-center h-100 mt-3">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center">
+                      {{ formatDate(past.TimeStamp) }}
+                    </td>
+                    <td class="text-center">INTERVAL</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center">
+                      {{ formatDate(forecast.TimeStamp) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
+                      {{ past.RTDValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center" >HAP ></td>
+                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                      {{ forecast.RTDValue | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
+                      {{ past.ActualValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center actual">&lt; ACTUAL</td>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+<ng-template #alarmModal let-modal>
+  <div class="modal-body text-center" style="background-color: #f4f9ff;">
+    <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
+    <h5 class="mt-1">{{alarmMessage}}</h5>
+    <h5 class="mt-1">{{alarmRTDMessage}}</h5>
+    <button (click)="stopAlarm()" class="btn btn-danger ml-2" *ngIf="isAcknowledgeAlarm"> <fa-icon [icon]="faTimesCircle" size="sm"></fa-icon> STOP ALARM</button>
+  </div>
+</ng-template>

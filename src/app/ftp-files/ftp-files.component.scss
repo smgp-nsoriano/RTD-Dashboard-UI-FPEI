@@ -1,0 +1,21 @@
+table {
+  th, td {
+    vertical-align: middle;
+  }
+}
+table > thead > tr > th ,table > tbody > tr > td {
+	padding : 4px 4px;
+	vertical-align: middle;
+	font-size: 13px;
+	/*text-align: center;*/
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	padding : 5px 5px !important;
+	vertical-align: middle;
+}
+
+.wd{
+  width: 300px;
+  margin-bottom: 20px;
+}

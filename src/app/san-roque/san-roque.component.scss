@@ -1,0 +1,102 @@
+.table {
+  tr {
+    &:not(.current-interval) {
+      th,
+      td {
+        vertical-align: middle;
+        font-family: 'Ubuntu Mono', sans-serif;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #fff;
+      }
+    }
+
+    &.current-interval {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 900;
+    }
+  }
+}
+
+.current-interval {
+    font-weight: bold;
+
+    td {
+        padding: 1rem 0.3rem;
+        font-size: 2.9rem;
+        color: #fff;
+    }
+}
+
+.online {
+    background-color: #2c8143;
+    border: none;
+    color: #fff;
+}
+
+.offline {
+    background-color: #e87c87;
+    border: none;
+}
+
+.actual {
+    color: #ffd40e !important;
+}
+
+.flagged {
+    background-color: #ffd40e;
+    color: red !important;
+}
+
+.btn {
+    &.btn-actual {
+        background-color: #dae0e5;
+    }
+
+    &.btn-flagged {
+        background-color: #ffe28c;
+
+        &--continuous {
+            background-color: transparent !important;
+            border: 1px solid #dae0e5;
+            color: #ffffff;
+        }
+    }
+}
+
+
+.myAlert-top{
+  position: fixed;
+  top: 90px; 
+  left:2%;
+  width: 96%;
+  z-index: 999;
+}
+
+.alarm-top{
+  position: fixed;
+  top: 100px; 
+  left:35%;
+  width: 20%;
+  z-index: 999;
+}
+
+.data-status{
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 2rem;
+  font-weight: bold;
+  float: right;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 1px;
+}
+
+.legend-status{
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 18px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 1px;
+}

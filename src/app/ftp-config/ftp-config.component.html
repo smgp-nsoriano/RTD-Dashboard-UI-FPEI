@@ -1,0 +1,117 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-10 offset-lg-1">
+      <div class="card">
+        <div class="card-header maindivheader">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>FTP Configuration List</h4>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-sm btn-outline-light" (click)="openModal(FtpModal,null)">
+                  <fa-icon [icon]="faPlus"></fa-icon>
+                    Add New FTP Configuration
+                  </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+          
+          <input type="text" class="form-control wd" [(ngModel)]="src" placeholder="Search">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>FTP IP Address</th>
+                  <th>Download Root Path</th>
+                  <th>UFL Root Path</th>
+                  <th>Username</th>
+                  <th style="display:none">Password</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ftp of ftpList | filter:src; let i = index">
+                  <td *ngIf="ftp.IsActive">{{ ftp.IPAddress }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.LocalRootPath }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.UFLRootPath }}</td>
+                  <td *ngIf="ftp.IsActive">{{ ftp.Username }}</td>
+                  <td *ngIf="ftp.IsActive" style="display:none">{{ ftp.Password }}</td>
+                  <td *ngIf="ftp.IsActive" class="text-center">
+                    <button class="btn btn-outline-secondary btn-xs font-sm" (click)="openModal(FtpModal,ftp)" >Update</button>
+                    <button class="btn btn-outline-warning btn-xs font-sm ml-1" (click)="openDeleteModal(delete,ftp)">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<ng-template #FtpModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalTransact }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>FTP IP Address</label>
+      <input type="text" class="form-control" [(ngModel)]="ipAddress">
+    </div>
+
+    <div class="form-group">
+      <label>Download Root Path</label>
+      <input type="text" class="form-control" [(ngModel)]="localPath">
+    </div>
+
+    <div class="form-group">
+      <label>UFL Root Path</label>
+      <input type="text" class="form-control" [(ngModel)]="uflPath">
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" class="form-control" [(ngModel)]="username">
+    </div>
+
+    <div class="form-group">
+      <label>Pasword</label>
+      <input type="password" class="form-control" [(ngModel)]="password">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button"
+      class="btn btn-outline-dark"
+      (click)="saveFtp()">
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">FTP Config Deletion</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <strong>Are you sure you want to delete?</strong>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-danger" (click)="deleteFtp()">Delete</button>
+  </div>
+</ng-template>

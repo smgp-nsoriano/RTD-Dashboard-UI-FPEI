@@ -1,0 +1,104 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/scss/bootstrap";
+
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:800');
+
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: $font-size-sm;
+  //padding-top: 7vh;
+  //padding-bottom: 10vh;
+  background-color:  #e2e2e2 !important;
+}
+
+main {
+  padding-top: 15px;
+}
+
+.current-time {
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.border-dark {
+  border-color: #000000 !important;
+}
+
+.hide {
+  display: none !important;
+}
+
+/*
+ * Over ride bootstrap bg-colors
+ */
+
+.bg-dark {
+  &--lighter {
+    background-color: #212427 !important;
+  }
+
+  background-color: #000000 !important;
+}
+
+.bg-danger {
+  background-color: #e40000 !important;
+}
+
+.bg-warning {
+  background-color: #ffd40e !important;
+}
+
+/*
+ * Over ride bootstrap text-colors
+ */
+
+.text-danger {
+  color: #e40000 !important;
+}
+
+.text-warning {
+  color: #ffd40e !important;
+}
+
+.btn-xs{
+	height: 27px;
+	padding-top: 2px;
+}
+
+.font-sm{
+  font-size:12px;
+}
+
+.maindivheader {
+  background-color: #e33f37;
+  padding: 8px !important;
+  border-bottom-color: #f71b0f !important;
+  font-weight: bold;
+  border-bottom-width: 1.3px !important;
+  color:white !important;
+}
+
+
+.wd{
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.pull-right{
+  float: right !important;
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

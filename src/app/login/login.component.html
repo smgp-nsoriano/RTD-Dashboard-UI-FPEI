@@ -1,0 +1,31 @@
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+      <!-- Tabs Titles -->
+
+      <!-- Icon -->
+      <div class="fadeIn first mt-5">
+        <img src="assets/images/RTDLogo.PNG" id="icon" alt="User Icon" />
+      </div>
+
+      <!-- Login Form -->
+      <form class="mt-5" [formGroup]="form">
+        <!--<select class="form-control selType" id="sel" #Apptype *ngIf="!isHide">
+          <option disabled>-- Select Application --</option>
+          <option>RTD Dashboard</option>
+          <option>CAMS Settings</option>
+        </select>-->
+          <input type="text" id="username" class="form-control fadeIn second mt-2" placeholder="Username" formControlName="username" (keyup.enter)="loginuser()">
+          <input type="password" id="password" class="form-control fadeIn third"  placeholder="Password" formControlName="password" (keyup.enter)="loginuser()">
+      </form>
+
+      <div class="container">
+          <ngb-alert class=" mt-5" *ngIf="alert.type === 'danger'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
+      </div>
+
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+          <input type="button" class="btn btn-warning" value="Log In" (click)="loginuser()" *ngIf="!isLoading">
+          <input type="button" class="btn btn-warning" value="Please wait.." *ngIf="isLoading" disabled>
+      </div>
+    </div>
+</div>

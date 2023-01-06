@@ -1,0 +1,160 @@
+<header>
+  <app-nav></app-nav>
+</header>
+
+<main class="container-fluid">
+  <ngb-alert *ngIf="errorMessage" type="danger" (close)="errorMessage = null">{{ errorMessage }}</ngb-alert>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card bg-dark border-dark text-light">
+        <div class="card-body h-100">
+          <div class="row align-items-center h-100">
+            <div class="col-lg-6 col-md-12 col-sm-12">
+              <div class="btn-group mr-3" *ngIf ="!isOperator">
+                <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                  <button class="btn btn-danger" ngbDropdownToggle *ngIf="currentSite.name === ''">
+                    SELECT PLANT
+                  </button>
+
+                  <button class="btn btn-danger" ngbDropdownToggle *ngIf="currentSite.name !== ''">
+                    {{ currentSite.name }}
+                  </button>
+
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <button class="dropdown-item"
+                      ngbDropdownItem
+                      *ngFor="let site of sites; let i = index"
+                      (click)="selectedSite(site.SiteID, false)"
+                      [class.active]="site.SiteID === currentSite.id">
+                      {{ site.SiteName }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" *ngIf="units !== 'undefined'">
+                  <button class="btn btn-warning" ngbDropdownToggle *ngIf="currentUnit.name === ''">
+                    SELECT UNIT
+                  </button>
+
+                  <button class="btn btn-warning" ngbDropdownToggle *ngIf="currentUnit.name !== ''">
+                    {{ currentUnit.name }}
+                  </button>
+
+                  <div class="dropdown-menu" ngbDropdownMenu>
+                    <button class="dropdown-item"
+                      ngbDropdownItem
+                      *ngFor="let unit of units; let i = index"
+                      (click)="selectedUnit(unit.UnitID, false, null)"
+                      [class.active]="unit.UnitID === currentUnit.id">
+                      {{ unit.UnitNumber }}
+                    </button>
+                  </div>
+                </div> 
+              </div>
+              <div class="btn-group mr-3" *ngIf="isOperator">
+                <h4 class="text-warning font-weight-bold">PLANT : {{ operatorUnit?.SiteCode }}</h4>
+              </div>
+
+              <div class="table-responsive mt-3">
+                <table class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name === ''"></th>
+                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name !== ''" [style.backgroundColor]="currentUnit.bColor" [style.color]="currentUnit.fColor" >{{ currentUnit.name }}</th>
+                      <th class="text-center" style="width: 5%" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE</th>
+                    </tr>
+                    <tr>
+                      <th class="text-center" colspan="2">RTD, MW</th>
+                      <th class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">Php/MWh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let forecast of forecasts; let i = index">
+                      <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                      <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
+                    </tr>
+
+                    <tr class="current-interval">
+                      <td class="text-center">{{ formatDate(current?.TimeStamp) }}</td>
+                      <td class="text-center" colspan="2">{{ current?.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ current?.PriceValue | number: '1.0-0' }}</td>
+                    </tr>
+
+                    <tr *ngFor="let past of pasts; let i = index">
+                      <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                      <td class="text-center w-50">{{ past.RTDValue | number: '1.0-0' }}</td>
+                      <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
+                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
+                        {{ past.PriceValue | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12 mb-1">
+                  COLOR LEGEND:
+                </div>
+
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <div class="p-2 mb-1 text-center font-weight-bold bg-danger">
+                    CURRENT INTERVAL
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger">
+                    ACTUAL MW OUTSIDE LIMITS
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                  <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white">
+                    ACTUAL MW WITHIN LIMITS
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12 col-sm-12">
+              <div class="row">
+                <div class="col-sm-12 mt-3 border border-white p-2">
+                  <h4 class="text-warning font-weight-bold">HOUR AHEAD</h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="HADOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 245px; display: block;"></highcharts-chart>
+                </div>
+
+                <div class="col-sm-12 mt-3 border border-white p-2">
+                  <h4 class="text-warning font-weight-bold">
+                    DAY AHEAD : {{DAPHour}}
+
+                    <div class="btn-group float-right">
+                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
+                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
+                    </div>
+                  </h4>
+
+                  <highcharts-chart
+                  [Highcharts]="Highcharts"
+                  [constructorType]="'chart'"
+                  [options]="DAHOptions"
+                  [(update)]="updateFlag"
+                  [oneToOne]="true"
+                  style="width: 100%; height: 245px; display: block;"></highcharts-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
