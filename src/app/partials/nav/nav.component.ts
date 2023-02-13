@@ -89,11 +89,14 @@ export class NavComponent implements OnInit {
       localStorage.setItem('currentUserName',this.currentUserInfo.UserName);
       localStorage.setItem('isOperator', this.currentUserInfo.IsOperator);
       localStorage.setItem('permissionID', this.currentUserInfo.PermissionID);
+      localStorage.setItem('isSPDC', this.currentUserInfo.IsSPDC);
       this.isLoading = false;
       this.isOperator = this.currentUserInfo.IsOperator;
     }, error => {
       this.isLoading = false;
-      // console.log(error.message);
+      //console.log(error.message);
+      window.alert('Session has expired! Please re-login.');
+      this.router.navigate(['']);
     });
   }
 

@@ -83,7 +83,7 @@ export class AccountTypesComponent implements OnInit {
 
     this.typeServices.getOperatorAccess(payload).subscribe(data => {
       this.sites = data;
-      console.log(this.sites, payload);
+      //console.log(this.sites, payload);
     }, error => {
       console.log(error.error);
     });
@@ -313,7 +313,7 @@ export class AccountTypesComponent implements OnInit {
         this.types = types;
       }else{
         this.operatorTypes = types;
-        console.log(this.types);
+        //console.log(this.types);
       }
       
     }, error => {

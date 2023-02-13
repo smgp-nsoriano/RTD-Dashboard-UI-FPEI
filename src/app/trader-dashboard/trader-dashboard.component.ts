@@ -39,7 +39,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   isGenRemarks:boolean;
   isOverrideShow:string;
   isPortfolioOnly:string;
+  isPbReason:string;
   isShowBid:string;
+  isShowPrice:string;
   editHide:boolean;
   sites;
   currentSite = {
@@ -652,6 +654,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   unitMin;
   unitViz;
   portfolioCurrentInterval:string;
+  isOperator:boolean;
+  isSPDC:boolean;
 
   constructor(
     private userService: UsersService,
@@ -663,15 +667,15 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     config.keyboard = false;}
 
   ngOnInit() {
+
+    this.CheckUserType();
     this.isOverrideShow = localStorage.getItem('IsOverride');
     this.isPortfolioOnly = localStorage.getItem('IsPortfolioOnly');
+    this.isPbReason = localStorage.getItem('IsPbReason');
+    this.isShowPrice = localStorage.getItem('IsShowPrice');
     this.isShowBid = localStorage.getItem('IsShowBid');
-    if(this.isPortfolioOnly == 'true'){
-      this.dashboardType = "portfolio";
-    }else{
-      this.dashboardType = "trader";
-    }
-    
+    this.dashboardType = "trader";
+
     this.alertUnits = '';
     this.bodyTag.classList.add('bg-dark');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -692,6 +696,20 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.alertMessage = null;
     this.GetDemand();
     this.PlotAllUnitDAPChart();
+  }
+
+  CheckUserType(){
+    this.isOperator = Boolean(JSON.parse(localStorage.getItem('isOperator')));
+    this.isSPDC =  Boolean(JSON.parse(localStorage.getItem('isSPDC')));
+    //console.log(localStorage.getItem('userToken'));
+
+    if(this.isOperator == true){
+      if(this.isSPDC==true){
+        this.router.navigate(['/spdc-monitoring']);
+      }else{
+        this.router.navigate(['/home']);
+      }
+    } 
   }
 
   TimerSetClock(dt:string){

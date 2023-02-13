@@ -79,9 +79,10 @@ isLoading: boolean;
       localStorage.setItem('PermissionID', this.currentUserInfo.PermissionID);
       localStorage.setItem('IsAlarmDisable', this.currentUserInfo.IsAlarmDisable);
       localStorage.setItem('IsOverride', this.currentUserInfo.IsOverride);
-      localStorage.setItem('IsPortfolioOnly', this.currentUserInfo.IsPortfolioOnly);
+      localStorage.setItem('IsPortfolioOnly', this.currentUserInfo.IsPortfolioOnly); //change function to enabling portfolio
+      localStorage.setItem('IsPbReason', this.currentUserInfo.IsPbReason);
       localStorage.setItem('IsShowBid', this.currentUserInfo.IsShowBid);
-      
+      localStorage.setItem('IsShowPrice', this.currentUserInfo.IsShowPrice);
       //if(appType=='RTD Dashboard'){
         localStorage.setItem('IsCam', 'false');
         if(this.currentUserInfo.IsSPDC){

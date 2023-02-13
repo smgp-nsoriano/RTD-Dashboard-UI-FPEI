@@ -359,6 +359,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     //this.isOperator = Boolean(JSON.parse(localStorage.getItem('isOperator')));
     //console.log(this.isOperator);
+    
     this.bodyTag.classList.add('bg-dark');
 
     interval(1000).subscribe(() => {
@@ -372,12 +373,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     .subscribe(() => {
       this.getData();
     });
+
     this.getCurrentUserInfo();
    
   }
 
   getData() {
-
+    this.pasts = [];
+    this.current = [];
     this.homeService.getCurrentRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
       this.current = data;
     }, error => {
@@ -616,6 +619,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       
       this.permissionID = +this.currentUserInfo.PermissionID;
       
+
       if(this.currentUserInfo.IsOperator){
         this.homeService.getOperatorUnit(this.permissionID).subscribe(data=>{
           this.operatorUnit = data;
