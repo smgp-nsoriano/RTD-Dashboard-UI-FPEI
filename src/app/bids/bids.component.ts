@@ -1116,13 +1116,19 @@ export class BidsComponent implements OnInit {
   }
 
   print(divName){
-    var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
     
+    var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+    let checkAS:boolean = false;
    /** BID Schedule */
     var result = [];
     
+
     let i=0; 
       for(let offer of this.offers){
+        if(offer.AS_RU_P1 != null || offer.AS_RD_P1 != null || offer.AS_FR_P1 != null || offer.AS_DR_P1 != null){
+          checkAS = true
+        }
+
         const data = {
           id:stringValue(i),
           Hour:stringValue(offer.Interval),
@@ -1148,6 +1154,7 @@ export class BidsComponent implements OnInit {
           Q10:stringValue(offer.Q10),
           P11:stringValue(offer.P11),
           Q11:stringValue(offer.Q11),
+
         }
         result.push(data);
         i++;
@@ -1271,8 +1278,165 @@ export class BidsComponent implements OnInit {
     doc.setFontSize(10);
     doc.text("TransID: " + stringValue(this.transID) , 30, 190);
     doc.text("Date Uploaded: " + this.dateUploaded , 120, 190);
-    doc.text("Uploaded By: " + stringValue(this.uploadedBy) , 210, 190);
+    doc.text("Uploaded By: " + stringValue(this.uploadedBy) , 210, 190);     
+      
+if(checkAS){
+// Reserve BID
+    var resultASRU = [];
+    var resultASRD = [];
+    var resultASFR = [];
+    var resultASDR = [];
+    i=0;
+    for(let offer of this.offers){
+      const dataRU = {
+        id:stringValue(i),
+        Hour:stringValue(offer.Interval),
+        P1:stringValue(offer.AS_RU_P1),
+        Q1:stringValue(offer.AS_RU_Q1),
+        P2:stringValue(offer.AS_RU_P2),
+        Q2:stringValue(offer.AS_RU_Q2),
+        P3:stringValue(offer.AS_RU_P3),
+        Q3:stringValue(offer.AS_RU_Q3),
+        P4:stringValue(offer.AS_RU_P4),
+        Q4:stringValue(offer.AS_RU_Q4),
+        P5:stringValue(offer.AS_RU_P5),
+        Q5:stringValue(offer.AS_RU_Q5),
+      }
+      const dataRD = {
+        id:stringValue(i),
+        Hour:stringValue(offer.Interval),
+        P1:stringValue(offer.AS_RD_P1),
+        Q1:stringValue(offer.AS_RD_Q1),
+        P2:stringValue(offer.AS_RD_P2),
+        Q2:stringValue(offer.AS_RD_Q2),
+        P3:stringValue(offer.AS_RD_P3),
+        Q3:stringValue(offer.AS_RD_Q3),
+        P4:stringValue(offer.AS_RD_P4),
+        Q4:stringValue(offer.AS_RD_Q4),
+        P5:stringValue(offer.AS_RD_P5),
+        Q5:stringValue(offer.AS_RD_Q5),
+      }
 
+      const dataFR = {
+        id:stringValue(i),
+        Hour:stringValue(offer.Interval),
+        P1:stringValue(offer.AS_FR_P1),
+        Q1:stringValue(offer.AS_FR_Q1),
+        P2:stringValue(offer.AS_FR_P2),
+        Q2:stringValue(offer.AS_FR_Q2),
+        P3:stringValue(offer.AS_FR_P3),
+        Q3:stringValue(offer.AS_FR_Q3),
+        P4:stringValue(offer.AS_FR_P4),
+        Q4:stringValue(offer.AS_FR_Q4),
+        P5:stringValue(offer.AS_FR_P5),
+        Q5:stringValue(offer.AS_FR_Q5),
+      }
+
+      const dataDR = {
+        id:stringValue(i),
+        Hour:stringValue(offer.Interval),
+        P1:stringValue(offer.AS_DR_P1),
+        Q1:stringValue(offer.AS_DR_Q1),
+        P2:stringValue(offer.AS_DR_P2),
+        Q2:stringValue(offer.AS_DR_Q2),
+        P3:stringValue(offer.AS_DR_P3),
+        Q3:stringValue(offer.AS_DR_Q3),
+        P4:stringValue(offer.AS_DR_P4),
+        Q4:stringValue(offer.AS_DR_Q4),
+        P5:stringValue(offer.AS_DR_P5),
+        Q5:stringValue(offer.AS_DR_Q5),
+      }
+
+      resultASRU.push(dataRU);
+      resultASRD.push(dataRD);
+      resultASFR.push(dataFR);
+      resultASDR.push(dataDR);
+      i++;
+    }
+
+    
+    let headerAS = [
+      'Hour',
+      'P1',
+      'Q1',
+      'P2',
+      'Q2',
+      'P3',
+      'Q3',
+      'P4',
+      'Q4',
+      'P5',
+      'Q5',
+    ];
+
+    let headerASRD = [
+      'P1',
+      'Q1',
+      'P2',
+      'Q2',
+      'P3',
+      'Q3',
+      'P4',
+      'Q4',
+      'P5',
+      'Q5',
+    ];
+    
+    doc.addPage();
+
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text( "RESERVED" , 30, 15);
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text( "AS RU" , 30, 28);
+    doc.table(30, 30, resultASRU 
+      ,headerAS
+      , { autoSize: true
+        , fontSize:8
+        , headerBackgroundColor: "#e33f37"
+        , headerTextColor:"white"
+        , padding: 1
+        });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text( "AS RD" , 98, 28);
+    doc.table(98, 30, resultASRD 
+      ,headerASRD
+      , { autoSize: true
+        , fontSize:8
+        , headerBackgroundColor: "#e33f37"
+        , headerTextColor:"white"
+        , padding: 1
+        });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text( "AS FR" , 157, 28);
+    doc.table(157, 30, resultASFR 
+          ,headerASRD
+          , { autoSize: true
+            , fontSize:8
+            , headerBackgroundColor: "#e33f37"
+            , headerTextColor:"white"
+            , padding: 1
+            });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text( "AS DR" , 216, 28); 
+    doc.table(216, 30, resultASDR 
+          ,headerASRD
+          , { autoSize: true
+            , fontSize:8
+            , headerBackgroundColor: "#e33f37"
+            , headerTextColor:"white"
+            , padding: 1
+            });
+    }
+    
     doc.save(this.unitNumber + "_" + moment(this.dateFormatted).format('YYYYMMDD') + ".pdf");
 
 
