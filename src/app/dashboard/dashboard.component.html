@@ -76,7 +76,8 @@
                       </div>
                     </div>
                   </div>
-  
+                  
+                  <!-- LEGEND -->
                   <div class="row mt-5">
                     <div class="col-sm-12 mb-1">
                       LEGEND:
@@ -101,17 +102,91 @@
                       <h5><span class="badge bg-light text-danger legend-status" >R</span> - RTD in use</h5>
                       <h5><span class="badge bg-light text-danger legend-status" >H</span> - HAP in use</h5>
                       <h5><span class="badge bg-light text-danger legend-status" >O</span> - Override in use</h5>
+                      <h5><span class="badge bg-light text-danger legend-status" >M</span> - MOT in use</h5>
                     </div>
                   </div>
                 </div>
-                <div class="col-8">
+
+                <!-- BIG RED SQUARE -->
+                <div *ngIf="isBat" class="col-8">
                   <div class="border border-white text-center font-weight-bold bg-danger border-4" style="height: 130px; vertical-align:middle; font-size: 85px; font-family: 'Open Sans', sans-serif">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
-                  <div class="border border-white text-center font-weight-bold border-4" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 457px; font-size: 315px; font-family: 'Open Sans', sans-serif">
-                    {{ current?.RTDValue | number: '1.0-0' }}
+                  <div class="border-4 border border-white text-center font-weight-bold parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 320px; font-size: 215px; font-family: 'Open Sans', sans-serif">
+                    <!-- LABEL -->
+                    <div class="data-label">ENERGY</div>
+                    <!-- VALUE -->
+                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
+                    <!-- BADGE DATA STATUS -->
                     <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
                       {{ current?.DataStatus }}
+                    </div>
+                    <!-- BADGE DECIMAL PLACES -->
+                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                      .{{ getDecimal(current?.RTDValue) }}
+                    </div>
+                  </div>
+                  <div class="d-flex">
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
+                      <!-- LABEL -->
+                      <div class="data-label">RR-UP</div>
+                      <!-- VALUE -->
+                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRU) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.RRU | number: '1.0-0' }}</span>
+                      <!-- BADGE DATA STATUS -->
+                      <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                        {{ current?.RUDataStatus }}
+                      </div>
+                      <!-- BADGE DECIMAL PLACES -->
+                      <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                        .{{ getDecimal(current?.RRU) }}
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
+                      <!-- LABEL -->
+                      <div class="data-label">RR-DOWN</div>
+                      <!-- VALUE -->
+                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRD) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.RRD | number: '1.0-0' }}</span>
+                      <!-- BADGE DATA STATUS -->
+                      <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                        {{ current?.RDDataStatus }}
+                      </div>
+                      <!-- BADGE DECIMAL PLACES -->
+                      <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                        .{{ getDecimal(current?.RRD) }}
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
+                      <!-- LABEL -->
+                      <div class="data-label">CONTINGENCY</div>
+                      <!-- VALUE -->
+                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.Contingency) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.Contingency | number: '1.0-0' }}</span>
+                      <!-- BADGE DATA STATUS -->
+                      <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                        {{ current?.ConDataStatus }}
+                      </div>
+                      <!-- BADGE DECIMAL PLACES -->
+                      <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                        .{{ getDecimal(current?.Contingency) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="!isBat" class="col-8">
+                  <div class="border border-white text-center font-weight-bold bg-danger border-4" style="height: 130px; vertical-align:middle; font-size: 85px; font-family: 'Open Sans', sans-serif">
+                    {{ formatDate(current?.TimeStamp) }}
+                  </div>
+                  <div class="border-4 border border-white text-center font-weight-bold parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 457px; font-size: 315px; font-family: 'Open Sans', sans-serif">
+                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
+                    <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                      {{ current?.DataStatus }}
+                    </div>
+                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                      .{{ getDecimal(current?.RTDValue) }}
                     </div>
                   </div>
                 </div>

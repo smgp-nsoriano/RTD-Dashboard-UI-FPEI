@@ -38,6 +38,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   isWithAlarmDisable:string;
   isGenRemarks:boolean;
   isOverrideShow:string;
+  isMOTShow:string;
   isPortfolioOnly:string;
   isPbReason:string;
   isShowBid:string;
@@ -88,6 +89,28 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     bColor:'',
     fColor:''
   };
+
+  RMunit1;
+  RMcurrentUnit1 = {
+    name: '',
+    id: '',
+    bColor:'',
+    fColor:''
+  }
+  RMunit2;
+  RMcurrentUnit2 = {
+    name: '',
+    id: '',
+    bColor:'',
+    fColor:''
+  }
+  RMunit3;
+  RMcurrentUnit3 = {
+    name: '',
+    id: '',
+    bColor:'',
+    fColor:''
+  }
 
   unit1PB;
   currentUnit1PB = {
@@ -141,6 +164,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   DAHseriesOptions = [];
   DAPAllUnitseriesOptions = [];
   DEMANDPseriesOptions = [];
+  ImportExporteriesOptions = [];
   HADOptions = {
     title: '',
     chart: {
@@ -450,6 +474,90 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     series: [],
   };
 
+  ImportExportOptions = {
+    title: '',
+    chart: {
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Roboto Condensed'
+      },
+      type:'column',
+      //animation: false
+    },
+
+    xAxis: {
+      type: 'category',
+      gridLineWidth: 1,
+      labels: {
+        style: {
+          color: '#fff'
+        }
+      },
+    },
+   yAxis : [
+      { // Primary yAxis
+         labels: {
+            format: '{value} MW',
+            style: {
+              color: 'yellow',
+            }
+         },
+         title: {
+            text: '',
+            style: {
+              color: 'yellow',
+            }
+         },
+         
+      },
+       { // Price yAxis
+        labels: {
+           format: '{value} Php',
+           style: {
+            color: 'yellow',
+           }
+        },
+        title: {
+           text: '',
+           style: {
+            color: 'yellow',
+           }
+        },
+        opposite: true
+      }     
+   ],
+   
+   legend: {
+     align: 'right',
+     verticalAlign: 'top',
+     itemStyle: {
+       color: '#fff'
+     },
+     itemHoverStyle: {
+       color: '#fff'
+     }
+   },
+
+    plotOptions: {
+      series: {
+        stacking: 'normal',
+        compare: 'percent',
+        showInNavigator: true,
+        lineWidth: 4,
+        marker: {
+          enabled: false
+        }
+      }
+    },
+
+    tooltip: {
+      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+      valueDecimals: 1,
+      split: true
+    },
+    series: [],
+  };
+
   DAPOptions ={
     title: '',
     chart: {
@@ -615,6 +723,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   };
 
   updateFlag = true;
+
   units;
   intervals;
   dbValues;
@@ -632,7 +741,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   currentInterval: string;
   currentTimestamp: string;
   rtdValue: number;
+  MOTValue: number;
   isOverride: boolean;
+  isMOT: boolean;
   successMessage: string;
   errorMessage: string;
   timerMessage;
@@ -656,6 +767,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   portfolioCurrentInterval:string;
   isOperator:boolean;
   isSPDC:boolean;
+  isImport:boolean;
 
   constructor(
     private userService: UsersService,
@@ -667,7 +779,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     config.keyboard = false;}
 
   ngOnInit() {
-
+    this.isImport = true;
     this.CheckUserType();
     this.isOverrideShow = localStorage.getItem('IsOverride');
     this.isPortfolioOnly = localStorage.getItem('IsPortfolioOnly');
@@ -681,7 +793,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
     this.GetUnitPerRegion();
-    this.SetData();
+    
     //this.TimerSetClock();
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
@@ -696,6 +808,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.alertMessage = null;
     this.GetDemand();
     this.PlotAllUnitDAPChart();
+    //this.SetData();
   }
 
   CheckUserType(){
@@ -717,7 +830,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.now = moment(dt,"MM/DD/YYYY HH:mm:ss");
     this.timerClock = setInterval(() => {
       this.now.add(1, 'second');
-      this.SetData(); 
+      // this.HADOptions.series = this.HADseriesOptions;
+      // this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
+      // this.updateFlag = true;
     }, 1000);
   }
 
@@ -819,6 +934,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.PlotHAPChart();
     this.GetUnitPerRegion();
     this.RefreshPBRemarks();
+
+    if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
+      this.SetUnitValue(this.currentUnit4.name, 'U4');
+    }
   }
 
   TabActive(type: string){
@@ -826,6 +945,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     if(type == 'portfolio'){
       this.GetUnitPerRegion();
     }
+    this.GetDemand();
   }
 
   DisableAlarm(){
@@ -842,14 +962,16 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.SetTimeFromServer();
   }
 
-  SetData() {
-    this.HADOptions.series = this.HADseriesOptions;
-    this.DAHOptions.series = this.DAHseriesOptions;
-    this.DEMANDOptions.series = this.DEMANDseriesOptions;
-    this.DEMANDPOptions.series = this.DEMANDPseriesOptions;
-    this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
-    this.updateFlag = true;
-  }
+  // SetData() {
+  //   this.HADOptions.series = this.HADseriesOptions;
+  //   this.DAHOptions.series = this.DAHseriesOptions;
+  //   this.DEMANDOptions.series = this.DEMANDseriesOptions;
+  //   this.DEMANDPOptions.series = this.DEMANDPseriesOptions;
+  //   this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
+  //   this.updateFlag = true;
+  // }
+
+  
 
   DefaultDashboardValue(){
     this.dbValues = [ {"TimestampLabel": "00:00", "PriceSched": null, "U1Sched": null, "U2Sched": null, "U3Sched": null, "U4Sched": null, "U1Actual": null, "U2Actual": null, "U3Actual": null, "U4Actual": null, "U1IsLimit": null, "U2IsLimit": null, "U3IsLimit": null, "U4IsLimit": null, "U1Status": null, "U2Status": null, "U3Status": null, "U4Status": null },
@@ -989,6 +1111,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.traderDashboardService.saveGeneralRemarks(payload).subscribe(data => {
       this.successMessage = "Remarks successfully saved!";
       this.genRemarks[0][this.selectedPBUnitType + "Remarks"] = this.selectedPBRemarks;
+      this.userLogs('PB_General_Remarks: ' + this.selectedUnitNumber + '( ' + this.selectedPBRemarks + ' )');
       this.modalReference.close();
       this.timerMessage = setInterval(() => {
         this.successMessage = null;
@@ -998,6 +1121,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }else{
     this.traderDashboardService.saveRemarks(payload).subscribe(data => {
       this.successMessage = "Remarks successfully saved!";
+      this.userLogs('PB_Remarks: ' + this.selectedUnitNumber + '( ' + this.selectedPBRemarks + ' ) | Interval: ' + dateTime);
       this.modalReference.close();
       this.timerMessage = setInterval(() => {
         this.successMessage = null;
@@ -1084,7 +1208,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.SetData();
+    this.HADOptions.series = this.HADseriesOptions;
+    this.updateFlag = true;
   }
 
   PlotDAPChart(){
@@ -1162,7 +1287,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.SetData();
+    this.DAHOptions.series = this.DAHseriesOptions;
+    this.updateFlag = true;
   }
 
   PlotAllUnitDAPChart(){
@@ -1186,7 +1312,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         );
       });
     });
-    
+
+    this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
+    this.updateFlag = true;
   }
 
   PopulateUnits(){
@@ -1201,6 +1329,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.unit2PB = data;
       this.unit3PB = data;
       this.unit4PB = data;
+      this.RMunit1 = data;
+      this.RMunit2 = data;
+      this.RMunit3 = data;
     });
   }
 
@@ -1244,6 +1375,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         data: min
       },
     );
+
+    this.DEMANDOptions.series = this.DEMANDseriesOptions;
+    this.updateFlag = true;
   }
 
   PlotDemandPorfolioChart(luzDemand,visDemand,minDemand,priceDemand){
@@ -1290,7 +1424,162 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         yAxis:1
       }
     );
-   
+
+    this.DEMANDPOptions.series = this.DEMANDPseriesOptions;
+    this.updateFlag = true;
+  }
+
+  PlotImportExportChart2(regLuzVisArray,regVisLuzArray,regMinVisArray,regMinVisMinArray){
+    const regLuzVis = [];
+    const regVisLuz = [];
+    const regMinVis = [];
+    const regVisMin = [];
+
+    this.ImportExporteriesOptions = [];
+    Object.keys(regLuzVisArray).forEach(element => {
+      let val;
+      if(regLuzVisArray[element].Value == null){
+        val = 0
+      }else{
+        val = regLuzVisArray[element].Value;
+      }
+      regLuzVis.push([regLuzVisArray[element].TimestampLabel, val]);
+    });
+    Object.keys(regVisLuzArray).forEach(element => {
+      let val;
+      if(regVisLuzArray[element].Value == null){
+        val = 0
+      }else{
+        val = regVisLuzArray[element].Value;
+      }
+      regVisLuz.push([regVisLuzArray[element].TimestampLabel,val]);
+    });
+
+    Object.keys(regMinVisArray).forEach(element => {
+      let val;
+      if(regMinVisArray[element].Value == null){
+        val = 0
+      }else{
+        val = regMinVisArray[element].Value;
+      }
+      regMinVis.push([regMinVisArray[element].TimestampLabel, val]);
+    });
+
+    Object.keys(regMinVisMinArray).forEach(element => {
+      let val;
+      if(regMinVisMinArray[element].Value == null){
+        val = 0
+      }else{
+        val = regMinVisMinArray[element].Value;
+      }
+      regVisMin.push([regMinVisMinArray[element].TimestampLabel, val]);
+    });
+
+    
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'LUZ-VIS',
+        color: '#3df463',
+        data: regLuzVis
+      },
+    );
+
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'VIS-LUZ',
+        color: '#3a87ff',
+        data: regVisLuz
+      },
+    );
+
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'MIN-VIS',
+        color: '#ff9454',
+        data: regMinVis
+      },
+    );
+
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'VIS-MIN',
+        color: '#32a852',
+        data: regVisMin
+      },
+    );
+
+    this.ImportExportOptions.series = this.ImportExporteriesOptions;
+    this.updateFlag = true;
+  }
+
+  PlotImportExportChart(regLuzArray,regVisArray,regMinArray){
+    const regLuz = [];
+    const regVis = [];
+    const regMin = [];
+
+    this.ImportExporteriesOptions = [];
+    Object.keys(regLuzArray).forEach(element => {
+      let val;
+      if(regLuzArray[element].Value == null){
+        val = 0
+      }else{
+        val = regLuzArray[element].Value;
+      }
+      regLuz.push([regLuzArray[element].TimestampLabel, val]);
+    });
+    Object.keys(regVisArray).forEach(element => {
+      let val;
+      if(regVisArray[element].Value == null){
+        val = 0
+      }else{
+        val = regVisArray[element].Value;
+      }
+      regVis.push([regVisArray[element].TimestampLabel,val]);
+    });
+
+    Object.keys(regMinArray).forEach(element => {
+      let val;
+      if(regMinArray[element].Value == null){
+        val = 0
+      }else{
+        val = regMinArray[element].Value;
+      }
+      regMin.push([regMinArray[element].TimestampLabel, val]);
+    });
+
+    
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'LUZ',
+        color: '#3df463',
+        data: regLuz
+      },
+    );
+
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'VIS',
+        color: '#3a87ff',
+        data: regVis
+      },
+    );
+
+    this.ImportExporteriesOptions.push(
+      {
+        name: 'MIN',
+        color: '#ff9454',
+        data: regMin
+      },
+    );
+
+
+    this.ImportExportOptions.series = this.ImportExporteriesOptions;
+    this.updateFlag = true;
+  }
+
+  SetImport(val){
+    this.isImport = val;
+    this.GetDemand();
   }
 
   GetDemand(){
@@ -1300,6 +1589,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     }else{
       priceUnitNumber = "";
     }
+
 
     this.traderDashboardService.getDemand(priceUnitNumber).subscribe(data=>{
       let currentDemands = data[0]['PIValue'];
@@ -1315,6 +1605,17 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       //this.PlotDemandChart(hLuzdemand,hVisdemand,hMindemand);
       this.PlotDemandPorfolioChart(hLuzdemand,hVisdemand,hMindemand,hPricedemand);
     });
+
+    this.traderDashboardService.getImportExport().subscribe(data => {
+      this.PlotImportExportChart(data[0]['PIValue'],data[1]['PIValue'],data[2]['PIValue']);
+      // if(this.isImport){
+      //   this.PlotImportExportChart(data[0]['PIValue'],data[1]['PIValue'],data[2]['PIValue']);
+      // }else{
+      //   this.PlotImportExportChart(data[3]['PIValue'],data[4]['PIValue'],data[5]['PIValue']);
+      // }
+    });
+    //this.SetImportExport();
+    //this.SetData();
   }
 
   SetUnitPrice(unitNumber:string){
@@ -1323,9 +1624,14 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       for(let x= 0; x<= 14; x++){
         this.dbValues[x].PriceSched = price[x].Value;
        }
-
        this.GetDemand();
     });
+  }
+
+  SetReserveMarketValue(unitNumber:string){
+    this.traderDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
+      console.log("reserve", data);
+    })
   }
 
    SetUnitValue(unitNumber:string, unitType:string){
@@ -1339,7 +1645,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
          }
       
 //rtd[5].Actual != null && 
-          if(rtd[5].Actual != null && rtd[5].IsLimit == false){
+          if(rtd[5].Actual != null && rtd[5].IsLimit == false && rtd[4].IsWithAlarm == true){
             this.alarmOutsideLimit=true;
           }
    
@@ -1403,7 +1709,16 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectedUnit(id:number,units, currentUnit, unitType:string){
+  userLogs(action:string){
+    const data = {
+      UserID: localStorage.getItem('UserID'),
+      Action: action,
+      ModuleID: 1
+    };
+    this.userService.userLogs(data).subscribe();
+  }
+
+  selectedUnit(id:number, units, currentUnit, unitType:string){
     const selected = units.find(unit => unit.UnitID === id);
     currentUnit.id = selected.UnitID;
     currentUnit.name = selected.UnitNumber; 
@@ -1415,18 +1730,26 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
          this.dbValues[x][unitType+"IsLimit"] = null;
          this.dbValues[x][unitType+"Status"] = null;
        }
-       this.PlotHAPChart();
-       this.PlotDAPChart();
+      // this.PlotHAPChart();
+      // this.PlotDAPChart();
+      this.ManualRefresh();
+     
       }else{
         if(unitType == 'Price'){
           this.SetUnitPrice(currentUnit.name);
+          this.userLogs('Price_Unit: ' + currentUnit.name);
         }else{
           this.SetUnitValue(currentUnit.name,unitType);
-          this.PlotHAPChart();
-          this.PlotDAPChart();
+          // this.PlotHAPChart();
+          // this.PlotDAPChart();
+    
+          this.ManualRefresh();
+          //console.log('unit selected');
+          this.userLogs('RTD_Unit: ' + currentUnit.name);
         }
       }
-    
+
+      
   }
 
   selectedPBUnit(id:number,units, currentUnit, unitType:string){
@@ -1445,6 +1768,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
        this.genRemarks[0][unitType+"UnitNumber"] = null;
        }else{
           this.SetPBUnitValue(currentUnit.name,unitType);
+          this.userLogs('PB_Unit: ' + currentUnit.name);
       }
   }
 
@@ -1457,7 +1781,18 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.rtdValue = overrideValue['Value'];
     });
 
-    this.modalReference = this.modalService.open(content, {size: 'sm',centered:true});
+    if(unitNumber == "13SMC_U01" || unitNumber == "13SMC_U02"){
+      this.traderDashboardService.getMOTValue(unitNumber).subscribe(data => {
+        let value = data;
+  
+        this.isMOT = value['IsUse'];
+        this.MOTValue = value['Value'];
+      });
+    }
+    
+    this.userLogs('Override: ' + unitNumber + ' | value: ' +  this.rtdValue);
+    
+    this.modalReference = this.modalService.open(content, { size: 'sm', centered: true });
   }
 
   OverrideValue(){
@@ -1468,7 +1803,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     const payload = {
       IsUse: this.isOverride,
       UnitNumber: this.selectedUnitNumber,
-      Value: this.rtdValue
+      Value: this.rtdValue,
+      IsReserve: false
     };
     
     this.traderDashboardService.saveOverrideValue(payload).subscribe(data => {
@@ -1483,20 +1819,42 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         this.successMessage = null;
         clearInterval(this.timerMessage);
         }, 3000);
-
-        if(this.currentUnit1.name != '' && this.currentUnit1.name == this.selectedUnitNumber){
-          this.SetUnitValue(this.currentUnit1.name, 'U1');
-        }
-        if(this.currentUnit2.name != '' && this.currentUnit2.name == this.selectedUnitNumber){
-          this.SetUnitValue(this.currentUnit2.name, 'U2');
-        }
-        if(this.currentUnit3.name != '' && this.currentUnit3.name == this.selectedUnitNumber){
-          this.SetUnitValue(this.currentUnit3.name, 'U3');
-        }
-        if(this.currentUnit4.name != '' && this.currentUnit4.name == this.selectedUnitNumber){
-          this.SetUnitValue(this.currentUnit4.name, 'U4');
-        }
     });
+
+    const payloadMOT = {
+      IsUse: this.isMOT,
+      UnitNumber: this.selectedUnitNumber,
+      Value: this.MOTValue
+    };
+
+    if(this.selectedUnitNumber == "13SMC_U01" || this.selectedUnitNumber == "13SMC_U02"){
+      this.traderDashboardService.saveMOTValue(payloadMOT).subscribe(data =>{
+        if(this.isMOT){
+          this.successMessage = "Unit " + this.selectedUnitNumber + " MOT value is Active";
+        }else{
+          this.successMessage = "Unit " + this.selectedUnitNumber + " MOT value is Inactive";
+        }
+        
+        this.modalReference.close();
+        this.timerMessage = setInterval(() => {
+          this.successMessage = null;
+          clearInterval(this.timerMessage);
+          }, 3000);
+
+          if(this.currentUnit1.name != '' && this.currentUnit1.name == this.selectedUnitNumber){
+            this.SetUnitValue(this.currentUnit1.name, 'U1');
+          }
+          if(this.currentUnit2.name != '' && this.currentUnit2.name == this.selectedUnitNumber){
+            this.SetUnitValue(this.currentUnit2.name, 'U2');
+          }
+          if(this.currentUnit3.name != '' && this.currentUnit3.name == this.selectedUnitNumber){
+            this.SetUnitValue(this.currentUnit3.name, 'U3');
+          }
+          if(this.currentUnit4.name != '' && this.currentUnit4.name == this.selectedUnitNumber){
+            this.SetUnitValue(this.currentUnit4.name, 'U4');
+          }
+      });
+    }
   }
 
   getCurrentInterval(interval:string){

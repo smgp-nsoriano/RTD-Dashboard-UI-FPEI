@@ -1,0 +1,145 @@
+.table {
+  tr {
+    &:not(.current-interval) {
+
+      th,
+      td {
+        // vertical-align: middle;
+        font-family: 'Open Sans', sans-serif;
+        //font-weight: bold;
+        font-size: 1rem;
+        color: white;
+        border: 1.6px solid rgb(255, 254, 254);
+        text-align: center;
+        position: relative;
+        vertical-align: middle;
+
+        &.current-interval {
+          font-family: 'Open Sans', sans-serif;
+          font-weight: 900;
+          color: white;
+          text-align: center;
+          font-size: 16pt;
+        }
+      }
+    }
+  }
+}
+
+// .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+// 	// padding : 1.8px 1.8px !important;
+// 	vertical-align: middle;
+//   width: 100px;
+// }
+
+
+.border-4 {
+  border: 3.6px solid rgb(255, 254, 254) !important;
+}
+
+.current-interval {
+  background-color: #e40000;
+  color: white;
+  min-width: 80px;
+
+  td {
+    // padding: 2rem 2rem 2rem 2rem;
+    font-size: 16pt;
+    color: white;
+    vertical-align: middle;
+    min-width: 1000px;
+  }
+}
+
+.online {
+  background-color: #2c8143;
+  border: none;
+  color: #fff;
+}
+
+.offline {
+  background-color: #e87c87;
+  border: none;
+}
+
+.actual {
+  color: hsl(49, 100%, 53%) !important;
+}
+
+.flagged {
+  background-color: #ffd40e;
+  color: red !important;
+}
+
+.btn {
+  &.btn-actual {
+    background-color: #dae0e5;
+  }
+
+  &.btn-flagged {
+    background-color: #ffe28c;
+
+    &--continuous {
+      background-color: transparent !important;
+      border: 1px solid #dae0e5;
+      color: #ffffff;
+    }
+  }
+
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}
+
+.myAlert-top {
+  position: fixed;
+  top: 90px;
+  left: 2%;
+  width: 96%;
+  z-index: 999;
+}
+
+.alarm-top {
+  position: fixed;
+  top: 100px;
+  left: 35%;
+  width: 20%;
+  z-index: 999;
+}
+
+
+.data-status {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 1rem;
+  font-weight: bold;
+  float: right;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 1px;
+}
+
+.legend-status {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 18px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 1px;
+}
+
+.pb-edit {
+  float: right;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0px 0px;
+  width: 23px !important;
+  height: 23px !important;
+  z-index: 999;
+}

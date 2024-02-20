@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {LoginService} from './login.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { UsersService } from '../users/users.service';
 
 @Component({
   selector: 'app-login',
@@ -25,11 +26,12 @@ isLoading: boolean;
   constructor(
     private route: ActivatedRoute,
     private loginservice: LoginService,
+    private userService: UsersService,
     private router: Router
   ) {
     this.form = new FormGroup({
-      username: new FormControl(),
-      password: new FormControl(),
+      username: new FormControl('', { updateOn: 'blur' }),
+      password: new FormControl('', { updateOn: 'blur' }),
       sel: new FormControl()
     });
   }
@@ -83,6 +85,7 @@ isLoading: boolean;
       localStorage.setItem('IsPbReason', this.currentUserInfo.IsPbReason);
       localStorage.setItem('IsShowBid', this.currentUserInfo.IsShowBid);
       localStorage.setItem('IsShowPrice', this.currentUserInfo.IsShowPrice);
+      localStorage.setItem('UserID', this.currentUserInfo.UserID);
       //if(appType=='RTD Dashboard'){
         localStorage.setItem('IsCam', 'false');
         if(this.currentUserInfo.IsSPDC){
@@ -94,6 +97,10 @@ isLoading: boolean;
             this.router.navigate(['/trading']);
           }
         }
+
+
+      // Logs UserLogin
+        this.userService.loginLogs({UserID: this.currentUserInfo.UserID, Action: 'In'}).subscribe();
       //}else if(appType=='CAMS Settings'){
       //  if(this.isCam == true ){
      //     localStorage.setItem('IsCam', 'true');

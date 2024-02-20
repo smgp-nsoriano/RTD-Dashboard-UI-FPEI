@@ -1,0 +1,428 @@
+
+<div class="card bg-dark border-dark text-light">
+  <div class="card-body h-100">
+    <div class="row">
+      <div class="col-lg-12 col-md-2 col-sm-12 col-xs-12">
+        <!-- Legend and Current demand -->
+        <!-- <div class="row">
+          <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 mt-2">
+            <div class="col-12">
+              <div class="row ">
+                <div class="col-12">
+                  <h6>LEGEND :</h6> 
+                </div>
+                <div class="col-4">
+                  <div class="border border-1 border-white text-center bg-warning text-danger font-weight-bold" style="font-size: 18px;">NC</div>
+                  <div class="border border-1 border-white text-center text-warning font-weight-bold" style="font-size: 18px;">ACTUAL</div>
+                </div>
+                <div class="col-8">
+                  <span class="badge bg-light text-danger legend-status" >R</span> - RTD in use  <span class="badge bg-light text-danger legend-status ml-1" >H</span> - HAP in use
+                  <p><span class="badge bg-light text-danger legend-status" >O</span> - Override in use  <span class="badge bg-light text-danger legend-status ml-1" >M</span> - MOT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!-- main table -->
+        <div class="row mt-4">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <th colspan="2" rowspan="3">INTERVAL</th>
+                    <th colspan="3">
+                      <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentRegion.name == ''">
+                          SELECT REGION
+                        </button>
+    
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentRegion.name !== ''" >
+                          {{ currentRegion.name }}
+                        </button>
+
+                        <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                          <button class="dropdown-item font-weight-bold"
+                            ngbDropdownItem
+                            *ngFor="let unit of RMRegion; let i = index"
+                            (click)="selectedPrice(unit.UnitID, RMRegion, currentRegion, 'region')"
+                            [class.active]="unit.UnitID === currentRegion.id">
+                            {{ unit.UnitNumber }}
+                          </button>
+                        </div>
+                      </div>
+                    </th>
+                    <!-- <th rowspan="2" style="min-width: 140px;">EN Price Php/MWh</th> -->
+                    <!-- <th rowspan="2" style="min-width: 140px;">RM Price Php/MWh</th> -->
+                    <th [attr.colspan]="showU1DRcolumn ? 5 : 4">
+                      <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit1.name == ''">
+                          SELECT UNIT
+                        </button>
+    
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit1.name !== ''" >
+                          {{ RMcurrentUnit1.name }}
+                        </button>
+
+                        <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                          <button class="dropdown-item font-weight-bold"
+                            ngbDropdownItem
+                            *ngFor="let unit of RMunit1; let i = index"
+                            (click)="selectedUnit(unit.UnitID, RMunit1, RMcurrentUnit1, 'U1')"
+                            [class.active]="unit.UnitID === RMcurrentUnit1.id">
+                            {{ unit.UnitNumber }}
+                          </button>
+                        </div>
+                      </div>
+                    </th>
+                    <th>
+                      <button class="btn btn-sm btn-primary px-0" style="width: 100%;" 
+                            (click)="OpenOverridModal(Override, RMcurrentUnit1.name)" 
+                            [disabled]="RMcurrentUnit1.name=='' || RMcurrentUnit1.name=='SELECT UNIT'">
+                        <span *ngIf="RMcurrentUnit1.name != '13SMC_U01' && RMcurrentUnit1.name != '13SMC_U02'">
+                          OVERRIDE
+                        </span>
+                      </button>
+                    </th>
+                    <th>
+                      <a [routerLink]="['/bids', RMcurrentUnit1.id, RMcurrentUnit1.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'" style="width: 100%;">
+                        BID
+                      </a>
+                      <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || RMcurrentUnit1.name=='' || RMcurrentUnit1.name=='SELECT UNIT'">BID</button>
+                    </th>
+                    <!-- <th rowspan="2" style="min-width: 140px;">EN Price Php/MWh</th> -->
+                    <!-- <th rowspan="2" style="min-width: 140px;">RM Price Php/MWh</th> -->
+                    <th [attr.colspan]="showU2DRcolumn ? 4 : 3">
+                      <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit2.name == ''">
+                          SELECT UNIT
+                        </button>
+    
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit2.name !== ''" >
+                          {{ RMcurrentUnit2.name }}
+                        </button>
+
+                        <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                          <button class="dropdown-item font-weight-bold"
+                            ngbDropdownItem
+                            *ngFor="let unit of RMunit2; let i = index"
+                            (click)="selectedUnit(unit.UnitID, RMunit2, RMcurrentUnit2, 'U2')"
+                            [class.active]="unit.UnitID === RMcurrentUnit2.id">
+                            {{ unit.UnitNumber }}
+                          </button>
+                        </div>
+                      </div>
+                    </th>
+                    <th>
+                      <button class="btn btn-sm btn-primary px-0" style="width: 100%;" 
+                            (click)="OpenOverridModal(Override, RMcurrentUnit2.name)" 
+                            [disabled]="RMcurrentUnit2.name=='' || RMcurrentUnit2.name=='SELECT UNIT'">
+                        <span *ngIf="RMcurrentUnit2.name != '13SMC_U01' && RMcurrentUnit2.name != '13SMC_U02'">
+                          OVERRIDE
+                        </span>
+                      </button>
+                    </th>
+                    <th>
+                      <a [routerLink]="['/bids', RMcurrentUnit2.id, RMcurrentUnit2.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'" style="width: 100%;">
+                        BID
+                      </a>
+                      <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || RMcurrentUnit2.name=='' || RMcurrentUnit2.name=='SELECT UNIT'">BID</button>
+                    </th>
+                    <!-- <th rowspan="2" style="min-width: 140px;">EN Price Php/MWh</th> -->
+                    <!-- <th rowspan="2" style="min-width: 140px;">RM Price Php/MWh</th> -->
+                    <th [attr.colspan]="showU3DRcolumn ? 4 : 3">
+                      <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit3.name == ''">
+                          SELECT UNIT
+                        </button>
+    
+                        <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="RMcurrentUnit3.name !== ''" >
+                          {{ RMcurrentUnit3.name }}
+                        </button>
+
+                        <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                          <button class="dropdown-item font-weight-bold"
+                            ngbDropdownItem
+                            *ngFor="let unit of RMunit3; let i = index"
+                            (click)="selectedUnit(unit.UnitID, RMunit2, RMcurrentUnit3, 'U3')"
+                            [class.active]="unit.UnitID === RMcurrentUnit3.id">
+                            {{ unit.UnitNumber }}
+                          </button>
+                        </div>
+                      </div>
+                    </th>
+                    <th>
+                      <button class="btn btn-sm btn-primary px-0" style="width: 100%;" 
+                            (click)="OpenOverridModal(Override, RMcurrentUnit3.name)" 
+                            [disabled]="RMcurrentUnit3.name=='' || RMcurrentUnit3.name=='SELECT UNIT'">
+                        <span *ngIf="RMcurrentUnit3.name != '13SMC_U01' && RMcurrentUnit3.name != '13SMC_U02'">
+                          OVERRIDE
+                        </span>
+                      </button>
+                    </th>
+                    <th>
+                      <a [routerLink]="['/bids', RMcurrentUnit3.id, RMcurrentUnit3.name]" target="_blank" class="btn btn-sm btn-light" *ngIf="isShowBid=='true' && RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'" style="width: 100%;">
+                        BID
+                      </a>
+                      <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || RMcurrentUnit3.name=='' || RMcurrentUnit3.name=='SELECT UNIT'">BID</button>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>Ru</th>
+                    <th>Rd</th>
+                    <th>Cr</th>
+                    
+                    <th style="font-size: 10pt">EN Price</th>
+                    <th>En</th>
+                    <th>Ru</th>
+                    <th>Rd</th>
+                    <th>Cr</th>
+                    <th class="text-warning">Actual</th>
+                    <th *ngIf="showU1DRcolumn">Dr</th>
+                    
+                    <th>En</th>
+                    <th>Ru</th>
+                    <th>Rd</th>
+                    <th>Cr</th>
+                    <th class="text-warning">Actual</th>
+                    <th *ngIf="showU2DRcolumn">Dr</th>
+
+                    <th>En</th>
+                    <th>Ru</th>
+                    <th>Rd</th>
+                    <th>Cr</th>
+                    <th class="text-warning">Actual</th>
+                    <th *ngIf="showU3DRcolumn">Dr</th>
+                  </tr>
+                  <tr>
+                    <th style="font-size: 9pt;">Php/MWh</th>
+                    <th style="font-size: 9pt;">Php/MWh</th>
+                    <th style="font-size: 9pt;">Php/MWh</th>
+
+                    <!-- unit 1 -->
+                    <th style="font-size: 9pt;">Php/MWh</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;" class="text-warning">MW</th>
+                    <th style="font-size: 9pt;" *ngIf="showU1DRcolumn">MW</th>
+
+                    <!-- unit 2 -->
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;" class="text-warning">MW</th>
+                    <th style="font-size: 9pt;" *ngIf="showU2DRcolumn">MW</th>
+
+                    <!-- unit 3 -->
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;">MW</th>
+                    <th style="font-size: 9pt;" class="text-warning">MW</th>
+                    <th style="font-size: 9pt;" *ngIf="showU3DRcolumn">MW</th>
+                  </tr>
+                </thead>
+                <tbody style="font-size: 9pt;">
+                  <!-- <tr></tr> -->
+                  <tr *ngFor="let data of dbValues; let i = index">
+                    <!-- cells above red:HAP -->
+                    <td *ngIf="i==0" class="text-center" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">HAP</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.TimestampLabel}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RURMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RDRMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.CRRMPrice | number: '1.0-0'}}</td>
+                    <!-- 1st unit -->
+                    <td *ngIf="i&lt;4" class="text-center">{{data.U1ENPrice | number: '1.0-0'}}</td>
+                    <!-- <td *ngIf="i&lt;4" class="text-center">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i==0" class="text-center" rowspan="4"></td>
+                    <td *ngIf="i&lt;4 && showU1DRcolumn" class="text-center">{{data.RMU1_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 2nd unit -->
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i==0" class="text-center" rowspan="4"></td>
+                    <td *ngIf="i&lt;4 && showU2DRcolumn" class="text-center">{{data.RMU2_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 3rd unit -->
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i==0" class="text-center" rowspan="4"></td>
+                    <td *ngIf="i&lt;4 && showU3DRcolumn" class="text-center">{{data.RMU3_DR_Sched | number: '1.0-0'}}</td>
+                    
+                    <!-- cells ON red:RTD -->
+                    <td *ngIf="i==4" class="text-center bg-danger" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
+                    <td *ngIf="i==4" class="current-interval">{{ getCurrentInterval(data.TimestampLabel) }}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.RURMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.RDRMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.CRRMPrice | number: '1.0-0'}}</td>
+                    <!-- 1st unit -->
+                    <td *ngIf="i==4" class="current-interval">{{data.U1ENPrice | number: '1.0-0'}}</td>
+                    <!-- <td *ngIf="i==4" class="current-interval">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU1_EN_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_EN_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU1_RU_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_RU_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU1_RD_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_RD_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU1_FR_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_FR_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval"></td>
+                    <td *ngIf="i==4 && showU1DRcolumn" class="current-interval">{{data.RMU1_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 2nd unit -->
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU2_EN_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_EN_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU2_RU_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_RU_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU2_RD_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_RD_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU2_FR_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_FR_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval"></td>
+                    <td *ngIf="i==4 && showU2DRcolumn" class="current-interval">{{data.RMU2_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 3rd unit -->
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU3_EN_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_EN_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU3_RU_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_RU_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU3_RD_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_RD_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval">
+                      {{data.RMU3_FR_Sched | number: '1.0-0'}}
+                      <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_FR_Status}}</div>
+                    </td>
+                    <td *ngIf="i==4" class="current-interval"></td>
+                    <td *ngIf="i==4 && showU3DRcolumn" class="current-interval">{{data.RMU3_DR_Sched | number: '1.0-0'}}</td>
+                    
+                    <!-- cells BELOW red:RTD -->
+                    <td *ngIf="i==5" class="text-center" rowspan="10" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">COMPLIANCE</td>
+                    <td *ngIf="i>4" class="text-center">{{data.TimestampLabel}}</td>
+                    <td *ngIf="i>4" class="text-center">{{data.RURMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4" class="text-center">{{data.RDRMPrice | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4" class="text-center">{{data.CRRMPrice | number: '1.0-0'}}</td>
+                    <!-- 1st unit -->
+                    <td *ngIf="i>4">{{data.U1ENPrice | number: '1.0-0'}}</td>
+                    <!-- <td *ngIf="i>4">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
+                    <td *ngIf="i>4">{{data.RMU1_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4" class="actual">{{data.RMU1_Actual_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4 && showU1DRcolumn">{{data.RMU1_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 2nd unit -->
+                    <td *ngIf="i>4">{{data.RMU2_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4" class="actual">{{data.RMU2_Actual_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4 && showU2DRcolumn">{{data.RMU2_DR_Sched | number: '1.0-0'}}</td>
+                    <!-- 3rd unit -->
+                    <td *ngIf="i>4">{{data.RMU3_EN_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_RU_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_RD_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_FR_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4" class="actual">{{data.RMU3_Actual_Sched | number: '1.0-0'}}</td>
+                    <td *ngIf="i>4 && showU3DRcolumn">{{data.RMU3_DR_Sched | number: '1.0-0'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<!-- modals -->
+<ng-template #Override let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title"><strong>{{selectedUnitNumber}}</strong> (MW)</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.en" [(ngModel)]="isOverride.en">
+        <label class="custom-control-label" for="isOverride.en">Override En Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.en" [disabled]="!isOverride.en">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.ru" [(ngModel)]="isOverride.ru">
+        <label class="custom-control-label" for="isOverride.ru">Override Ru Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.ru" [disabled]="!isOverride.ru">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.rd" [(ngModel)]="isOverride.rd">
+        <label class="custom-control-label" for="isOverride.rd">Override Rd Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.rd" [disabled]="!isOverride.rd">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.cr" [(ngModel)]="isOverride.cr">
+        <label class="custom-control-label" for="isOverride.cr">Override Fr Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.cr" [disabled]="!isOverride.cr">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.dr" [(ngModel)]="isOverride.dr">
+        <label class="custom-control-label" for="isOverride.dr">Override Dr Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.dr" [disabled]="!isOverride.dr">
+    </div>
+
+
+    <!-- <div class="form-group" *ngIf="selectedUnitNumber == '13SMC_U01' || selectedUnitNumber == '13SMC_U02'">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="chbMOT" [(ngModel)]="isMOT">
+        <label class="custom-control-label" for="chbMOT">MOT Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="MOTValue" [disabled]="!isMOT">
+    </div> -->
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-warning" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-success" (click)="OverrideValueRM()">OK</button>
+  </div>
+</ng-template>

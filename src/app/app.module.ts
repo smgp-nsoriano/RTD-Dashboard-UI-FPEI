@@ -38,6 +38,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { TraderDashboardComponent } from './trader-dashboard/trader-dashboard.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { PBReasonComponent } from './pbreason/pbreason.component';
+import { ReserveMarketDashboardComponent } from './reserve-market-dashboard/reserve-market-dashboard.component';
+import { ReserveRequirementComponent } from './reserve-requirement/reserve-requirement.component';
+import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio.component';
 
 
 @NgModule({
@@ -66,7 +69,10 @@ import { PBReasonComponent } from './pbreason/pbreason.component';
     DashboardComponent,
     TraderDashboardComponent,
     PortfolioComponent,
-    PBReasonComponent
+    PBReasonComponent,
+    ReserveMarketDashboardComponent,
+    ReserveRequirementComponent,
+    ReservePortfolioComponent
   ],
   imports: [
     BrowserModule,

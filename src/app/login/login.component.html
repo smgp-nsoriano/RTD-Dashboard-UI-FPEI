@@ -14,8 +14,9 @@
           <option>RTD Dashboard</option>
           <option>CAMS Settings</option>
         </select>-->
-          <input type="text" id="username" class="form-control fadeIn second mt-2" placeholder="Username" formControlName="username" (keyup.enter)="loginuser()">
-          <input type="password" id="password" class="form-control fadeIn third"  placeholder="Password" formControlName="password" (keyup.enter)="loginuser()">
+        <!-- (keyup.enter)="loginuser()" -->
+          <input type="text" id="username" autocomplete="off" class="form-control fadeIn second mt-2" placeholder="Username" formControlName="username" >
+          <input type="password" id="password" autocomplete="off" class="form-control fadeIn third"  placeholder="Password" formControlName="password">
       </form>
 
       <div class="container">

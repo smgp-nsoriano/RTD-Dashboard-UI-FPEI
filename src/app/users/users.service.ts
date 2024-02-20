@@ -79,4 +79,12 @@ export class UsersService {
       withCredentials: true
     });
   }
+
+  userLogs(data){
+    return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data);
+  }
+
+  loginLogs(data){
+    return this.http.post(`${this.env.apiUrl}/UserManagement/LoginLogs`, data);
+  }
 }

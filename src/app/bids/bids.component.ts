@@ -7,6 +7,9 @@ import { BidsService } from './bids.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { jsPDF } from "jspdf";
 import { findIndex } from 'rxjs/operators';
+import { UsersService } from '../users/users.service';
+import { EnvService } from '../env.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-bids',
@@ -42,13 +45,15 @@ export class BidsComponent implements OnInit {
   isCopy:boolean = false;
   isPaste:boolean = false;
   isPasteActive:boolean;
-
-  pmax:number=0;
-  rrmax:number=0;
+  pmaxEntry:number;
+  rrmaxEntry:number;
+  pmax:number;
+  rrmax:number;
   rrUp:number;
   rrDown:number;
   errorCounts:number = 0;
 
+  controlModeValue:string;
   dateFormatted:string;
   dateCopyTo:string;
   dateToday:string;
@@ -65,7 +70,10 @@ export class BidsComponent implements OnInit {
     private route: ActivatedRoute,
     private unitService: UnitsService,
     private bidsService:BidsService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private userService:UsersService,
+    private envService:EnvService,
+    private http:HttpClient
   ) {
     this.route.params.subscribe(param => {
       this.unitId = param.unitId;
@@ -74,6 +82,7 @@ export class BidsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.controlModeValue = 'A';
     this.isEdit=false;
     //this.getOffer();
     this.offer = [];
@@ -86,9 +95,14 @@ export class BidsComponent implements OnInit {
 
     //this.getOffer();
     this.dateFormatted = moment().format('YYYY-MM-DD');
-    this.getOfferByDate();
     this.GetRRStandard();
+    this.getOfferByDate();
     this.isInvalidFile = true;
+  }
+
+  setControlMode(val:string){
+    this.controlModeValue = val;
+    console.log(this.controlModeValue);
   }
 
   CopySchedule(){
@@ -111,6 +125,11 @@ export class BidsComponent implements OnInit {
   ShowRRStandard(modal){
     this.modalReference =this.modalService.open(modal,{centered:true});
   }
+
+
+  ShowControlMode(modal){
+    this.modalReference =this.modalService.open(modal,{centered:true});
+  }
   
   SaveRRStandard(){
     console.log(this.rrmax);
@@ -122,6 +141,15 @@ export class BidsComponent implements OnInit {
       this.rrError = "Please fill ramprate down";
       return
     }
+    if(this.rrmaxEntry == null){
+      this.rrError = "Please fill ramprate max";
+      return
+    }
+    if(this.pmaxEntry == null){
+      this.rrError = "Please fill p max";
+      return
+    }
+
     if(this.rrUp > this.rrmax || this.rrDown > this.rrmax){
       this.rrError = "Standard must not exceed Ramprate Max.!";
       this.GetRRStandard();
@@ -131,12 +159,19 @@ export class BidsComponent implements OnInit {
     const payload = {
       UnitNumber:this.unitNumber,
       RRUp:this.rrUp,
-      RRDown:this.rrDown
+      RRDown:this.rrDown,
+      RRMax:this.rrmaxEntry,
+      PMax:this.pmaxEntry
     }
     this.unitService.setRRStandard(payload).subscribe(data=>{
       this.ramprateStandard = data;
       this.rrUp = this.ramprateStandard.RRUp;
       this.rrDown = this.ramprateStandard.RRDown;
+      this.rrmax = this.ramprateStandard.RRMax;
+      this.pmax = this.ramprateStandard.PMax;
+      this.rrmaxEntry = this.ramprateStandard.RRMax;
+      this.pmaxEntry = this.ramprateStandard.PMax;
+      this.PQValidation();
       this.modalReference.close();
     });
   }
@@ -146,6 +181,10 @@ export class BidsComponent implements OnInit {
       this.ramprateStandard = data;
       this.rrUp = this.ramprateStandard.RRUp;
       this.rrDown = this.ramprateStandard.RRDown;
+      this.rrmax = this.ramprateStandard.RRMax;
+      this.pmax = this.ramprateStandard.PMax;
+      this.rrmaxEntry = this.ramprateStandard.RRMax;
+      this.pmaxEntry = this.ramprateStandard.PMax;
     });
   }
 
@@ -274,18 +313,18 @@ export class BidsComponent implements OnInit {
     this.offersValidation=[];
     this.ramprateValidation = [];
     let validationRules;
-    let rule;
-    rule=[];
+    ///let rule;
+    //rule=[];
     let checkInterval=0;
     let msg;
-    this.bidsService.getOffersValidation().subscribe(data=>{
-      let offerErrorCount:number = 0;
+
+    let offerErrorCount:number = 0;
       let intevalErrorCount:number = 0;
       let rrErrorCount:number = 0;
-      validationRules = data;
-      rule = validationRules.find(val => val.UnitID == +this.unitId)
-      this.pmax = +rule.PMAX;
-      this.rrmax = +rule.RRMAX;
+      //validationRules = data;
+      //rule = validationRules.find(val => val.UnitID == +this.unitId)
+      //this.pmax = +rule.PMAX;
+      //this.rrmax = +rule.RRMAX;
 
       for(let data of this.offers){
         msg = [];
@@ -872,7 +911,10 @@ export class BidsComponent implements OnInit {
       //console.log(this.offersValidation.length);
       this.isValidatingFile = false;
       //this.modalReference =this.modalService.open(modal,{size:"lg"});
-    });
+
+    //this.bidsService.getOffersValidation().subscribe(data=>{
+      
+    //});
     
   }
 
@@ -1084,13 +1126,47 @@ export class BidsComponent implements OnInit {
     }
   }
 
+
+  downloadXML(){
+    this.updateOffer();
+    this.unitService.downloadBid(this.unitId, this.unitNumber, this.offers,this.controlModeValue).subscribe(data => {
+      //this.offers = data['offers'];
+      this.downloadFile(this.unitId);
+    });
+  }
+
+  downloadFile(unitId: number): void {
+    const url = `${this.envService.apiUrlV1}XMLFiles/BidOffer${unitId}.xml`;
+
+    this.http.get(url, { responseType: 'blob' }).subscribe(
+      (response: Blob) => {
+        // Create a blob URL and trigger a download
+        const blobUrl = window.URL.createObjectURL(response);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'BidOffer.xml';
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+      },
+      error => {
+        console.error('Error downloading file:', error);
+        // Handle the error as needed
+      }
+    );
+  }
+
   upload() {
     
     this.updateOffer();
     this.bidLoading = true;
     this.offers[0].UploadedBy = localStorage.getItem('currentUserName');
     
-    this.unitService.createBid(this.unitId, this.unitNumber, this.offers).subscribe(data => {
+    this.unitService.createBid(this.unitId, this.unitNumber, this.offers, this.controlModeValue).subscribe(data => {
       this.modalReference.close();
       this.successMessage = data['message'];
       this.bidLoading = false;
@@ -1154,7 +1230,7 @@ export class BidsComponent implements OnInit {
           Q10:stringValue(offer.Q10),
           P11:stringValue(offer.P11),
           Q11:stringValue(offer.Q11),
-
+          CMode:stringValue(offer.ControlMode),
         }
         result.push(data);
         i++;
@@ -1206,7 +1282,8 @@ export class BidsComponent implements OnInit {
       'P10',
       'Q10',
       'P11',
-      'Q11'
+      'Q11',
+      'CMode'
     ];
     
     doc.setFontSize(20);
@@ -1291,60 +1368,60 @@ if(checkAS){
       const dataRU = {
         id:stringValue(i),
         Hour:stringValue(offer.Interval),
-        P1:stringValue(offer.AS_RU_P1),
-        Q1:stringValue(offer.AS_RU_Q1),
-        P2:stringValue(offer.AS_RU_P2),
-        Q2:stringValue(offer.AS_RU_Q2),
-        P3:stringValue(offer.AS_RU_P3),
-        Q3:stringValue(offer.AS_RU_Q3),
-        P4:stringValue(offer.AS_RU_P4),
-        Q4:stringValue(offer.AS_RU_Q4),
-        P5:stringValue(offer.AS_RU_P5),
-        Q5:stringValue(offer.AS_RU_Q5),
+        P1:stringValue(offer.AS_RU_Q1),
+        Q1:stringValue(offer.AS_RU_P1),
+        P2:stringValue(offer.AS_RU_Q2),
+        Q2:stringValue(offer.AS_RU_P2),
+        P3:stringValue(offer.AS_RU_Q3),
+        Q3:stringValue(offer.AS_RU_P3),
+        P4:stringValue(offer.AS_RU_Q4),
+        Q4:stringValue(offer.AS_RU_P4),
+        P5:stringValue(offer.AS_RU_Q5),
+        Q5:stringValue(offer.AS_RU_P5),
       }
       const dataRD = {
         id:stringValue(i),
         Hour:stringValue(offer.Interval),
-        P1:stringValue(offer.AS_RD_P1),
-        Q1:stringValue(offer.AS_RD_Q1),
-        P2:stringValue(offer.AS_RD_P2),
-        Q2:stringValue(offer.AS_RD_Q2),
-        P3:stringValue(offer.AS_RD_P3),
-        Q3:stringValue(offer.AS_RD_Q3),
-        P4:stringValue(offer.AS_RD_P4),
-        Q4:stringValue(offer.AS_RD_Q4),
-        P5:stringValue(offer.AS_RD_P5),
-        Q5:stringValue(offer.AS_RD_Q5),
+        P1:stringValue(offer.AS_RD_Q1),
+        Q1:stringValue(offer.AS_RD_P1),
+        P2:stringValue(offer.AS_RD_Q2),
+        Q2:stringValue(offer.AS_RD_P2),
+        P3:stringValue(offer.AS_RD_Q3),
+        Q3:stringValue(offer.AS_RD_P3),
+        P4:stringValue(offer.AS_RD_Q4),
+        Q4:stringValue(offer.AS_RD_P4),
+        P5:stringValue(offer.AS_RD_Q5),
+        Q5:stringValue(offer.AS_RD_P5),
       }
 
       const dataFR = {
         id:stringValue(i),
         Hour:stringValue(offer.Interval),
-        P1:stringValue(offer.AS_FR_P1),
-        Q1:stringValue(offer.AS_FR_Q1),
-        P2:stringValue(offer.AS_FR_P2),
-        Q2:stringValue(offer.AS_FR_Q2),
-        P3:stringValue(offer.AS_FR_P3),
-        Q3:stringValue(offer.AS_FR_Q3),
-        P4:stringValue(offer.AS_FR_P4),
-        Q4:stringValue(offer.AS_FR_Q4),
-        P5:stringValue(offer.AS_FR_P5),
-        Q5:stringValue(offer.AS_FR_Q5),
+        P1:stringValue(offer.AS_FR_Q1),
+        Q1:stringValue(offer.AS_FR_P1),
+        P2:stringValue(offer.AS_FR_Q2),
+        Q2:stringValue(offer.AS_FR_P2),
+        P3:stringValue(offer.AS_FR_Q3),
+        Q3:stringValue(offer.AS_FR_P3),
+        P4:stringValue(offer.AS_FR_Q4),
+        Q4:stringValue(offer.AS_FR_P4),
+        P5:stringValue(offer.AS_FR_Q5),
+        Q5:stringValue(offer.AS_FR_P5),
       }
 
       const dataDR = {
         id:stringValue(i),
         Hour:stringValue(offer.Interval),
-        P1:stringValue(offer.AS_DR_P1),
-        Q1:stringValue(offer.AS_DR_Q1),
-        P2:stringValue(offer.AS_DR_P2),
-        Q2:stringValue(offer.AS_DR_Q2),
-        P3:stringValue(offer.AS_DR_P3),
-        Q3:stringValue(offer.AS_DR_Q3),
-        P4:stringValue(offer.AS_DR_P4),
-        Q4:stringValue(offer.AS_DR_Q4),
-        P5:stringValue(offer.AS_DR_P5),
-        Q5:stringValue(offer.AS_DR_Q5),
+        P1:stringValue(offer.AS_DR_Q1),
+        Q1:stringValue(offer.AS_DR_P1),
+        P2:stringValue(offer.AS_DR_Q2),
+        Q2:stringValue(offer.AS_DR_P2),
+        P3:stringValue(offer.AS_DR_Q3),
+        Q3:stringValue(offer.AS_DR_P3),
+        P4:stringValue(offer.AS_DR_Q4),
+        Q4:stringValue(offer.AS_DR_P4),
+        P5:stringValue(offer.AS_DR_Q5),
+        Q5:stringValue(offer.AS_DR_P5),
       }
 
       resultASRU.push(dataRU);

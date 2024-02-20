@@ -349,12 +349,16 @@ export class DashboardComponent implements OnInit, OnDestroy{
   timerAlarm:any;
   checkIsLimit:boolean;
   isAcknowledgeAlarm:boolean;
+  isWithAlarm:boolean;
+  isWithDecimal:boolean;
+
   currentUserInfo;
   modalRef: NgbModalRef;
   alarmMessage: string;
   alarmRTDMessage:string;
   blinkerTimer:any;
   isRTDBlinking:boolean;
+  isBat:boolean;
 
   order: string = 'TimeStamp';
   constructor(private dashboardService: DashboardService,
@@ -368,6 +372,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
   
+    this.isWithDecimal = false; 
     this.bodyTag.classList.add('bg-dark');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.current = [];
@@ -490,6 +495,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
     this.dashboardService.getCurrentRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
       this.current = data;
+      this.isWithAlarm = this.current.IsWithAlarm;
+      this.isWithDecimal = this.current.IsWithDecimal;
       if(this.current['DataStatus'] == "H"){
         this.stopAlarm();
         this.alarmRTDMessage = "HAP is in use.";
@@ -522,11 +529,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
       //&& this.pasts[5].ActualValue != null
       if(this.pasts[5].IsLimit == false && this.pasts[5].ActualValue != null){
         this.stopAlarm();
-        this.alarmRTDMessage = "Actual MW, outside the limits";
-        this.OutsideLimitAudio();
-        this.timerAlarm = setInterval(() => {
-          this.stopAlarm();
-        },5000);
+        if(this.isWithAlarm){
+          this.alarmRTDMessage = "Actual MW, outside the limits";
+          this.OutsideLimitAudio();
+          this.timerAlarm = setInterval(() => {
+            this.stopAlarm();
+          },5000);
+        }
       }
     }, error => {
       console.log(error.message);
@@ -684,6 +693,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
           //this.selectedSite(+this.operatorUnit.SiteID, true);
           this.selectedUnit(+this.operatorUnit.UnitID, true, this.operatorUnit);
           //console.log(this.operatorUnit);
+
+          this.isBat = this.operatorUnit.UnitNumber.includes("BAT")
         });
       }else{
         this.dashboardService.getSiteList(this.permissionID).subscribe(data => {
@@ -760,4 +771,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
     audio.play();
   }
 
+  getDecimal(number: number): number {
+    const decimalPart = Math.abs(number - Math.floor(number));
+    const decimalOnly = Number(decimalPart.toFixed(2).slice(2));
+    return decimalOnly;
+  }
+
+  getWholeNumber(number: number): number {
+    const wholeNumber: number = Math.trunc(number);
+    return wholeNumber;
+  }
 }

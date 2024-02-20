@@ -26,8 +26,13 @@ export class TraderDashboardService {
     getPrice(unit:string){
       return this.http.get(`${this.env.apiUrl}/Trading/Price?UnitNumber=${unit}`);
     }
+    
     getRTD(unit:string){
       return this.http.get(`${this.env.apiUrl}/Trading/RTD?UnitNumber=${unit}`);
+    }
+
+    getReserveSchedules(unit:string){
+      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`);
     }
 
     getHAP(unit:string){
@@ -49,9 +54,30 @@ export class TraderDashboardService {
       }});
     }
 
+    getMOTValue(unit:string){
+      return this.http.get(`${this.env.apiUrl}/Trading/GetMOTValue?UnitNumber=${unit}`);
+    }
+
+    saveMOTValue(data) {
+      return this.http.post(`${this.env.apiUrl}/Trading/SaveMOTValue`, data, {
+        headers : {
+          'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }});
+    }
+ 
+
     getDemand(UnitNumber:string){
       return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`);
     }
+
+    getImportExport(){
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport`);
+    }
+
+    getImportExport2(){
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport2`);
+    }
+
 
     getUnitRegion(){
       return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`);

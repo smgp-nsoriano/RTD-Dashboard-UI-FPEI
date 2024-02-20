@@ -28,6 +28,7 @@
     "angular-9-datatable": "^0.1.1",
     "bootstrap": "^4.6.0",
     "core-js": "^2.6.12",
+    "express": "^4.18.2",
     "highcharts": "^7.2.2",
     "highcharts-angular": "^2.10.0",
     "howler": "^2.2.1",

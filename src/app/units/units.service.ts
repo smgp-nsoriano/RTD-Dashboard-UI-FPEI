@@ -60,10 +60,16 @@ export class UnitsService {
     return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOfferByDateNew?UnitNumber=${unitNumber}&DateSchedule=${date}`);
   }
 
-  createBid(unitId, unitNumber, offers) {
-    const data = {unitId, unitNumber, offers};
+  createBid(unitId, unitNumber, offers,controlMode) {
+    const data = {unitId, unitNumber, offers,controlMode};
     return this.http.post(`${this.env.apiUrl}/MarketData/CreateBidNew`, data);
   }
+
+  downloadBid(unitId, unitNumber, offers,controlMode) {
+    const data = {unitId, unitNumber, offers, controlMode};    
+    return this.http.post(`${this.env.apiUrl}/MarketData/BidXML`, data);
+  }
+
 
   updateOffer(unitId, unitNumber, offers) {
     const data = {unitId, unitNumber, offers};

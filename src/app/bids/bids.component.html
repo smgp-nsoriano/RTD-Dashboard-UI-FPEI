@@ -23,6 +23,7 @@
                 <div class="input-group-append hide-print" >
                   <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="BlankBidModal(blankoffer)" *ngIf="isInvalidFile" >Create Bid</button>
                   <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="CopyBidModal(copyoffer)" *ngIf="!isInvalidFile" >Copy To</button>
+                  <!--<button class="btn btn-outline-secondary btn-sm ml-1" type="button" (click)="ShowControlMode(controlMode)">Control Mode</button>-->
                   <button class="btn btn-outline-secondary btn-sm ml-1" type="button" id="uploadFile" (click)="PQValidation()" [disabled]="isInvalidFile">Validate</button>
                   <!--<button class="btn btn-outline-secondary btn-sm ml-1" *ngIf="isValidatingFile" type="button" disabled>Validating..</button>-->
                   <button class="btn btn-outline-warning btn-sm ml-1" type="button" (click)="ShowRRStandard(rrStandard)">RR Standard</button>
@@ -98,6 +99,7 @@
                   <th>Q10</th>
                   <th>P11</th>
                   <th>Q11</th>
+                  <th style="width: 80px !important;">CMode</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -169,6 +171,9 @@
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q11 &lt; pmax && offer.Q11 != null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q11,null)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q11">
+                  </td>
+                  <td style="width: 80px !important;" class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
+                    <input class="form-control form-control-sm text-center text-borderless" [(ngModel)]="offer.ControlMode">
                   </td>
                   <td [class.copied-offer]="offer.IsCopied == true && isCopy" class="text-center"
                   (mouseover)="offer.IsHovered=true" (mouseleave)="offer.IsHovered=false">
@@ -279,143 +284,143 @@
                   <td class="text-center">{{ offer.Interval }}</td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P1">
-                  </td>
-                  <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q1">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P1">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q2">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P2">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q3">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P3">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q4">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P4">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q5">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P5">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q1">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P1">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q2">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P2">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q3">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P3">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q4">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P4">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q5">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P5">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q1">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P1">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q2">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P2">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q3">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P3">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q4">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P4">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q5">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P5">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q1">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P1">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q2">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P2">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q3">
                   </td>
-                  
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P3">
                   </td>
+                  
                   <td class="text-center">
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q4">
                   </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P4">
+                  </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q5">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P5">
                   </td>
                 </tr>
               </tbody>
@@ -506,8 +511,13 @@
           </p>
 
           <div class="mt-3 float-right hide-print">
+           
+
             <button class="btn btn-warning btn-sm mr-2" (click)="ShowSaveChanges(saveChanges)" [disabled]="isInvalidFile || isPreviousDate">
               Save Changes
+            </button>
+            <button class="btn btn-secondary btn-sm mr-2" (click)="downloadXML()" [disabled]="isInvalidFile || errorCounts > 0">
+              Download XML
             </button>
             <button class="btn btn-secondary btn-sm" (click)="ShowBidUpload(confirmationBid)"  [disabled]="isInvalidFile || errorCounts > 0">
               UPLOAD BID
@@ -637,14 +647,37 @@
   </div>
 
   <div class="modal-body">
-    <div class="form-group">
-      <label>Ramprate Up</label>
-      <input type="number" class="form-control form-control-sm text-right col-6" [(ngModel)]="rrUp" >
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label>Ramprate Up</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrUp" >
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">  
+          <label>Ramprate Down</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrDown" >
+        </div>
+      </div>
     </div>
-    <div class="form-group">  
-      <label>Ramprate Down</label>
-      <input type="number" class="form-control form-control-sm text-right col-6" [(ngModel)]="rrDown" >
+
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label>PMAX</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="pmaxEntry" >
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">  
+          <label>RRMax</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrmaxEntry" >
+        </div>
+      </div>
     </div>
+    
+    
     <ngb-alert *ngIf="rrError" type="danger" (close)="rrError = null">{{ rrError }}</ngb-alert>
   </div>
 
@@ -689,5 +722,39 @@
     <button class="btn btn-sm btn-success" *ngIf="!bidLoading" (click)="upload()">Upload</button>
     <button class="btn btn-sm btn-success" *ngIf="bidLoading" disabled>Uploading..</button>
     <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #controlMode let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Control Mode</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="rb" id="rba" checked (click)="setControlMode('A')">
+      <label class="form-check-label" for="rba">
+        Automatic Generation Control
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="rb" id="rbg" (click)="setControlMode('G')">
+      <label class="form-check-label" for="rbg">
+        Governor Control Mode
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="rb" id="rbm" (click)="setControlMode('M')">
+      <label class="form-check-label" for="rbm">
+        Manual Dispatch
+      </label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Close</button>
   </div>
 </ng-template>

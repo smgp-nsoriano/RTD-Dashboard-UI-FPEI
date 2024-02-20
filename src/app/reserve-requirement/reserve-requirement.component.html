@@ -1,0 +1,95 @@
+<div>
+  <div class="row p-5">
+    <!-- Luzon -->
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Up - Luzon
+        </h5>
+        <highcharts-chart
+        [Highcharts]="Highcharts"
+        [constructorType]="'chart'"
+        [options]="DEMANDPOptions"
+        [(update)]="updateFlag"
+        [oneToOne]="true"
+        style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Down - Luzon
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Contingency Reserve - Luzon
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+
+    <!-- Visayas -->
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Up - Visayas
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Down - Visayas
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Contingency Reserve - Visayas
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    
+    <!-- Mindanao -->
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Up - Mindanao
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Regulation Down - Mindanao
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+    <div class="col-4 p-1">
+      <div class="border border-white p-2 border-1">
+        <h5 class="text-warning font-weight-bold">
+          Contingency Reserve - Mindanao
+        </h5>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
+          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+      </div>
+    </div>
+  </div>
+</div>
