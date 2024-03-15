@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { ReserveRequirementService } from './reserve-requirement.service';
+import * as moment from 'moment';
 
 require('highcharts/modules/no-data-to-display')(Highcharts);
 
@@ -9,9 +11,13 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
   styleUrls: ['./reserve-requirement.component.scss']
 })
 export class ReserveRequirementComponent implements OnInit {
-
+  now
+  timerData
+  timerDT
+  timerClock
+  regions = ['CLUZ', 'CVIS', 'CMIN']
   Highcharts = Highcharts;
-  DEMANDPOptions = {
+  optionsTemplate = {
     title: '',
     chart: {
       backgroundColor: 'transparent',
@@ -22,10 +28,16 @@ export class ReserveRequirementComponent implements OnInit {
 
     xAxis: {
       type: 'category',
-      gridLineWidth: 1,
+      gridLineWidth: 0.5,
       labels: {
+        useHTML: true,
         style: {
           color: '#fff'
+        },
+        formatter: function() {
+          const currentHour = new Date().getHours()
+          if (this.value === currentHour.toString()) return `<span style="color: red">${this.value}</span>`
+          return this.value
         }
       },
     },
@@ -109,11 +121,240 @@ export class ReserveRequirementComponent implements OnInit {
       },
     ],
   };
-  updateFlag = true;
+  dottedTrendSnippet = {
+    zoneAxis: 'x',
+    zones: [{
+      value: new Date().getHours().toString()
+    }, {
+      dashStyle: 'dot'
+    }]
+  }
+  updateFlags = [false, false, false, false, false, false, false, false, false];
 
-  constructor() { }
+  ru_luz_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  rd_luz_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  cr_luz_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  ru_vis_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  rd_vis_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  cr_vis_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  ru_min_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  rd_min_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+  cr_min_options = {
+    title: '',
+    chart: this.optionsTemplate.chart,
+    xAxis: this.optionsTemplate.xAxis,
+    yAxis : this.optionsTemplate.yAxis,
+    legend: this.optionsTemplate.legend,
+    plotOptions: this.optionsTemplate.plotOptions,
+    tooltip: this.optionsTemplate.tooltip,
+    series: [],
+  };
+
+
+  constructor(private ReserveRequirementService: ReserveRequirementService) { }
 
   ngOnInit() {
+    this.now = moment("","MM/DD/YYYY HH:mm:ss");
+    this.SetTimeFromServer();
+    this.timerDT = setInterval(() => {
+      this.SetTimeFromServer();
+    }, 30000);
+
+    this.GetDataPerRegion();
   }
 
+  GetDataPerRegion() {
+    console.log("updating tables");
+    this.ReserveRequirementService.getRMRegionPrices24h("CLUZ").subscribe(data => {
+      // console.log(data);
+      let resData = Object.entries(data).map(entry => entry[1])
+
+      let ru_reqt = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let ru_sched = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let ru_price = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("ru_luz_options", ru_reqt, ru_sched, ru_price)
+      this.updateFlags[0] = true
+
+      let rd_reqt = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let rd_sched = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let rd_price = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("rd_luz_options", rd_reqt, rd_sched, rd_price)
+      this.updateFlags[1] = true
+
+      let cr_reqt = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let cr_sched = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let cr_price = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("cr_luz_options", cr_reqt, cr_sched, cr_price)
+      this.updateFlags[2] = true
+    });
+    this.ReserveRequirementService.getRMRegionPrices24h("CVIS").subscribe(data => {
+      let resData = Object.entries(data).map(entry => entry[1])
+
+      let ru_reqt = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let ru_sched = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let ru_price = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("ru_vis_options", ru_reqt, ru_sched, ru_price)
+      this.updateFlags[3] = true
+
+      let rd_reqt = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let rd_sched = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let rd_price = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("rd_vis_options", rd_reqt, rd_sched, rd_price)
+      this.updateFlags[4] = true
+
+      let cr_reqt = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let cr_sched = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let cr_price = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("cr_vis_options", cr_reqt, cr_sched, cr_price)
+      this.updateFlags[5] = true
+    });
+    this.ReserveRequirementService.getRMRegionPrices24h("CMIN").subscribe(data => {
+      let resData = Object.entries(data).map(entry => entry[1])
+
+      let ru_reqt = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let ru_sched = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let ru_price = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("ru_min_options", ru_reqt, ru_sched, ru_price)
+      this.updateFlags[6] = true
+
+      let rd_reqt = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let rd_sched = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let rd_price = resData[1]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("rd_min_options", rd_reqt, rd_sched, rd_price)
+      this.updateFlags[7] = true
+
+      let cr_reqt = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
+      let cr_sched = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Schedule])
+      let cr_price = resData[2]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.Price])
+      this.pushDataToChart("cr_min_options", cr_reqt, cr_sched, cr_price)
+      this.updateFlags[8] = true
+    });
+  }
+
+  pushDataToChart(chartOptions_name:string, reqt, sched, price) {
+    this[chartOptions_name].series = [
+        {
+          type: 'area',
+          name: "REQT",
+          color: '#43A6C6',
+          data: [...reqt],
+          // ...this.dottedTrendSnippets
+        },
+        {
+          name: "SCHED",
+          color: 'orange',
+          data: [...sched],
+          // ...this.dottedTrendSnippet
+        },
+        {
+          name: "PRICE",
+          color: 'yellow',
+          yAxis: 1,
+          data: [...price],
+          // ...this.dottedTrendSnippet
+        },
+      ];
+  }
+
+  SetTimeFromServer(){
+    this.ReserveRequirementService.getDT().subscribe(data=>{
+      clearInterval(this.timerData);
+      clearInterval(this.timerClock);
+      this.TimerSetClock(data.toString());
+      this.TimerGetData();
+    });
+  }
+
+  TimerSetClock(dt:string){
+    //
+    this.now = moment(dt,"MM/DD/YYYY HH:mm:ss");
+    this.timerClock = setInterval(() => {
+      this.now.add(1, 'second');
+      // this.HADOptions.series = this.HADseriesOptions;
+      // this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
+      // this.updateFlag = true;
+    }, 1000);
+  }
+
+  TimerGetData(){
+    this.timerData = setInterval(() => {
+      if (+moment(this.now).second() == 3) {
+        console.log("fetch");
+        
+        this.GetDataPerRegion();
+      }
+    }, 15000);
+  }
 }

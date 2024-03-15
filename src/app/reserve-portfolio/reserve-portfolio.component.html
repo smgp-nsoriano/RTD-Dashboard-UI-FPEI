@@ -1,15 +1,24 @@
+<div class="alert alert-success alert-dismissible fade show myAlert-top" role="alert" *ngIf="successMessage!=null">
+  <strong>{{successMessage}}</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="successMessage=null">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
 <div>
   <!-- stuff up top -->
-  <div class="row p-5">
-    <div class="col-4">
-      <table class="table table-sm table-bordered w-full">
-        <tbody>
-          <th class="current-interval px-2">
-            INTERVAL
-          </th>
-          <td style="width: 200px;">???</td>
-        </tbody>
-      </table>
+  <div class="row px-5 pt-3 pb-1">
+    <!-- <div class="col-4"> -->
+    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 mt-2">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-danger text-light font-weight-bold" style="font-size: 18px;">INTERVAL </span>
+        </div>
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-dark text-warning font-weight-bold"
+            style="font-size: 24px;">{{interval}}</span>
+        </div>
+      </div>
     </div>
     <div class="col-8">
       <table class="table table-sm table-bordered w-full">
@@ -30,32 +39,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th>Regulation Up</th>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-          </tr>
-          <tr>
-            <td>Regulation Down</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-          </tr>
-          <tr>
-            <td>Contingency Reserve</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
-            <td>???</td>
+          <tr *ngFor="let data of reqtSched; let i = index">
+            <th>{{data.header}}</th>
+            <td>{{data.cluz_reqt}}</td>
+            <td [class.sched-req-mismatch]="data.cluz_reqt !== data.cluz_sched">{{data.cluz_sched}}</td>
+            <td>{{data.cvis_reqt}}</td>
+            <td [class.sched-req-mismatch]="data.cvis_reqt !== data.cvis_sched">{{data.cvis_sched}}</td>
+            <td>{{data.cmin_reqt}}</td>
+            <td [class.sched-req-mismatch]="data.cmin_reqt !== data.cmin_sched">{{data.cmin_sched}}</td>
           </tr>
         </tbody>
       </table>
@@ -66,24 +57,69 @@
   <table class="table table-sm table-bordered w-full">
     <thead>
       <tr>
-        <th class="current-interval" rowspan="2">Region</th>
-        <th class="current-interval" rowspan="2">Facility</th>
-        <th class="current-interval" colspan="4">RTD</th>
-        <th class="current-interval" rowspan="2">Actual</th>
-        <th class="current-interval" rowspan="2">MOP</th>
-        <th class="current-interval" colspan="4">PRICES</th>
-        <th class="current-interval" rowspan="2">Remarks</th>
+        <th class="table-header" rowspan="2">Region</th>
+        <th class="table-header" rowspan="2">Facility</th>
+        <th class="table-header" colspan="4">RTD</th>
+        <th class="table-header" rowspan="2">Actual</th>
+        <th class="table-header" rowspan="2">MOP</th>
+        <th class="table-header" colspan="4">PRICES</th>
+        <th class="table-header" rowspan="2">Remarks</th>
       </tr>
       <tr>
-        <th class="current-interval">Energy</th>
-        <th class="current-interval">Reg. Up</th>
-        <th class="current-interval">Reg. Down</th>
-        <th class="current-interval">CR</th>
-        <th class="current-interval">Energy</th>
-        <th class="current-interval">Reg. Up</th>
-        <th class="current-interval">Reg. Down</th>
-        <th class="current-interval">CR</th>
+        <th class="table-header">Energy</th>
+        <th class="table-header">Reg. Up</th>
+        <th class="table-header">Reg. Down</th>
+        <th class="table-header">CR</th>
+        <th class="table-header">Energy</th>
+        <th class="table-header">Reg. Up</th>
+        <th class="table-header">Reg. Down</th>
+        <th class="table-header">CR</th>
       </tr>
     </thead>
+    <tbody>
+      <tr *ngFor="let data of sortedUnitRegionMapping; let i = index">
+        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regions[data.region]}}</td>
+        <td class="text-left">{{data.unitDisplayName}}</td>
+        <td>{{data.rtd_en | number: '1.0-0'}}</td>
+        <td>{{data.rtd_ru | number: '1.0-0'}}</td>
+        <td>{{data.rtd_rd | number: '1.0-0'}}</td>
+        <td>{{data.rtd_cr | number: '1.0-0'}}</td>
+        <td [class.neg-actual]="data.actual < 0" [attr.title]="data.actual">{{data.actual | number: '1.0-0'}}</td>
+        <td>{{data.mop}}</td>
+        <td>{{data.price_en | number: '1.0-0'}}</td>
+        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_ru | number: '1.0-0'}}</td>
+        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_rd | number: '1.0-0'}}</td>
+        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_cr | number: '1.0-0'}}</td>
+        <td (mouseover)="data.unitIsHideEdit=false" (mouseleave)="data.unitIsHideEdit=true" style="min-width: 400px;">
+          {{data.remarks}}
+          <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.unitIsHideEdit"
+            (click)="OpenEditRemarksModal(PbRemarks,data.unitNumber,'',data.remarks,true,'U4',i)">
+            <fa-icon [icon]="faEdit" size="sm"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
   </table>
 </div>
+
+<ng-template #PbRemarks let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Update Remarks <strong>{{selectedUnitNumber}}</strong></h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="font-weight-bold" *ngIf="!isGenRemarks">{{pbDateDisplay}} {{pbHr}}:{{selectedPBInterval}} </label>
+      <label class="font-weight-bold" *ngIf="isGenRemarks">General Remarks </label>
+      <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="selectedPBRemarks"></textarea>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-warning" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-success" (click)="SaveRemarks()">Save</button>
+  </div>
+</ng-template>

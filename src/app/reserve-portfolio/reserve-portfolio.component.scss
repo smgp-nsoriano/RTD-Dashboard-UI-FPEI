@@ -51,6 +51,13 @@
   }
 }
 
+.table-header {
+  background-color: #e40000;
+  color: white;
+  min-width: 80px;
+  font-size: 5pt;
+}
+
 .online {
   background-color: #2c8143;
   border: none;
@@ -142,4 +149,14 @@
   width: 23px !important;
   height: 23px !important;
   z-index: 999;
+}
+
+.neg-actual{
+  background-color: #e87c87;
+  color: red;
+}
+
+.sched-req-mismatch {
+  background-color: yellow;
+  color: red !important; 
 }

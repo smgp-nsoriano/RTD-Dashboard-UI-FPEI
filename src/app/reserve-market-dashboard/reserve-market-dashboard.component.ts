@@ -93,6 +93,13 @@ export class ReserveMarketDashboardComponent implements OnInit {
     bColor:'',
     fColor:''
   };
+  RMEnPrice;
+  RMEnPriceUnit = {
+    name: '',
+    id: '',
+    bColor:'',
+    fColor:''
+  }
   RMunit1;
   RMcurrentUnit1 = {
     name: '',
@@ -122,6 +129,11 @@ export class ReserveMarketDashboardComponent implements OnInit {
       if (sessStore['region']) {
         this.currentRegion.id = sessStore['region'].UnitID;
         this.currentRegion.name = sessStore['region'].UnitNumber;
+      }
+
+      if (sessStore['enPrice']) {
+        this.RMEnPriceUnit.id = sessStore['enPrice'].UnitID;
+        this.RMEnPriceUnit.name = sessStore['enPrice'].UnitNumber;
       }
       
       if (sessStore['U1']) {
@@ -247,6 +259,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
       let bateries = Object.entries(data).map(entry => entry[1]).filter(e => e.TypeID === "BATT" && e.UnitNumber !== "01ANGAT_A" );
       // console.log(data);
       
+      this.RMEnPrice = bateries
       this.RMunit1 = bateries;
       this.RMunit2 = bateries;
       this.RMunit3 = bateries;
@@ -292,6 +305,9 @@ export class ReserveMarketDashboardComponent implements OnInit {
     // }
     if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
       this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
+    }
+    if(this.RMEnPriceUnit.name != '' && this.RMEnPriceUnit.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMEnPriceUnit.name, "enPrice");
     }
     if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
       this.SetReserveMarketValue(this.RMcurrentUnit1.name, "U1");
@@ -344,7 +360,9 @@ export class ReserveMarketDashboardComponent implements OnInit {
       // ;
       let res = data;
       for( let x = 0; x <= 14; x++ ) {
-        this.dbValues[x][unitType + "ENPrice"] = res[5].ReserveSchedules[x].Schedule;
+        if(unitType === "enPrice"){
+          this.dbValues[x]["U1ENPrice"] = res[5].ReserveSchedules[x].Schedule;
+        }
         // this.dbValues[x][unitType + "RMPrice"] = null; // res[6].ReserveSchedules[x].Schedule
         this.dbValues[x]["RM" + unitType + "_EN_Sched"] = res[0].ReserveSchedules[x].Schedule;
         this.dbValues[x]["RM" + unitType + "_RU_Sched"] = res[3].ReserveSchedules[x].Schedule;
@@ -421,18 +439,12 @@ export class ReserveMarketDashboardComponent implements OnInit {
         this.dbValues[x]["RM" + unitType + "_DR_Sched"] = null;
       }
 
-      // this.PlotHAPChart();
-      // this.PlotDAPChart();
       this.ManualRefresh();
 
     } else {
-      // if(inSessionStore[])
       this.SetReserveMarketValue(currentUnit.name, unitType);
-      // this.PlotHAPChart();
-      // this.PlotDAPChart();
 
       this.ManualRefresh();
-      //console.log('unit selected');
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
   }

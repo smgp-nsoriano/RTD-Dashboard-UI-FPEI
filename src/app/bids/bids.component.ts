@@ -1238,7 +1238,7 @@ export class BidsComponent implements OnInit {
 
     function stringValue(value){
       let val=' ';
-      if(value != null){
+      if(value != null && value !== ""){
         val = value.toLocaleString('en-GB');
       }
       return val;

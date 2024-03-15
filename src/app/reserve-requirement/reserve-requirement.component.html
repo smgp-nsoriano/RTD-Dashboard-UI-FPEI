@@ -9,8 +9,8 @@
         <highcharts-chart
         [Highcharts]="Highcharts"
         [constructorType]="'chart'"
-        [options]="DEMANDPOptions"
-        [(update)]="updateFlag"
+        [options]="ru_luz_options"
+        [(update)]="updateFlags[0]"
         [oneToOne]="true"
         style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
@@ -20,8 +20,8 @@
         <h5 class="text-warning font-weight-bold">
           Regulation Down - Luzon
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="rd_luz_options"
+          [(update)]="updateFlags[1]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     <div class="col-4 p-1">
@@ -29,8 +29,8 @@
         <h5 class="text-warning font-weight-bold">
           Contingency Reserve - Luzon
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="cr_luz_options"
+          [(update)]="updateFlags[2]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
 
@@ -40,8 +40,8 @@
         <h5 class="text-warning font-weight-bold">
           Regulation Up - Visayas
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="ru_vis_options"
+        [(update)]="updateFlags[3]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     <div class="col-4 p-1">
@@ -49,8 +49,8 @@
         <h5 class="text-warning font-weight-bold">
           Regulation Down - Visayas
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="rd_vis_options"
+        [(update)]="updateFlags[4]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     <div class="col-4 p-1">
@@ -58,8 +58,8 @@
         <h5 class="text-warning font-weight-bold">
           Contingency Reserve - Visayas
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-        [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="cr_vis_options"
+        [(update)]="updateFlags[5]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     
@@ -69,8 +69,8 @@
         <h5 class="text-warning font-weight-bold">
           Regulation Up - Mindanao
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="ru_min_options"
+          [(update)]="updateFlags[6]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     <div class="col-4 p-1">
@@ -78,8 +78,8 @@
         <h5 class="text-warning font-weight-bold">
           Regulation Down - Mindanao
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="rd_min_options"
+          [(update)]="updateFlags[7]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
     <div class="col-4 p-1">
@@ -87,8 +87,8 @@
         <h5 class="text-warning font-weight-bold">
           Contingency Reserve - Mindanao
         </h5>
-        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="DEMANDPOptions"
-          [(update)]="updateFlag" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
+        <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'chart'" [options]="cr_min_options"
+          [(update)]="updateFlags[8]" [oneToOne]="true" style="width: 100%; height: 25vh; display: block;"></highcharts-chart>
       </div>
     </div>
   </div>
