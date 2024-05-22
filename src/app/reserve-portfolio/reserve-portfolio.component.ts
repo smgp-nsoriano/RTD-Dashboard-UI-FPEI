@@ -61,14 +61,14 @@ export class ReservePortfolioComponent implements OnInit {
       unitIsHideEdit: true,
       facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null,
     },
-    {
-      unitId: 1032,
-      unitNumber: "01MAGAPIT_BAT",
-      unitDisplayName: "MAGAPIT",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
+    // {
+    //   unitId: 1032,
+    //   unitNumber: "01MAGAPIT_BAT",
+    //   unitDisplayName: "MAGAPIT",
+    //   region: 0,
+    //   unitIsHideEdit: true,
+    //   facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+    // },
     {
       unitId: 1014,
       unitNumber: "01MSINLO_BAT",

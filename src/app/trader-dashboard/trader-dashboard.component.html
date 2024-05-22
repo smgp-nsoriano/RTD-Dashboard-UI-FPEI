@@ -616,13 +616,14 @@
             <div class="col-12">
               <div class="input-group mt-5 mb-2">
                 <div class="input-group-prepend">
-                 
+                  <!-- <input type="date" [value]="formattedDate" (change)="saverange()" /> -->
+                  <input class="mx-2 bg-transparent text-white font-weight-bold border-1 border-white rounded" type="date" [(ngModel)]="formattedDate" (ngModelChange)="saverange($event)" style="width: 200px; font-size: 14pt;" />
                 </div>
                 <div class="input-group-prepend">
                   <button class="btn btn-primary font-weight-bold mr-3" (click)="LessPBDate()"> &lt; </button>
                 </div>
                 <div class="input-group-prepend ">
-                  <h5 class="text-warning p-1 font-weight-bold"> {{pbDateDisplay}} {{pbHr}}H </h5>
+                  <h5 class="text-warning p-1 font-weight-bold"> {{pbHr}}H </h5>
                 </div>
                 <div class="input-group-prepend">
                   <button class="btn btn-primary font-weight-bold ml-3" (click)="AddPBDate()"> &gt; </button>
@@ -731,28 +732,28 @@
                       <td style="width:5% !important" [class.actual]="data.U1IsLimit" [class.flagged]="data.U1IsLimit==false && data.U1Actual != null">{{data.U1Actual}}</td>
                       <td (mouseover)="data.U1IsHideEdit=false" (mouseleave)="data.U1IsHideEdit=true"  [class.flagged]="data.U1IsLimit==false && data.U1Actual != null">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U1Remarks}}</span>
-                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U1IsHideEdit && data.U1Actual != null" (click)="OpenPBRemarksModal(PbRemarks,currentUnit1PB.name,data.TimestampLabel,data.U1Remarks,false,'U1',i)">
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U1IsHideEdit && currentUnit1PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit1PB.name,data.TimestampLabel,data.U1Remarks,false,'U1',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>
                       <td style="width:5% !important" [class.actual]="data.U2IsLimit" [class.flagged]="data.U2IsLimit==false && data.U2Actual != null">{{data.U2Actual}}</td>
                       <td (mouseover)="data.U2IsHideEdit=false" (mouseleave)="data.U2IsHideEdit=true"   [class.flagged]="data.U2IsLimit==false && data.U2Actual != null">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U2Remarks}}</span>
-                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U2IsHideEdit && data.U2Actual != null" (click)="OpenPBRemarksModal(PbRemarks,currentUnit2PB.name,data.TimestampLabel,data.U2Remarks,false,'U2',i)">
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U2IsHideEdit && currentUnit2PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit2PB.name,data.TimestampLabel,data.U2Remarks,false,'U2',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>
                       <td style="width:5% !important" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">{{data.U3Actual}}</td>
                       <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true"   [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U3Remarks}}</span>
-                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit && data.U3Actual != null" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,data.TimestampLabel,data.U3Remarks,false,'U3',i)">
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit && currentUnit3PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,data.TimestampLabel,data.U3Remarks,false,'U3',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>
                       <td style="width:5% !important" [class.actual]="data.U4IsLimit" [class.flagged]="data.U4IsLimit==false && data.U4Actual != null">{{data.U4Actual}}</td>
                       <td (mouseover)="data.U4IsHideEdit=false" (mouseleave)="data.U4IsHideEdit=true"   [class.flagged]="data.U4IsLimit==false && data.U4Actual != null">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U4Remarks}}</span>
-                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit && data.U4Actual != null" (click)="OpenPBRemarksModal(PbRemarks,currentUnit4PB.name,data.TimestampLabel,data.U4Remarks,false,'U4',i)">
+                        <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit && currentUnit4PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit4PB.name,data.TimestampLabel,data.U4Remarks,false,'U4',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>

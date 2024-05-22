@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { faRetweet,faBellSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TraderDashboardService } from './trader-dashboard.service'
+// import { DatePipe } from '@angular/common';
 
 declare const require;
 
@@ -774,7 +775,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private traderDashboardService: TraderDashboardService,
     private router: Router,
-    config: NgbModalConfig) { 
+    config: NgbModalConfig
+  ) { 
     config.backdrop = 'static';
     config.keyboard = false;}
 
@@ -1028,6 +1030,17 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.pbDateDisplay = this.pbDate.format("MM/DD/YYYY");
       this.pbHr = this.pbDate.format("HH");
     }
+  }
+
+  get formattedDate() {
+    return this.pbDate.format("YYYY-MM-DD");
+    // return this.datePipe.transform(this.pbDate.format("MM/DD/YYYY"), 'dd-MM-yyyy');
+  }
+  saverange(newValue){
+    let dateObj = moment(newValue)
+    this.pbDate = dateObj;
+    this.pbDateDisplay = dateObj.format("MM/DD/YYYY");
+    this.RefreshPBRemarks();
   }
 
   AddPBDate(){
@@ -1520,7 +1533,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.ImportExporteriesOptions = [];
     Object.keys(regLuzArray).forEach(element => {
       let val;
-      if(regLuzArray[element].Value == null){
+      if(isNaN(regLuzArray[element].Value) || regLuzArray[element].Value == null){
         val = 0
       }else{
         val = regLuzArray[element].Value;
@@ -1529,7 +1542,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     });
     Object.keys(regVisArray).forEach(element => {
       let val;
-      if(regVisArray[element].Value == null){
+      if(isNaN(regVisArray[element].Value) || regVisArray[element].Value == null){
         val = 0
       }else{
         val = regVisArray[element].Value;
@@ -1539,7 +1552,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
     Object.keys(regMinArray).forEach(element => {
       let val;
-      if(regMinArray[element].Value == null){
+      if(isNaN(regMinArray[element].Value) || regMinArray[element].Value == null){
         val = 0
       }else{
         val = regMinArray[element].Value;
