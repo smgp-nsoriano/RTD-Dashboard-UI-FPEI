@@ -36,130 +36,144 @@ export class ReservePortfolioComponent implements OnInit {
   ]
 
   regions = ["LUZ", "VIS", "MIN"]
-  unitRegionMapping = [
-    {
-      unitId: 1035,
-      unitNumber: "01CNCEP_BAT",
-      unitDisplayName: "CONCEPCION",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1030,
-      unitNumber: "01LAMAO_BAT",
-      unitDisplayName: "LAMAO",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1031,
-      unitNumber: "01LIMAY_BAT",
-      unitDisplayName: "LIMAY",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null,
-    },
-    // {
-    //   unitId: 1032,
-    //   unitNumber: "01MAGAPIT_BAT",
-    //   unitDisplayName: "MAGAPIT",
-    //   region: 0,
-    //   unitIsHideEdit: true,
-    //   facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    // },
-    {
-      unitId: 1014,
-      unitNumber: "01MSINLO_BAT",
-      unitDisplayName: "MASINLOC",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1033,
-      unitNumber: "01SNMAN_BAT",
-      unitDisplayName: "SAN MANUEL",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1039,
-      unitNumber: "04ORMOC_BAT",
-      unitDisplayName: "ORMOC",
-      region: 1,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1036,
-      unitNumber: "05TOLEDO_BAT",
-      unitDisplayName: "TOLEDO",
-      region: 1,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1028,
-      unitNumber: "06KABAN_BAT",
-      unitDisplayName: "KABANKALAN",
-      region: 1,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1037,
-      unitNumber: "07UBAY_BAT",
-      unitDisplayName: "UBAY",
-      region: 1,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1042,
-      unitNumber: "11JASA_BAT",
-      unitDisplayName: "JASAAN",
-      region: 2,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1043,
-      unitNumber: "11VILLA_BAT",
-      unitDisplayName: "VILLANUEVA",
-      region: 2,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1041,
-      unitNumber: "13MACO_BAT",
-      unitDisplayName: "MACO",
-      region: 2,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 1040,
-      unitNumber: "13MALITA_BAT",
-      unitDisplayName: "MALITA",
-      region: 2,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-    {
-      unitId: 9999,
-      unitNumber: "01GAMU_BAT",
-      unitDisplayName: "GAMU",
-      region: 0,
-      unitIsHideEdit: true,
-      facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
-    },
-  ]
-  sortedUnitRegionMapping = this.unitRegionMapping.sort((a, b) => a.region - b.region)
+  // unitRegionMapping = [
+  //   {
+  //     unitId: 1035,
+  //     unitNumber: "01CNCEP_BAT",
+  //     unitDisplayName: "CONCEPCION",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1030,
+  //     unitNumber: "01LAMAO_BAT",
+  //     unitDisplayName: "LAMAO",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1031,
+  //     unitNumber: "01LIMAY_BAT",
+  //     unitDisplayName: "LIMAY",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null,
+  //   },
+  //   // {
+  //   //   unitId: 1032,
+  //   //   unitNumber: "01MAGAPIT_BAT",
+  //   //   unitDisplayName: "MAGAPIT",
+  //   //   region: 0,
+  //   //   unitIsHideEdit: true,
+  //   //   facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   // },
+  //   {
+  //     unitId: 1014,
+  //     unitNumber: "01MSINLO_BAT",
+  //     unitDisplayName: "MASINLOC",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1033,
+  //     unitNumber: "01SNMAN_BAT",
+  //     unitDisplayName: "SAN MANUEL",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1039,
+  //     unitNumber: "04ORMOC_BAT",
+  //     unitDisplayName: "ORMOC",
+  //     region: 1,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1036,
+  //     unitNumber: "05TOLEDO_BAT",
+  //     unitDisplayName: "TOLEDO",
+  //     region: 1,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1028,
+  //     unitNumber: "06KABAN_BAT",
+  //     unitDisplayName: "KABANKALAN",
+  //     region: 1,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1037,
+  //     unitNumber: "07UBAY_BAT",
+  //     unitDisplayName: "UBAY",
+  //     region: 1,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1042,
+  //     unitNumber: "11JASA_BAT",
+  //     unitDisplayName: "JASAAN",
+  //     region: 2,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1043,
+  //     unitNumber: "11VILLA_BAT",
+  //     unitDisplayName: "VILLANUEVA",
+  //     region: 2,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1041,
+  //     unitNumber: "13MACO_BAT",
+  //     unitDisplayName: "MACO",
+  //     region: 2,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 1040,
+  //     unitNumber: "13MALITA_BAT",
+  //     unitDisplayName: "MALITA",
+  //     region: 2,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  //   {
+  //     unitId: 9999,
+  //     unitNumber: "01GAMU_BAT",
+  //     unitDisplayName: "GAMU",
+  //     region: 0,
+  //     unitIsHideEdit: true,
+  //     facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  //   },
+  // ]
+  // sortedUnitRegionMapping = this.unitRegionMapping.sort((a, b) => a.region - b.region)
 
+  maintableRow = {
+    unitId: null,
+    unitNumber: "",
+    unitDisplayName: "",
+    region: 0,
+    unitIsHideEdit: true,
+    facility: null, rtd_en: null, rtd_ru: null, rtd_rd: null, rtd_cr: null, actual: null, mop: null, price_en: null, price_ru: null, price_rd: null, price_cr: null, remarks: null
+  }
+  maintable = []
+  regionalPrices = [
+    { price_ru: null, price_rd: null, price_cr: null }, // LUZ
+    { price_ru: null, price_rd: null, price_cr: null }, // VIS
+    { price_ru: null, price_rd: null, price_cr: null }, // MIN
+  ]
   constructor(private userService: UsersService, private ReservePortfolioService: ReservePortfolioService, private unitService: UnitsService, private modalService: NgbModal,) { }
 
   ngOnInit() {
@@ -222,23 +236,69 @@ export class ReservePortfolioComponent implements OnInit {
     });
   }
 
+  displayNames(unitNumber:string) {
+    let dictionary = {
+      "01CNCEP_BAT": "CONCEPCION",
+      "01LAMAO_BAT": "LAMAO",
+      "01LIMAY_BAT": "LIMAY",
+      "01MAGAPIT_BAT": "MAGAPIT",
+      "01MSINLO_BAT": "MASINLOC",
+      "01SNMAN_BAT": "SAN MANUEL",
+      "04ORMOC_BAT": "ORMOC",
+      "05TOLEDO_BAT": "TOLEDO",
+      "06KABAN_BAT": "KABANKALAN",
+      "07UBAY_BAT": "UBAY",
+      "11JASA_BAT": "JASAAN",
+      "11VILLA_BAT": "VILLANUEVA",
+      "13MACO_BAT": "MACO",
+      "13MALITA_BAT": "MALITA",
+      "01GAMU_BAT": "GAMU",
+      "03LUMBAN_BAT": "LUMBAN",
+    }
+    
+    return typeof dictionary[unitNumber] === 'undefined' ? unitNumber : dictionary[unitNumber]
+  }
+
   GetDataForMainTable() {
     this.ReservePortfolioService.getReserveSchedules().subscribe(data => {
+      let regionID = 0;
       Object.entries(data).map(entry => entry[1]).forEach(element => {
-        element.ReservePortfolios.forEach(unit => {
-          let targetIndex = this.sortedUnitRegionMapping.findIndex(el => el.unitNumber === unit.UnitNumber);
-          this.sortedUnitRegionMapping[targetIndex] = {
-            ...this.sortedUnitRegionMapping[targetIndex],
-            rtd_en: unit.RTD_EN,
-            rtd_ru: unit.RTD_RU,
-            rtd_rd: unit.RTD_RD,
-            rtd_cr: unit.RTD_CR,
-            actual: unit.Actual,
-            mop: unit.MOP,
-            price_en: unit.Price_EN,
-            remarks: unit.Remarks,
+        let filtered = element.ReservePortfolios.filter(r => r.UnitNumber !== '01MAGAPIT_BAT') // filter out MagapitBat; at the time of writing magapit has no data
+        filtered.forEach(unit => {
+          let targetIndex = this.maintable.findIndex(el => el.unitNumber === unit.UnitNumber);
+          if(targetIndex !== -1) { // table init
+            this.maintable[targetIndex] = {
+              ...this.maintableRow,
+              unitNumber: unit.UnitNumber,
+              unitDisplayName: this.displayNames(unit.UnitNumber),
+              rtd_en: unit.RTD_EN,
+              rtd_ru: unit.RTD_RU,
+              rtd_rd: unit.RTD_RD,
+              rtd_cr: unit.RTD_CR,
+              actual: unit.Actual,
+              mop: unit.MOP,
+              price_en: unit.Price_EN,
+              remarks: unit.Remarks,
+              region: regionID,
+            }
+          } else { // table update; seperate init and update to prevent emptying and re-filing table
+            this.maintable.push({
+              ...this.maintableRow,
+              unitNumber: unit.UnitNumber,
+              unitDisplayName: this.displayNames(unit.UnitNumber),
+              rtd_en: unit.RTD_EN,
+              rtd_ru: unit.RTD_RU,
+              rtd_rd: unit.RTD_RD,
+              rtd_cr: unit.RTD_CR,
+              actual: unit.Actual,
+              mop: unit.MOP,
+              price_en: unit.Price_EN,
+              remarks: unit.Remarks,
+              region: regionID,
+            })
           }
         })
+        regionID++;
       });
     }, err => {
       // do nothing
@@ -246,7 +306,7 @@ export class ReservePortfolioComponent implements OnInit {
   }
 
   getNumberOfUnitsInRegion(regionIndex: number){
-    return this.sortedUnitRegionMapping.filter(el => el.region === regionIndex).length
+    return this.maintable.filter(el => el.region === regionIndex).length
   }
 
   GetDataForReqtSchedTable() {
@@ -261,10 +321,10 @@ export class ReservePortfolioComponent implements OnInit {
       this.reqtSched[2].cluz_reqt = data[2]["ReserveRegionalSchedules"][0].MrktReqt;
       this.reqtSched[2].cluz_sched = data[2]["ReserveRegionalSchedules"][0].Schedule;
 
-      let index_of_luz = this.sortedUnitRegionMapping.findIndex(unit => unit.region === 0); // the first instance of region
-      this.sortedUnitRegionMapping[index_of_luz].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_luz].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_luz].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
+      let index_of_luz = this.maintable.findIndex(unit => unit.region === 0); // the first instance of region
+      this.regionalPrices[0].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[0].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[0].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
     });
     this.ReservePortfolioService.getRMRegionPrices24h("CVIS").subscribe(data => {
       this.reqtSched[0].cvis_reqt = data[0]["ReserveRegionalSchedules"][0].MrktReqt;
@@ -276,10 +336,10 @@ export class ReservePortfolioComponent implements OnInit {
       this.reqtSched[2].cvis_reqt = data[2]["ReserveRegionalSchedules"][0].MrktReqt;
       this.reqtSched[2].cvis_sched = data[2]["ReserveRegionalSchedules"][0].Schedule;
 
-      let index_of_vis = this.sortedUnitRegionMapping.findIndex(unit => unit.region === 1); // the first instance of region
-      this.sortedUnitRegionMapping[index_of_vis].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_vis].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_vis].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
+      let index_of_vis = this.maintable.findIndex(unit => unit.region === 1); // the first instance of region
+      this.regionalPrices[1].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[1].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[1].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
     });
     this.ReservePortfolioService.getRMRegionPrices24h("CMIN").subscribe(data => {
       this.reqtSched[0].cmin_reqt = data[0]["ReserveRegionalSchedules"][0].MrktReqt;
@@ -291,10 +351,10 @@ export class ReservePortfolioComponent implements OnInit {
       this.reqtSched[2].cmin_reqt = data[2]["ReserveRegionalSchedules"][0].MrktReqt;
       this.reqtSched[2].cmin_sched = data[2]["ReserveRegionalSchedules"][0].Schedule;
 
-      let index_of_min = this.sortedUnitRegionMapping.findIndex(unit => unit.region === 2); // the first instance of region
-      this.sortedUnitRegionMapping[index_of_min].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_min].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
-      this.sortedUnitRegionMapping[index_of_min].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
+      let index_of_min = this.maintable.findIndex(unit => unit.region === 2); // the first instance of region
+      this.regionalPrices[2].price_ru = data[0]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[2].price_rd = data[1]["ReserveRegionalSchedules"][0].Price;
+      this.regionalPrices[2].price_cr = data[2]["ReserveRegionalSchedules"][0].Price;
     });
   }
 
@@ -328,13 +388,13 @@ export class ReservePortfolioComponent implements OnInit {
       UnitNumber: this.selectedUnitNumber,
       Value: this.selectedPBRemarks
     };
-    console.log(payload, this.sortedUnitRegionMapping[this.editremarksOf_index].remarks);
+    console.log(payload, this.maintable[this.editremarksOf_index].remarks);
     
     
     // if (this.isGenRemarks) {
       this.ReservePortfolioService.saveGeneralRemarks(payload).subscribe(data => {
         this.successMessage = "Remarks successfully saved!";
-        this.sortedUnitRegionMapping[this.editremarksOf_index].remarks = this.selectedPBRemarks;
+        this.maintable[this.editremarksOf_index].remarks = this.selectedPBRemarks;
         this.userLogs('PB_General_Remarks: ' + this.selectedUnitNumber + '( ' + this.selectedPBRemarks + ' )');
         this.modalReference.close();
         this.timerMessage = setInterval(() => {

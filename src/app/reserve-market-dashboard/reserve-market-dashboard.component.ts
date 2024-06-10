@@ -176,12 +176,12 @@ export class ReserveMarketDashboardComponent implements OnInit {
     };
     this.userService.userLogs(data).subscribe();
   }
-  NoInternetAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/no_connection.mp3";
-    audio.load();
-    audio.play();
-  }
+  // NoInternetAudio(){
+  //   let audio = new Audio();
+  //   audio.src = "assets/audio/no_connection.mp3";
+  //   audio.load();
+  //   audio.play();
+  // }
   getCurrentInterval(interval:string){
     this.currentInterval = interval;
     return interval;
@@ -274,9 +274,9 @@ export class ReserveMarketDashboardComponent implements OnInit {
       }
       this.currentTimestamp = interval[4].Timestamp;
     }, error => {
-      error;
-      this.alertMessage = "No connection to server!";
-      this.NoInternetAudio();
+      // error;
+      // this.alertMessage = "No connection to server!";
+      // this.NoInternetAudio();
     });
   }
 

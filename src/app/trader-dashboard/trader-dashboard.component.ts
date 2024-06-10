@@ -1032,10 +1032,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  get formattedDate() {
-    return this.pbDate.format("YYYY-MM-DD");
-    // return this.datePipe.transform(this.pbDate.format("MM/DD/YYYY"), 'dd-MM-yyyy');
-  }
+  pbdate = moment(new Date()).format("YYYY-MM-DD"); // idk how this particular one works; angular is weird; but it works.. sooo...
   saverange(newValue){
     let dateObj = moment(newValue)
     this.pbDate = dateObj;
@@ -1718,7 +1715,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     },error=>{
       error;
       this.alertMessage = "No connection to server!";
-      this.NoInternetAudio();
+      if (!this.isAlarmDisable) {
+        this.NoInternetAudio();
+      }
     });
   }
 

@@ -77,8 +77,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of sortedUnitRegionMapping; let i = index">
-        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regions[data.region]}}</td>
+      <tr *ngFor="let data of maintable; let i = index">
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regions[data.region]}}</td>
         <td class="text-left">{{data.unitDisplayName}}</td>
         <td>{{data.rtd_en | number: '1.0-0'}}</td>
         <td>{{data.rtd_ru | number: '1.0-0'}}</td>
@@ -87,13 +87,13 @@
         <td [class.neg-actual]="data.actual < 0" [attr.title]="data.actual">{{data.actual | number: '1.0-0'}}</td>
         <td>{{data.mop}}</td>
         <td>{{data.price_en | number: '1.0-0'}}</td>
-        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_ru | number: '1.0-0'}}</td>
-        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_rd | number: '1.0-0'}}</td>
-        <td *ngIf="sortedUnitRegionMapping[i-1]?.region !== sortedUnitRegionMapping[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{data.price_cr | number: '1.0-0'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_ru | number: '1.0-0'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_rd | number: '1.0-0'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_cr | number: '1.0-0'}}</td>
         <td (mouseover)="data.unitIsHideEdit=false" (mouseleave)="data.unitIsHideEdit=true" style="min-width: 400px;">
           {{data.remarks}}
           <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.unitIsHideEdit"
-            (click)="OpenEditRemarksModal(PbRemarks,data.unitNumber,'',data.remarks,true,'U4',i)">
+            (click)="OpenEditRemarksModal(PbRemarks, data.unitNumber, '', data.remarks, true, 'U4',i)">
             <fa-icon [icon]="faEdit" size="sm"></fa-icon>
           </button>
         </td>

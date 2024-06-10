@@ -617,7 +617,7 @@
               <div class="input-group mt-5 mb-2">
                 <div class="input-group-prepend">
                   <!-- <input type="date" [value]="formattedDate" (change)="saverange()" /> -->
-                  <input class="mx-2 bg-transparent text-white font-weight-bold border-1 border-white rounded" type="date" [(ngModel)]="formattedDate" (ngModelChange)="saverange($event)" style="width: 200px; font-size: 14pt;" />
+                  <input class="mx-2 bg-transparent text-white font-weight-bold border-1 border-white rounded" type="date" [(ngModel)]="pbdate" (ngModelChange)="saverange($event)" style="width: 200px; font-size: 14pt;" />
                 </div>
                 <div class="input-group-prepend">
                   <button class="btn btn-primary font-weight-bold mr-3" (click)="LessPBDate()"> &lt; </button>
