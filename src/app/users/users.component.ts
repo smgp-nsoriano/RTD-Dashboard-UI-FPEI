@@ -167,6 +167,8 @@ export class UsersComponent implements OnInit {
 
   getUsers() {
     this.userServices.getUsers().subscribe(users => {
+      console.log(users);
+      
       this.users = users;
     }, error => {
       console.log(error.message);
@@ -226,6 +228,50 @@ export class UsersComponent implements OnInit {
       this.currentUserInfo = info;
     }, error => {
       console.log(error.message);
+    });
+  }
+
+  disable_confirmation_open(modal, isDisable: boolean, rec: null) {
+    this.isLoading = false;
+
+    this.modalTitle = isDisable ? 'Disable User Account' : "Enable User Account";
+    this.selectedRec = rec;
+    // this.isEdit = editing;
+
+    // this.form.get('userName').patchValue(this.selectedRec.UserName);
+    // this.form.get('firstName').patchValue(this.selectedRec.FirstName);
+    // this.form.get('lastName').patchValue(this.selectedRec.LastName);
+    // this.form.get('emailAddress').patchValue(this.selectedRec.EmailAddress);
+    // this.form.get('accountType').patchValue(this.selectedRec.UserTypeID);
+
+    this.modalRef = this.modalService.open(modal);
+  }
+
+  disableuser(rec) {
+    const index = this.users.indexOf(rec);
+
+    this.userServices.disableuser(rec).subscribe(data => {
+      // this.users.splice(index, 1);
+      this.users[index].IsActive = false;
+      this.modalRef.close();
+      this.alert.type = 'success';
+      this.alert.message = 'Record disabled!';
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  enableuser(rec) {
+    const index = this.users.indexOf(rec);
+
+    this.userServices.enableuser(rec).subscribe(data => {
+      // this.users.splice(index, 1);
+      this.users[index].IsActive = true;
+      this.modalRef.close();
+      this.alert.type = 'success';
+      this.alert.message = 'Record enabled!';
+    }, error => {
+      console.log(error);
     });
   }
 }

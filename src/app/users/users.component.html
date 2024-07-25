@@ -49,9 +49,11 @@
                   <td>{{ rec.LastName }}</td>
                   <td>{{ rec.EmailAddress }}</td>
                   <td class="w-10 text-center">
-                    <button class="btn btn-sm btn-outline-secondary btn-xs font-sm"  (click)="modal(user, true, rec)">Update</button>
-                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1"
-                    (click)="otherModal(delete, true ,rec)">Delete</button>
+                    <!-- enable/disable user -->
+                    <button *ngIf="rec.IsActive" class="btn btn-sm btn-outline-danger btn-xs font-sm" (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)">Disable</button>
+                    <button *ngIf="!rec.IsActive" class="btn btn-sm btn-outline-success btn-xs font-sm" (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)">Enable</button>
+                    <button class="btn btn-sm btn-outline-secondary btn-xs font-sm ml-1" (click)="modal(user, true, rec)">Update</button>
+                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" (click)="otherModal(delete, true ,rec)">Delete</button>
                     <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" (click)="otherModal(delete, false ,rec)">Reset Password</button>
                   </td>
                 </tr>
@@ -127,4 +129,33 @@
       <button *ngIf="isDeleting" class="btn btn-sm btn-danger" (click)="deleteuser(selectedRec)">Delete</button>
       <button *ngIf="!isDeleting" class="btn btn-sm btn-danger" (click)="resetpassword(selectedRec)">Reset</button>
     </div>
+</ng-template>
+
+<ng-template #disableConfirm let-modal>
+  <!-- <div>asd</div> -->
+  <div class="modal-header">
+    <h6 class="modal-title">{{ modalTitle }}</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <strong *ngIf="selectedRec.IsActive">Are you sure you want to disable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
+    <strong *ngIf="!selectedRec.IsActive">Are you sure you want to disable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
+
+    <div class="my-3">
+      <div>FirstName: <strong>{{selectedRec.FirstName}}</strong></div>
+      <div>LastName: <strong>{{selectedRec.LastName}}</strong></div>
+      <div>EmailAddress: <strong>{{selectedRec.EmailAddress}}</strong></div>
+    </div>
+
+    <div *ngIf="selectedRec.IsActive"><span class="text-warning">Note:</span> Disabling a user will not automatically log the user out.</div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button *ngIf="selectedRec.IsActive" class="btn btn-sm btn-danger" (click)="disableuser(selectedRec)">Disable</button>
+    <button *ngIf="!selectedRec.IsActive" class="btn btn-sm btn-success" (click)="enableuser(selectedRec)">Enable</button>
+  </div>
 </ng-template>

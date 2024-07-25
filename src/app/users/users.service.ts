@@ -55,6 +55,14 @@ export class UsersService {
     return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`);
   }
 
+  disableuser(data) {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Disable/${data.UserID}`);
+  }
+
+  enableuser(data) {
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Enable/${data.UserID}`);
+  }
+
   resetpassword(data) {
     return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data);
   }
