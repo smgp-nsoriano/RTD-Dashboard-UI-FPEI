@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../env.service';
 
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -108,4 +109,8 @@ export class TraderDashboardService {
     getAllUnitDAP(){
       return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`);
     }
+
+
+
+
 }

@@ -47,21 +47,15 @@
 
     <!-- Reserve Market view -->
     <div class="col-lg-12 text-white" *ngIf="this.dashboardType == 'reserve-market'">
-
-      <app-reserve-market-dashboard></app-reserve-market-dashboard>
-      
+     <app-reserve-market-dashboard></app-reserve-market-dashboard>
     </div>
     <!-- Reserve Market Requirement -->
     <div class="col-lg-12 text-white" *ngIf="this.dashboardType == 'reserve-req'">
-
       <app-reserve-requirement></app-reserve-requirement>
-      
     </div>
     <!-- Reserve Market portfolio -->
     <div class="col-lg-12 text-white" *ngIf="this.dashboardType == 'reserve-portfolio'">
-    
       <app-reserve-portfolio></app-reserve-portfolio>
-    
     </div>
     <!-- Trader view -->
     <div class="col-lg-12" *ngIf="this.dashboardType == 'trader'">

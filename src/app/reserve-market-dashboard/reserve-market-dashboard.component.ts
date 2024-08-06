@@ -4,14 +4,14 @@ import * as moment from 'moment';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UsersService } from '../users/users.service';
 import { ReserveMarketDashboardServiceService } from './reserve-market-dashboard-service.service';
-
+import { EventService } from '../trader-dashboard/EventService';
 @Component({
   selector: 'app-reserve-market-dashboard',
   templateUrl: './reserve-market-dashboard.component.html',
-  styleUrls: ['./reserve-market-dashboard.component.scss']
+  styleUrls: ['./reserve-market-dashboard.component.scss'],
 })
 export class ReserveMarketDashboardComponent implements OnInit {
-  constructor(private RMDashboardService: ReserveMarketDashboardServiceService, private userService: UsersService, private modalService: NgbModal,) { }
+  constructor(private eventService: EventService,private RMDashboardService: ReserveMarketDashboardServiceService, private userService: UsersService, private modalService: NgbModal,) { }
 
   isShowBid
   alertMessage
@@ -163,6 +163,8 @@ export class ReserveMarketDashboardComponent implements OnInit {
       this.SetTimeFromServer();
     }, 15000);
 
+    //refresh button click event from Trader Page to Reserve Market
+    this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
     this.PopulateUnits();
     this.SetIntervals();
     this.TimerGetData();
@@ -205,6 +207,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
     });
   }
   TimerGetData(){
+    
     this.timerData = setInterval(() => {
       
       if (+moment(this.now).second() == 3) {
@@ -281,28 +284,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
   }
 
   RefreshData(){
-    // this.alarmOutsideLimit=false;
-    // this.alarmNoconnection=false;
-    // this.alarmRTDChanged=false;
-    // this.alarmHAP=false;
-    // this.alarmOverride=false;
-    
     this.SetIntervals();
-    // if(this.currentUnitPrice.name != '' && this.currentUnitPrice.name != 'SELECT UNIT'){
-    //   this.SetUnitPrice(this.currentUnitPrice.name);
-    // }
-    // if(this.currentUnit1.name != '' && this.currentUnit1.name != 'SELECT UNIT'){
-    //   this.SetUnitValue(this.currentUnit1.name, 'U1');
-    // }
-    // if(this.currentUnit2.name != '' && this.currentUnit2.name != 'SELECT UNIT'){
-    //   this.SetUnitValue(this.currentUnit2.name, 'U2');
-    // }
-    // if(this.currentUnit3.name != '' && this.currentUnit3.name != 'SELECT UNIT'){
-    //   this.SetUnitValue(this.currentUnit3.name, 'U3');
-    // }
-    // if(this.currentUnit4.name != '' && this.currentUnit4.name != 'SELECT UNIT'){
-    //   this.SetUnitValue(this.currentUnit4.name, 'U4');
-    // }
     if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
       this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
     }
@@ -319,16 +301,36 @@ export class ReserveMarketDashboardComponent implements OnInit {
       this.SetReserveMarketValue(this.RMcurrentUnit3.name, "U3");
     }
 
-    // this.GetDemand();
-    // this.PlotHAPChart();
-    // this.GetUnitPerRegion();
-    // this.RefreshPBRemarks();
+    this.RefreshReserveMarket();
+
+    if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMcurrentUnit3.name, 'U3');
+    }
+  }
+
+  RefreshReserveMarket(){
+    if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
+      this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
+    }
+    if(this.RMEnPriceUnit.name != '' && this.RMEnPriceUnit.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMEnPriceUnit.name, "enPrice");
+    }
+    if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMcurrentUnit1.name, "U1");
+    }
+    if(this.RMcurrentUnit2.name != '' && this.RMcurrentUnit2.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMcurrentUnit2.name, "U2");
+    }
+    if(this.RMcurrentUnit3.name != '' && this.RMcurrentUnit2.name != 'SELECT UNIT'){
+      this.SetReserveMarketValue(this.RMcurrentUnit3.name, "U3");
+    }
   }
 
   ManualRefresh() {
+    console.log("Reserve Market Refresh Triggered");
     this.RefreshData();
-    // this.PlotDAPChart();
-    // this.SetTimeFromServer();
+    this.PopulateUnits();
+    this.OverrideValueRM();
   }
 
   SetReserveMarketPricesValue(unitNumber:string, unitType:string){
@@ -402,7 +404,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
 
       // this.PlotHAPChart();
       // this.PlotDAPChart();
-      this.ManualRefresh();
+      this.RefreshReserveMarket();
 
     } else {
       // if(inSessionStore[])
@@ -410,7 +412,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
       // this.PlotHAPChart();
       // this.PlotDAPChart();
 
-      this.ManualRefresh();
+      this.RefreshReserveMarket();
       //console.log('unit selected');
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
@@ -439,12 +441,12 @@ export class ReserveMarketDashboardComponent implements OnInit {
         this.dbValues[x]["RM" + unitType + "_DR_Sched"] = null;
       }
 
-      this.ManualRefresh();
+      this.RefreshReserveMarket();
 
     } else {
       this.SetReserveMarketValue(currentUnit.name, unitType);
 
-      this.ManualRefresh();
+      this.RefreshReserveMarket();
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
   }

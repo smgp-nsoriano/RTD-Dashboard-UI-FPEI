@@ -5,6 +5,8 @@ import { UnitsService } from '../units/units.service';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { EventService } from '../trader-dashboard/EventService';
+
 
 @Component({
   selector: 'app-reserve-portfolio',
@@ -174,7 +176,7 @@ export class ReservePortfolioComponent implements OnInit {
     { price_ru: null, price_rd: null, price_cr: null }, // VIS
     { price_ru: null, price_rd: null, price_cr: null }, // MIN
   ]
-  constructor(private userService: UsersService, private ReservePortfolioService: ReservePortfolioService, private unitService: UnitsService, private modalService: NgbModal,) { }
+  constructor(private eventService: EventService, private userService: UsersService, private ReservePortfolioService: ReservePortfolioService, private unitService: UnitsService, private modalService: NgbModal,) { }
 
   ngOnInit() {
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -183,8 +185,12 @@ export class ReservePortfolioComponent implements OnInit {
       this.SetTimeFromServer();
     }, 15000);
     
-    // this.GetInterval();
-    this.RefreshDashboard();
+    this.GetInterval();
+
+    //refresh button click event from Trader Page to Reserve Portfolio
+    this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
+
+
   }
 
   SetTimeFromServer(){
@@ -224,9 +230,15 @@ export class ReservePortfolioComponent implements OnInit {
   }
 
   RefreshDashboard() {
-    console.log("Dashboard refresh");
     this.GetDataForReqtSchedTable();
     this.GetDataForMainTable();
+    
+  }
+  ManualRefresh(){
+    console.log("Reserve Portfolio Refresh Triggered");
+    this.RefreshDashboard();
+    this.PopulateUnits();
+    this.SetTimeFromServer
   }
 
   GetInterval() {
