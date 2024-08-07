@@ -142,7 +142,7 @@
 
   <div class="modal-body">
     <strong *ngIf="selectedRec.IsActive">Are you sure you want to disable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
-    <strong *ngIf="!selectedRec.IsActive">Are you sure you want to disable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
+    <strong *ngIf="!selectedRec.IsActive">Are you sure you want to enable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
 
     <div class="my-3">
       <div>FirstName: <strong>{{selectedRec.FirstName}}</strong></div>

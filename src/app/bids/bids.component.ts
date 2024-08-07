@@ -1145,7 +1145,7 @@ export class BidsComponent implements OnInit {
 
         const link = document.createElement('a');
         link.href = blobUrl;
-        link.download = 'BidOffer.xml';
+        link.download = `BidOffer${unitId}.xml`;
         document.body.appendChild(link);
         link.click();
 
