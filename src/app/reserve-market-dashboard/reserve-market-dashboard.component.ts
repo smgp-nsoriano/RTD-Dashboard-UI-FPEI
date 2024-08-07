@@ -300,37 +300,12 @@ export class ReserveMarketDashboardComponent implements OnInit {
     if(this.RMcurrentUnit3.name != '' && this.RMcurrentUnit2.name != 'SELECT UNIT'){
       this.SetReserveMarketValue(this.RMcurrentUnit3.name, "U3");
     }
-
-    this.RefreshReserveMarket();
-
-    if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
-      this.SetReserveMarketValue(this.RMcurrentUnit3.name, 'U3');
-    }
-  }
-
-  RefreshReserveMarket(){
-    if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
-      this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
-    }
-    if(this.RMEnPriceUnit.name != '' && this.RMEnPriceUnit.name != 'SELECT UNIT'){
-      this.SetReserveMarketValue(this.RMEnPriceUnit.name, "enPrice");
-    }
-    if(this.RMcurrentUnit1.name != '' && this.RMcurrentUnit1.name != 'SELECT UNIT'){
-      this.SetReserveMarketValue(this.RMcurrentUnit1.name, "U1");
-    }
-    if(this.RMcurrentUnit2.name != '' && this.RMcurrentUnit2.name != 'SELECT UNIT'){
-      this.SetReserveMarketValue(this.RMcurrentUnit2.name, "U2");
-    }
-    if(this.RMcurrentUnit3.name != '' && this.RMcurrentUnit2.name != 'SELECT UNIT'){
-      this.SetReserveMarketValue(this.RMcurrentUnit3.name, "U3");
-    }
   }
 
   ManualRefresh() {
     console.log("Reserve Market Refresh Triggered");
     this.RefreshData();
     this.PopulateUnits();
-    this.OverrideValueRM();
   }
 
   SetReserveMarketPricesValue(unitNumber:string, unitType:string){
@@ -404,7 +379,6 @@ export class ReserveMarketDashboardComponent implements OnInit {
 
       // this.PlotHAPChart();
       // this.PlotDAPChart();
-      this.RefreshReserveMarket();
 
     } else {
       // if(inSessionStore[])
@@ -412,7 +386,6 @@ export class ReserveMarketDashboardComponent implements OnInit {
       // this.PlotHAPChart();
       // this.PlotDAPChart();
 
-      this.RefreshReserveMarket();
       //console.log('unit selected');
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
@@ -440,13 +413,9 @@ export class ReserveMarketDashboardComponent implements OnInit {
         this.dbValues[x]["RM" + unitType + "_FR_Sched"] = null;
         this.dbValues[x]["RM" + unitType + "_DR_Sched"] = null;
       }
-
-      this.RefreshReserveMarket();
-
     } else {
       this.SetReserveMarketValue(currentUnit.name, unitType);
 
-      this.RefreshReserveMarket();
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
   }
