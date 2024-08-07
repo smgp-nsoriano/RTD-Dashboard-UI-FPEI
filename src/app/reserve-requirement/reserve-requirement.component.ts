@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { ReserveRequirementService } from './reserve-requirement.service';
 import * as moment from 'moment';
+import { EventService } from '../trader-dashboard/EventService';
 
 require('highcharts/modules/no-data-to-display')(Highcharts);
 
@@ -223,7 +224,7 @@ export class ReserveRequirementComponent implements OnInit {
   };
 
 
-  constructor(private ReserveRequirementService: ReserveRequirementService) { }
+  constructor(private eventService:EventService, private ReserveRequirementService: ReserveRequirementService) { }
 
   ngOnInit() {
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -233,10 +234,12 @@ export class ReserveRequirementComponent implements OnInit {
     }, 30000);
 
     this.GetDataPerRegion();
+    
+    //refresh button click event from Trader Dashboard to RM,RR,RP
+    this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
   }
 
   GetDataPerRegion() {
-    console.log("updating tables");
     this.ReserveRequirementService.getRMRegionPrices24h("CLUZ").subscribe(data => {
       // console.log(data);
       let resData = Object.entries(data).map(entry => entry[1])
@@ -356,5 +359,10 @@ export class ReserveRequirementComponent implements OnInit {
         this.GetDataPerRegion();
       }
     }, 15000);
+  }
+
+  ManualRefresh(){
+    console.log("Reserve Requirement Refresh Triggered");
+    this.GetDataPerRegion();
   }
 }

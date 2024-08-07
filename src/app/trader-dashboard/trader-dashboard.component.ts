@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { faRetweet,faBellSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TraderDashboardService } from './trader-dashboard.service'
+import { EventService } from './EventService';
 // import { DatePipe } from '@angular/common';
 
 declare const require;
@@ -17,7 +18,7 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
 @Component({
   selector: 'app-trader-dashboard',
   templateUrl: './trader-dashboard.component.html',
-  styleUrls: ['./trader-dashboard.component.scss']
+  styleUrls: ['./trader-dashboard.component.scss'],
 })
 export class TraderDashboardComponent implements OnInit, OnDestroy {
 
@@ -774,11 +775,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private modalService: NgbModal,
     private traderDashboardService: TraderDashboardService,
+    private eventService: EventService,
     private router: Router,
     config: NgbModalConfig
   ) { 
     config.backdrop = 'static';
     config.keyboard = false;}
+
 
   ngOnInit() {
     this.isImport = true;
@@ -959,6 +962,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   ManualRefresh(){
+    console.log("Energy Trader Refresh Triggered")
+    this.eventService.Refresh();//call to refresh the pages for RM,RR,RP
     this.RefreshData();
     this.PlotDAPChart();
     this.SetTimeFromServer();
