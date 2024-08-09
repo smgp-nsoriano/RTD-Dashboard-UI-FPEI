@@ -15,10 +15,12 @@ export class ReserveRequirementService {
     return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
   }
 
-  getRMRegionPrices24h(region) {
-    let dateNow = moment(new Date()).format("MM/DD/YYYY");
+  getRMRegionPrices24h(region, date) {
+    let rr_date = moment(date).format("MM/DD/YYYY");
+    
+    // let dateNow = moment(new Date()).format("MM/DD/YYYY");
     // dateNow = "02/26/2024"
     
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices24h?Region=${region}&date=${dateNow}`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices24h?Region=${region}&date=${rr_date}`);
   }
 }

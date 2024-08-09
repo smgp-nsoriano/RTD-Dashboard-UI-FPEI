@@ -239,8 +239,9 @@ export class ReserveRequirementComponent implements OnInit {
     this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
   }
 
+  rr_date = moment(new Date()).format("YYYY-MM-DD");
   GetDataPerRegion() {
-    this.ReserveRequirementService.getRMRegionPrices24h("CLUZ").subscribe(data => {
+    this.ReserveRequirementService.getRMRegionPrices24h("CLUZ", this.rr_date).subscribe(data => {
       // console.log(data);
       let resData = Object.entries(data).map(entry => entry[1])
 
@@ -262,7 +263,7 @@ export class ReserveRequirementComponent implements OnInit {
       this.pushDataToChart("cr_luz_options", cr_reqt, cr_sched, cr_price)
       this.updateFlags[2] = true
     });
-    this.ReserveRequirementService.getRMRegionPrices24h("CVIS").subscribe(data => {
+    this.ReserveRequirementService.getRMRegionPrices24h("CVIS", this.rr_date).subscribe(data => {
       let resData = Object.entries(data).map(entry => entry[1])
 
       let ru_reqt = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])
@@ -283,7 +284,7 @@ export class ReserveRequirementComponent implements OnInit {
       this.pushDataToChart("cr_vis_options", cr_reqt, cr_sched, cr_price)
       this.updateFlags[5] = true
     });
-    this.ReserveRequirementService.getRMRegionPrices24h("CMIN").subscribe(data => {
+    this.ReserveRequirementService.getRMRegionPrices24h("CMIN", this.rr_date).subscribe(data => {
       let resData = Object.entries(data).map(entry => entry[1])
 
       let ru_reqt = resData[0]['ReserveRegionalSchedules'].map(obj => [parseInt(obj.Interval.split(":")[0]).toString(), obj.MrktReqt])

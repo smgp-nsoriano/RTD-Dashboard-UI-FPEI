@@ -1,5 +1,10 @@
 <div>
-  <div class="row p-5">
+  <div class="row px-5 pt-3">
+    <input class="mx-2 bg-transparent text-white font-weight-bold border-1 border-white rounded" type="date"
+       [(ngModel)]="rr_date" (ngModelChange)="GetDataPerRegion()" style="width: 200px; font-size: 14pt;" />
+       <!-- [(ngModel)]="pbdate" (ngModelChange)="saverange($event)" -->
+  </div>
+  <div class="row px-5 py-2">
     <!-- Luzon -->
     <div class="col-4 p-1">
       <div class="border border-white p-2 border-1">
