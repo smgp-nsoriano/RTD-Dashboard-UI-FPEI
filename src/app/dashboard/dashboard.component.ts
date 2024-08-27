@@ -771,10 +771,20 @@ export class DashboardComponent implements OnInit, OnDestroy{
     audio.play();
   }
 
-  getDecimal(number: number): number {
-    const decimalPart = Math.abs(number - Math.floor(number));
-    const decimalOnly = Number(decimalPart.toFixed(2).slice(2));
-    return decimalOnly;
+  getDecimal(number: number): string {
+    // this does not work for xx.0x (example 118.09 turns into 118.9)
+    // const decimalPart = Math.abs(number - Math.floor(number));
+    // const decimalOnly = Number(decimalPart.toFixed(2).slice(2));
+    // return decimalOnly;
+
+    const decimalPart = number % 1;
+    const decimalOnly = Number(decimalPart.toFixed(2)).toString();
+    const decimal_parts = decimalOnly.split(".")
+    if (decimal_parts[1]){
+      return decimal_parts[1]
+    } else {
+      return "0"
+    }
   }
 
   getWholeNumber(number: number): number {
