@@ -105,10 +105,33 @@
   padding: 1px 1px;
 }
 
+.reserve-data-status {
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 1.5rem;
+  font-weight: bold;
+  float: right;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 1px;
+}
+
 .data-decimal {
   width: 100px !important;
   height: 55px !important;
   font-size: 3rem;
+  font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  padding: 1px 1px;
+}
+
+.reserve-data-decimal {
+  width: 50px !important;
+  height: 30px !important;
+  font-size: 1.5rem;
   font-weight: bold;
   position: absolute;
   bottom: 0;

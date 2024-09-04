@@ -694,7 +694,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.selectedUnit(+this.operatorUnit.UnitID, true, this.operatorUnit);
           //console.log(this.operatorUnit);
 
-          this.isBat = this.operatorUnit.UnitNumber.includes("BAT")
+          this.isBat = (this.operatorUnit.UnitNumber.includes("BAT") || this.operatorUnit.UnitNumber === '13SMC_U01' || this.operatorUnit.UnitNumber === '13SMC_U02')
         });
       }else{
         this.dashboardService.getSiteList(this.permissionID).subscribe(data => {
