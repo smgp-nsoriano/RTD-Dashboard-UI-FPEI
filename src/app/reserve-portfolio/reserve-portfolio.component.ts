@@ -266,6 +266,8 @@ export class ReservePortfolioComponent implements OnInit {
       "13MALITA_BAT": "MALITA",
       "01GAMU_BAT": "GAMU",
       "03LUMBAN_BAT": "LUMBAN",
+      "13SMC_U01": "13SMC_U01",
+      "13SMC_U02": "13SMC_U02",
     }
     
     return typeof dictionary[unitNumber] === 'undefined' ? unitNumber : dictionary[unitNumber]

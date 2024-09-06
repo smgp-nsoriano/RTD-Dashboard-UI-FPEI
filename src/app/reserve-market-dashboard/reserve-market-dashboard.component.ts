@@ -259,7 +259,7 @@ export class ReserveMarketDashboardComponent implements OnInit {
   PopulateUnits(){
     let permissionID = +localStorage.getItem('PermissionID');
     this.RMDashboardService.getUnitPerAccess(+permissionID).subscribe(data => {
-      let bateries = Object.entries(data).map(entry => entry[1]).filter(e => e.TypeID === "BATT" && e.UnitNumber !== "01ANGAT_A" );
+      let bateries = Object.entries(data).map(entry => entry[1]).filter(e => (e.TypeID === "BATT" || e.UnitNumber === "13SMC_U01" || e.UnitNumber === "13SMC_U02") && e.UnitNumber !== "01ANGAT_A");
       // console.log(data);
       
       this.RMEnPrice = bateries
