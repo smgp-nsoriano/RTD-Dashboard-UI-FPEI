@@ -22,7 +22,7 @@
 
 <main class="container-fluid" >
    <div class="row">
-     <div class="col-lg-5 col-md-6 col-sm-12">
+    <div class="col-lg-5 col-md-6 col-sm-12">
       <div class="current-time text-warning ml-3">
         {{ FormatClock() }}
         <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRecycle" size="lg"></fa-icon></button>
@@ -58,7 +58,7 @@
       <app-reserve-portfolio></app-reserve-portfolio>
     </div>
     <!-- Trader view -->
-    <div class="col-lg-12" *ngIf="this.dashboardType == 'trader'">
+    <div class="col-lg-12" *ngIf="this.dashboardType == 'trader'"> 
       <div class="card bg-dark border-dark text-light">
         <div class="card-body h-100">
           <div class="row">

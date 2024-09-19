@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReservePortfolioService } from './reserve-portfolio.service';
 import { UsersService } from '../users/users.service';
 import { UnitsService } from '../units/units.service';
@@ -13,7 +13,7 @@ import { EventService } from '../trader-dashboard/EventService';
   templateUrl: './reserve-portfolio.component.html',
   styleUrls: ['./reserve-portfolio.component.scss']
 })
-export class ReservePortfolioComponent implements OnInit {
+export class ReservePortfolioComponent implements OnDestroy,OnInit{
   faEdit = faEdit;
   tmp = ""
   interval: string = null
@@ -31,6 +31,17 @@ export class ReservePortfolioComponent implements OnInit {
   successMessage
   timerMessage
 
+  alertMessage:string;
+  alarmOutsideLimit:boolean;
+  alarmNoconnection:boolean;
+  alarmRTDChanged:boolean;
+  alarmHAP:boolean;
+  alarmOverride:boolean;
+  timerAlarmOutsideLimit:any;
+  timerAlarmReserveChanged:any;
+  timerAlarmNoConnection:any;
+  timerAlarmHAP:any;
+ 
   reqtSched = [
     { header: "Regulation Up", cluz_reqt: null, cluz_sched: null, cvis_reqt: null, cvis_sched: null, cmin_reqt: null, cmin_sched: null },
     { header: "Regulation Down", cluz_reqt: null, cluz_sched: null, cvis_reqt: null, cvis_sched: null, cmin_reqt: null, cmin_sched: null },
@@ -427,6 +438,15 @@ export class ReservePortfolioComponent implements OnInit {
     //   });
     // }
   
+  }
+  ngOnDestroy() {
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmReserveChanged);
+    clearInterval(this.timerAlarmNoConnection);
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alertMessage =null;
   }
 
   userLogs(action:string){
