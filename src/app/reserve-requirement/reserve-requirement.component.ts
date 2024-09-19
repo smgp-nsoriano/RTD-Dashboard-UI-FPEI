@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,OnDestroy } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { ReserveRequirementService } from './reserve-requirement.service';
 import * as moment from 'moment';
@@ -11,11 +11,23 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
   templateUrl: './reserve-requirement.component.html',
   styleUrls: ['./reserve-requirement.component.scss']
 })
-export class ReserveRequirementComponent implements OnInit {
+export class ReserveRequirementComponent implements OnInit,OnDestroy {
   now
   timerData
   timerDT
   timerClock
+
+  alertMessage:string;
+   alarmOutsideLimit:boolean;
+  alarmNoconnection:boolean;
+  alarmRTDChanged:boolean;
+  alarmHAP:boolean;
+  alarmOverride:boolean;
+  timerAlarmOutsideLimit:any;
+  timerAlarmReserveChanged:any;
+  timerAlarmNoConnection:any;
+  timerAlarmHAP:any;
+ 
   regions = ['CLUZ', 'CVIS', 'CMIN']
   Highcharts = Highcharts;
   optionsTemplate = {
@@ -227,6 +239,8 @@ export class ReserveRequirementComponent implements OnInit {
   constructor(private eventService:EventService, private ReserveRequirementService: ReserveRequirementService) { }
 
   ngOnInit() {
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
@@ -365,5 +379,16 @@ export class ReserveRequirementComponent implements OnInit {
   ManualRefresh(){
     console.log("Reserve Requirement Refresh Triggered");
     this.GetDataPerRegion();
+  }
+
+
+  ngOnDestroy() {
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmReserveChanged);
+    clearInterval(this.timerAlarmNoConnection);
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alertMessage =null;
   }
 }

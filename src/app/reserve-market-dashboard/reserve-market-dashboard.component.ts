@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Subscription,timer } from 'rxjs';
 import * as moment from 'moment';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UsersService } from '../users/users.service';
@@ -10,11 +10,29 @@ import { EventService } from '../trader-dashboard/EventService';
   templateUrl: './reserve-market-dashboard.component.html',
   styleUrls: ['./reserve-market-dashboard.component.scss'],
 })
-export class ReserveMarketDashboardComponent implements OnInit {
+export class ReserveMarketDashboardComponent implements OnInit,OnDestroy {
   constructor(private eventService: EventService,private RMDashboardService: ReserveMarketDashboardServiceService, private userService: UsersService, private modalService: NgbModal,) { }
 
+
+  alertMessage:string;
+  isAlarmDisable:boolean;
+  isWithAlarmDisable:string;
+  alertType:string;
+  alarmActive:boolean;
+  alarmOutsideLimit:boolean;
+  alarmNoconnection:boolean;
+  alarmRTDChanged:boolean;
+  alarmHAP:boolean;
+  alarmOverride:boolean;
+  timerAlarmOutsideLimit:any;
+  timerAlarmReserveChanged:any;
+  timerAlarmNoConnection:any;
+  timerAlarmHAP:any;
+  timeoutId: any;
+  dashboardType:string;
+
   isShowBid
-  alertMessage
+  
   currentTimestamp
   timerData
   timerClock
@@ -154,10 +172,12 @@ export class ReserveMarketDashboardComponent implements OnInit {
     } else {
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
+  
 
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
-    
+    this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
+    this.dashboardType = "reserveMarket";
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
@@ -165,6 +185,8 @@ export class ReserveMarketDashboardComponent implements OnInit {
 
     //refresh button click event from Trader Page to Reserve Market
     this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
+    this.eventService.getEnableClickEvent().subscribe(()=>{this.EnableAlarm();});
+    this.eventService.getDisableClickEvent().subscribe(()=>{this.DisableAlarm();});
     this.PopulateUnits();
     this.SetIntervals();
     this.TimerGetData();
@@ -207,53 +229,65 @@ export class ReserveMarketDashboardComponent implements OnInit {
     });
   }
   TimerGetData(){
-    
-    this.timerData = setInterval(() => {
-      
+    this.timerData = setInterval(() => {      
       if (+moment(this.now).second() == 3) {
         this.RefreshData();
       }
+      if(!this.isAlarmDisable && this.dashboardType == "reserveMarket"){
+        if(+moment(this.now).second() == 10){  
+            if(this.alarmOutsideLimit){
+              this.alertMessage = "Actual MW, Outside limits!";
+              this.OutsideLimitAudio();
+                this.timerAlarmOutsideLimit=setInterval(() => {
+                  this.OutsideLimitAudio();
+                }, 5000);
+                this.timeoutId = setTimeout(() => {
+                  this.alertMessage = null;
+                  clearInterval(this.timerAlarmOutsideLimit);
+                  console.log('Interval cleared after 30 seconds!');
+                  this.alarmOutsideLimit = false;
+                }, 30000);
+            }
+          }
 
-      // if(!this.isAlarmDisable && this.dashboardType == 'trader'){
-      //   if(+moment(this.now).second() == 10){
-      //     if(this.alarmOutsideLimit){
-      //       this.alertMessage = "Actual MW, Outside limits!"
-      //       this.OutsideLimitAudio();
-      //       this.timerAlarmOutsideLimit = setInterval(() => {
-      //       this.OutsideLimitAudio();
-      //       }, 4000);
-      //     }
-      //   }
+        if(+moment(this.now).minute() % 5 == 0){
+          if(+moment(this.now).second() == 5){
+              if(this.alarmRTDChanged){
+                this.alertMessage = "RTD has changed!";
+                 this.RTDChangedAudio();
+                 console.log('Reserve Market Change!');
+              } 
+          }
+          //if(+moment(this.now).second() == 10){
+                //if(this.alarmHAP){
+                  //this.alertMessage = "HAP is in use!"
+                  //this.timerAlarmHAP = setInterval(() => {
+                    //this.HAPAudio();
+                  //}, 4000);
+              //}else if(this.alarmOverride){
+                //this.alertMessage = "Override value is in use!"
+                //this.OverrideAudio();
+              //}
+            //}
+         }
 
-      //   if(+moment(this.now).minute() % 5 == 0){
-      //     //Alarms
-      //     if(+moment(this.now).second() == 5){
-      //         if(this.alarmRTDChanged){
-      //           this.alertMessage = "RTD has changed!"
-      //           this.RTDChangedAudio();
-      //         } 
-      //     }
-        
-      //     if(+moment(this.now).second() == 10){
-      //           if(this.alarmHAP){
-      //             this.alertMessage = "HAP is in use!"
-      //             this.timerAlarmHAP = setInterval(() => {
-      //               this.HAPAudio();
-      //             }, 4000);
-      //         }else if(this.alarmOverride){
-      //           this.alertMessage = "Override value is in use!"
-      //           this.OverrideAudio();
-      //         }
-      //       }
-      //     }
-      // }
-
-      
-      // if(+moment(this.now).minute() == 21 && +moment(this.now).second() == 2){
-      //     this.PlotDAPChart();
-      //     this.PlotAllUnitDAPChart();
-      // }
+       }  
     }, 1000);
+  }
+
+  KillAlarm(){
+    this.alertMessage = null;
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    if(this.timerAlarmOutsideLimit){
+      clearInterval(this.timerAlarmOutsideLimit);
+    }
+    if(this.timeoutId){
+      clearTimeout(this.timeoutId);
+    }
+    clearInterval(this.timerAlarmNoConnection);
+    this.eventService.stopAudio();
   }
 
   PopulateUnits(){
@@ -277,9 +311,13 @@ export class ReserveMarketDashboardComponent implements OnInit {
       }
       this.currentTimestamp = interval[4].Timestamp;
     }, error => {
-      // error;
-      // this.alertMessage = "No connection to server!";
-      // this.NoInternetAudio();
+      //error;
+      //this.alertMessage = "No connection to server!";
+      //if (!this.isAlarmDisable) {
+        //this.timerAlarmNoConnection = setInterval(() => {
+          //this.NoInternetAudio();
+         //}, 4000);
+      //}
     });
   }
 
@@ -303,6 +341,11 @@ export class ReserveMarketDashboardComponent implements OnInit {
   }
 
   ManualRefresh() {
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmNoConnection);
+    this.eventService.stopAudio();
+    this.alarmOutsideLimit=false;
+    this.alarmRTDChanged =false;
     console.log("Reserve Market Refresh Triggered");
     this.RefreshData();
     this.PopulateUnits();
@@ -355,6 +398,48 @@ export class ReserveMarketDashboardComponent implements OnInit {
           this["show"+ unitType +"DRcolumn"] = true // show dr column if there is value
         }
       }
+
+      if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < 0) && 
+        (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
+        this.alarmOutsideLimit=true;
+      }
+      //if(this.dbValues[5]["RM" + unitType + "_RU_Sched"] != this.dbValues[4]["RM" + unitType + "_RU_Sched"] && 
+        //this.dbValues[5]["RM" + unitType + "_RD_Sched"] != this.dbValues[4]["RM" + unitType + "_RD_Sched"] &&
+        //this.dbValues[5]["RM" + unitType + "_FR_Sched"] != this.dbValues[4]["RM" + unitType + "_FR_Sched"]){
+          //this.alarmRTDChanged = true;
+      //}
+        
+      
+      //if((this.dbValues[5].RMU1_Actual_Sched < 0 || this.dbValues[5].RMU1_Actual_Sched !==null ) ||
+        //(this.dbValues[5].RMU2_Actual_Sched < 0 || this.dbValues[5].RMU2_Actual_Sched !==null) ||
+        //(this.dbValues[5].RMU3_Actual_Sched < 0 || this.dbValues[5].RMU3_Actual_Sched !==null)
+       //){ 
+        //this.alarmOutsideLimit=true;
+      //}       
+      if((this.dbValues[5].RMU1_RU_Sched != this.dbValues[4].RMU1_RU_Sched) &&
+        (this.dbValues[5].RMU2_RU_Sched != this.dbValues[4].RMU2_RU_Sched) &&
+        (this.dbValues[5].RMU3_RU_Sched != this.dbValues[4].RMU3_RU_Sched) &&
+        (this.dbValues[5].RMU1_RD_Sched != this.dbValues[4].RMU1_RD_Sched) &&
+        (this.dbValues[5].RMU2_RD_Sched != this.dbValues[4].RMU2_RD_Sched) &&
+        (this.dbValues[5].RMU3_RD_Sched != this.dbValues[4].RMU3_RD_Sched) &&
+        (this.dbValues[5].RMU1_FR_Sched != this.dbValues[4].RMU1_FR_Sched) &&
+        (this.dbValues[5].RMU2_FR_Sched != this.dbValues[4].RMU2_FR_Sched) &&
+        (this.dbValues[5].RMU3_FR_Sched != this.dbValues[4].RMU3_FR_Sched)){
+        this.alarmRTDChanged = true;
+      }
+            
+       //if(this.dbValues[4].RMU1_Actual_Sched.DataStatus == "H" &&
+        //this.dbValues[4].RMU2_Actual_Sched.DataStatus &&
+        //this.dbValues[4].RMU3_Actual_Sched.DataStatus
+       //){
+        //this.alarmHAP = true;
+      //}
+      //if(this.dbValues[4].RMU1_Actual_Sched.DataStatus == "O" &&
+        //this.dbValues[4].RMU2_Actual_Sched.DataStatus == "O" &&
+        //this.dbValues[4].RMU3_Actual_Sched.DataStatus == "O"
+      //){
+        //this.alarmOverride = true;
+      //}
     })
   }
 
@@ -443,6 +528,73 @@ export class ReserveMarketDashboardComponent implements OnInit {
     this.modalReference = this.modalService.open(content, { size: 'sm', centered: true });
   }
 
+
+  DisableAlarm(){
+    console.log("RM alarm Off")
+      this.alertMessage =null;
+      if(this.timerAlarmOutsideLimit){
+        clearInterval(this.timerAlarmOutsideLimit);
+      }
+  
+      if(this.timeoutId){
+        clearTimeout(this.timeoutId);
+      }
+      clearInterval(this.timerAlarmNoConnection);
+      this.isAlarmDisable = true;
+  }
+
+  EnableAlarm(){
+    console.log("RM alarm On")
+    this.isAlarmDisable = false;
+  }
+
+  HAPAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/hap.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  OverrideAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/override.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  RTDChangedAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/rtd_changed.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  NoInternetAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/no_connection.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  OutsideLimitAudio(){
+    this.eventService.playAudio("assets/audio/outside_limit.mp3");
+  }
+
+  ngOnDestroy() {
+      this.alarmRTDChanged=false;
+      this.alarmOutsideLimit=false;
+      this.alarmNoconnection=false;
+      this.alertMessage = null;
+      this.eventService.stopAudio();
+      if(this.timerAlarmOutsideLimit){
+        clearInterval(this.timerAlarmOutsideLimit);
+      }
+      if(this.timeoutId){
+        clearTimeout(this.timeoutId);
+      }
+  }
+
+
   OverrideValueRM(){
     if(this.isOverride && this.overrideValues.cr == null && this.overrideValues.ru == null && this.overrideValues.rd == null && this.overrideValues.en == null){
       return
@@ -467,7 +619,6 @@ export class ReserveMarketDashboardComponent implements OnInit {
     this.successMessage = JSON.stringify(payload)
     this.modalReference.close();
     this.timerMessage = setInterval(() => {
-      this.successMessage = null;
       clearInterval(this.timerMessage);
     }, 3000);
 
