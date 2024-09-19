@@ -556,10 +556,7 @@ export class ReserveMarketDashboardComponent implements OnInit,OnDestroy {
   }
 
   OverrideAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/override.mp3";
-    audio.load();
-    audio.play();
+    this.eventService.playAudio("assets/audio/override.mp3");
   }
 
   RTDChangedAudio(){
