@@ -244,7 +244,7 @@ export class ReserveMarketDashboardComponent implements OnInit,OnDestroy {
                 this.timeoutId = setTimeout(() => {
                   this.alertMessage = null;
                   clearInterval(this.timerAlarmOutsideLimit);
-                  console.log('Interval cleared after 30 seconds!');
+                  //console.log('Interval cleared after 30 seconds!');
                   this.alarmOutsideLimit = false;
                 }, 30000);
             }
@@ -280,13 +280,8 @@ export class ReserveMarketDashboardComponent implements OnInit,OnDestroy {
     this.alarmRTDChanged=false;
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
-    if(this.timerAlarmOutsideLimit){
-      clearInterval(this.timerAlarmOutsideLimit);
-    }
-    if(this.timeoutId){
-      clearTimeout(this.timeoutId);
-    }
-    clearInterval(this.timerAlarmNoConnection);
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearTimeout(this.timeoutId);
     this.eventService.stopAudio();
   }
 
@@ -532,14 +527,12 @@ export class ReserveMarketDashboardComponent implements OnInit,OnDestroy {
   DisableAlarm(){
     console.log("RM alarm Off")
       this.alertMessage =null;
-      if(this.timerAlarmOutsideLimit){
-        clearInterval(this.timerAlarmOutsideLimit);
-      }
-  
-      if(this.timeoutId){
-        clearTimeout(this.timeoutId);
-      }
-      clearInterval(this.timerAlarmNoConnection);
+      this.alarmRTDChanged=false;
+      this.alarmOutsideLimit=false;
+      this.alarmNoconnection=false;
+      clearInterval(this.timerAlarmOutsideLimit);
+      clearTimeout(this.timeoutId);
+      this.eventService.stopAudio();
       this.isAlarmDisable = true;
   }
 
