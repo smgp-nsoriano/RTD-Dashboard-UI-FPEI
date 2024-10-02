@@ -435,7 +435,7 @@ ngAfterViewInit(){
           this["show"+ unitType +"DRcolumn"] = true // show dr column if there is value
         }
       }
-      if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < 0) && 
+      if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < -50) && 
         (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
         this.alarmOutsideLimit=true;
       }
