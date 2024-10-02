@@ -19,6 +19,18 @@ export class ReserveRequirementComponent implements OnInit,OnDestroy,AfterViewIn
   timerData
   timerDT
   timerClock
+
+  alertMessage:string;
+   alarmOutsideLimit:boolean;
+  alarmNoconnection:boolean;
+  alarmRTDChanged:boolean;
+  alarmHAP:boolean;
+  alarmOverride:boolean;
+  timerAlarmOutsideLimit:any;
+  timerAlarmReserveChanged:any;
+  timerAlarmNoConnection:any;
+  timerAlarmHAP:any;
+ 
   regions = ['CLUZ', 'CVIS', 'CMIN']
   Highcharts = Highcharts;
   optionsTemplate = {
@@ -230,6 +242,8 @@ export class ReserveRequirementComponent implements OnInit,OnDestroy,AfterViewIn
   constructor(private eventService:EventService, private ReserveRequirementService: ReserveRequirementService) { }
 
   ngOnInit() {
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
@@ -249,6 +263,7 @@ export class ReserveRequirementComponent implements OnInit,OnDestroy,AfterViewIn
   }
 
   GetDataPerRegion() {
+    
     this.ReserveRequirementService.getRMRegionPrices24h("CLUZ").subscribe(data => {
       // console.log(data);
       let resData = Object.entries(data).map(entry => entry[1])
@@ -377,6 +392,5 @@ export class ReserveRequirementComponent implements OnInit,OnDestroy,AfterViewIn
   ngOnDestroy(){
     this.destroy$.next();
     this.destroy$.complete();
-    
   }
 }

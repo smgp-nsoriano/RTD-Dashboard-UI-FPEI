@@ -24,6 +24,7 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
   alarmHAP:boolean;
   alarmOverride:boolean;
   timerAlarmOutsideLimit:any;
+  timerAlarmNoConnection:any;
   timerAlarmHAP:any;
   dashboardType:string;
   isShowBid
@@ -167,6 +168,7 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
     } else {
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
+  
 
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -312,6 +314,16 @@ ngAfterViewInit(){
     }, 1000);
   }
 
+  KillAlarm(){
+    this.alertMessage = null;
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearTimeout(this.timeoutId);
+    this.eventService.stopAudio();
+  }
+
   PopulateUnits(){
     let permissionID = +localStorage.getItem('PermissionID');
     this.RMDashboardService.getUnitPerAccess(+permissionID).subscribe(data => {
@@ -333,9 +345,13 @@ ngAfterViewInit(){
       }
       this.currentTimestamp = interval[4].Timestamp;
     }, error => {
-      // error;
-      // this.alertMessage = "No connection to server!";
-      // this.NoInternetAudio();
+      //error;
+      //this.alertMessage = "No connection to server!";
+      //if (!this.isAlarmDisable) {
+        //this.timerAlarmNoConnection = setInterval(() => {
+          //this.NoInternetAudio();
+         //}, 4000);
+      //}
     });
   }
 
@@ -360,6 +376,11 @@ ngAfterViewInit(){
   }
 
   ManualRefresh() {
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmNoConnection);
+    this.eventService.stopAudio();
+    this.alarmOutsideLimit=false;
+    this.alarmRTDChanged =false;
     console.log("Reserve Market Refresh Triggered");
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
@@ -514,6 +535,48 @@ ngAfterViewInit(){
     this.modalReference = this.modalService.open(content, { size: 'sm', centered: true });
   }
 
+
+  // DisableAlarm(){
+  //   console.log("RM alarm Off")
+  //     this.alertMessage =null;
+  //     this.alarmRTDChanged=false;
+  //     this.alarmOutsideLimit=false;
+  //     this.alarmNoconnection=false;
+  //     clearInterval(this.timerAlarmOutsideLimit);
+  //     clearTimeout(this.timeoutId);
+  //     this.eventService.stopAudio();
+  //     this.isAlarmDisable = true;
+  // }
+
+  // EnableAlarm(){
+  //   console.log("RM alarm On")
+  //   this.isAlarmDisable = false;
+  // }
+
+  HAPAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/hap.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  OverrideAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/override.mp3";
+    audio.load();
+    audio.play();
+  }
+
+ 
+  NoInternetAudio(){
+    let audio = new Audio();
+    audio.src = "assets/audio/no_connection.mp3";
+    audio.load();
+    audio.play();
+  }
+ 
+
+
   OverrideValueRM(){
     if(this.isOverride && this.overrideValues.cr == null && this.overrideValues.ru == null && this.overrideValues.rd == null && this.overrideValues.en == null){
       return
@@ -538,7 +601,6 @@ ngAfterViewInit(){
     this.successMessage = JSON.stringify(payload)
     this.modalReference.close();
     this.timerMessage = setInterval(() => {
-      this.successMessage = null;
       clearInterval(this.timerMessage);
     }, 3000);
 
@@ -577,45 +639,12 @@ ngAfterViewInit(){
     //this.tempValue = false;
   //}
 
-  HAPAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/hap.mp3";
-    audio.load();
-    audio.play();
-  }
-
-  OverrideAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/override.mp3";
-    audio.load();
-    audio.play();
-  }
-
   RTDChangedAudio(){
     let audio = new Audio();
     audio.src = "assets/audio/rtd_changed.mp3";
     audio.load();
     audio.play();
   }
-
-  NoInternetAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/no_connection.mp3";
-    audio.load();
-    audio.play();
-  }
-
-  KillAlarm(){
-    console.log("stop the alarm");
-    this.alertMessage = null;
-    this.alarmOutsideLimit=false;
-    this.alarmRTDChanged=false;
-    this.alarmHAP=false;
-    this.alarmOverride=false;
-    clearInterval(this.timerAlarmOutsideLimit);
-    clearInterval(this.timerAlarmHAP);
-  }
-
   OutsideLimitAudio(){
 
     this.eventService.playAudio("assets/audio/outside_limit.mp3")

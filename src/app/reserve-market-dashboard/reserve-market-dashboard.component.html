@@ -6,6 +6,13 @@
   </button>
 </div>
 
+<div class="alert alert-success alert-dismissible fade show myAlert-top" role="alert" *ngIf="successMessage!=null">
+  <strong>{{successMessage}}</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="successMessage=null">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
 <div class="card bg-dark border-dark text-light">
   <div class="card-body h-100">
     

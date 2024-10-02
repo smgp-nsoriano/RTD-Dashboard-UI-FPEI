@@ -36,6 +36,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   faBellSlash = faBellSlash;
   faEdit = faEdit;
   isAlarmDisable:boolean;
+  alarmEnable:boolean;
   isWithAlarmDisable:string;
   isGenRemarks:boolean;
   isOverrideShow:string;
@@ -756,6 +757,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   alarmHAP:boolean;
   alarmOverride:boolean;
   timerAlarmOutsideLimit:any;
+  timerAlarmNoConnection:any;
   timerAlarmHAP:any;
   luzDemand:number;
   visDemand:number;
@@ -791,7 +793,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.isShowPrice = localStorage.getItem('IsShowPrice');
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.dashboardType = "trader";
-
     this.alertUnits = '';
     this.bodyTag.classList.add('bg-dark');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -808,7 +809,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.PopulateUnits();
     this.SetIntervals();
     this.TimerGetData();
-    this.alertMessage = null;
     this.GetDemand();
     this.PlotAllUnitDAPChart();
     //this.SetData();
@@ -846,7 +846,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
   TimerGetData(){
     this.timerData = setInterval(() => {
-      
       if(+moment(this.now).second() == 3){
         this.RefreshData();
       }
@@ -854,11 +853,11 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       if(!this.isAlarmDisable && this.dashboardType == 'trader'){
         if(+moment(this.now).second() == 10){
           if(this.alarmOutsideLimit){
-            this.alertMessage = "Actual MW, Outside limits!"
             this.OutsideLimitAudio();
+            this.alertMessage = "Actual MW, Outside limits!";
             this.timerAlarmOutsideLimit = setInterval(() => {
             this.OutsideLimitAudio();
-            }, 4000);
+            }, 5000);
           }
         }
 
@@ -866,7 +865,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           //Alarms
           if(+moment(this.now).second() == 5){
               if(this.alarmRTDChanged){
-                this.alertMessage = "RTD has changed!"
+                 this.alertMessage = "RTD has changed!";
                 this.RTDChangedAudio();
               } 
           }
@@ -878,14 +877,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
                     this.HAPAudio();
                   }, 4000);
               }else if(this.alarmOverride){
-                this.alertMessage = "Override value is in use!"
+                this.alertMessage = "Override value is in use!";
                 this.OverrideAudio();
               }
             }
           }
       }
 
-      
       if(+moment(this.now).minute() == 21 && +moment(this.now).second() == 2){
           this.PlotDAPChart();
           this.PlotAllUnitDAPChart();
@@ -911,6 +909,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.alarmOverride=false;
     clearInterval(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
+    clearInterval(this.timerAlarmNoConnection);
   }
 
   RefreshData(){
@@ -953,6 +952,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.GetUnitPerRegion();
     }
     this.GetDemand();
+  
   }
 
   DisableAlarm(){
@@ -970,6 +970,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   ManualRefresh(){
+    clearTimeout(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmNoConnection);
+    this.alertMessage = null;
     console.log("Energy Trader Refresh Triggered")
     this.eventService.Refresh();//call to refresh the pages for RM,RR,RP
     this.RefreshData();
@@ -1649,6 +1652,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
        }
        this.GetDemand();
     });
+
+
+
+    
   }
 
   SetReserveMarketValue(unitNumber:string){
@@ -1728,9 +1735,11 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     },error=>{
       error;
       this.alertMessage = "No connection to server!";
-      if (!this.isAlarmDisable) {
-        this.NoInternetAudio();
-      }
+        if (!this.isAlarmDisable) {
+          this.timerAlarmNoConnection = setInterval(() => {
+            this.NoInternetAudio();
+           }, 4000);
+        }
     });
   }
 
@@ -1887,11 +1896,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     return interval;
   }
 
-  ngOnDestroy() {
-    this.bodyTag.classList.remove('bg-dark');
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
 
   HAPAudio(){
     let audio = new Audio();
@@ -1926,6 +1930,20 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     audio.src = "assets/audio/outside_limit.mp3";
     audio.load();
     audio.play();
+  }
+
+
+  ngOnDestroy() {
+    clearTimeout(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmHAP);
+    clearInterval(this.timerAlarmNoConnection);
+    this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alertMessage =null;
+    this.bodyTag.classList.remove('bg-dark');
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   GetUnitPerRegion(){

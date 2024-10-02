@@ -34,6 +34,17 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
   successMessage
   timerMessage
 
+  alertMessage:string;
+  alarmOutsideLimit:boolean;
+  alarmNoconnection:boolean;
+  alarmRTDChanged:boolean;
+  alarmHAP:boolean;
+  alarmOverride:boolean;
+  timerAlarmOutsideLimit:any;
+  timerAlarmReserveChanged:any;
+  timerAlarmNoConnection:any;
+  timerAlarmHAP:any;
+ 
   reqtSched = [
     { header: "Regulation Up", cluz_reqt: null, cluz_sched: null, cvis_reqt: null, cvis_sched: null, cmin_reqt: null, cmin_sched: null },
     { header: "Regulation Down", cluz_reqt: null, cluz_sched: null, cvis_reqt: null, cvis_sched: null, cmin_reqt: null, cmin_sched: null },
@@ -435,7 +446,7 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
     // }
   
   }
-
+ 
   userLogs(action:string){
     const data = {
       UserID: localStorage.getItem('UserID'),
@@ -448,6 +459,5 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
   ngOnDestroy(){
     this.destroy$.next();
     this.destroy$.complete();
-
   }
 }
