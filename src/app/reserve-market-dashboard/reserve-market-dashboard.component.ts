@@ -253,10 +253,7 @@ ngAfterViewInit(){
       clearInterval(this.timerData);
       clearInterval(this.timerClock);
       this.TimerSetClock(data.toString());
-      if(this.tempValue==false){
-        this.TimerGetData();
-      }
-      
+      this.TimerGetData();
     });
   }
 
@@ -321,7 +318,7 @@ ngAfterViewInit(){
     this.alarmNoconnection=false;
     clearInterval(this.timerAlarmOutsideLimit);
     clearTimeout(this.timeoutId);
-    this.eventService.stopAudio();
+    this.eventService.stopaudio();
   }
 
   PopulateUnits(){
@@ -378,7 +375,7 @@ ngAfterViewInit(){
   ManualRefresh() {
     clearInterval(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmNoConnection);
-    this.eventService.stopAudio();
+    this.eventService.stopaudio();
     this.alarmOutsideLimit=false;
     this.alarmRTDChanged =false;
     console.log("Reserve Market Refresh Triggered");
@@ -656,7 +653,7 @@ ngAfterViewInit(){
   }
 
   ngOnDestroy(){
-    this.tempValue=null;
+   // this.tempValue=null;
     this.alarmOutsideLimit=false;
     this.alarmRTDChanged=false;
     if (this.timerAlarmOutsideLimit) {
