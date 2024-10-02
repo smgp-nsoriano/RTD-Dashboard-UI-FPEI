@@ -21,6 +21,9 @@ export class ReserveRequirementService {
     // let dateNow = moment(new Date()).format("MM/DD/YYYY");
     // dateNow = "02/26/2024"
     
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices24h?Region=${region}&date=${rr_date}`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices24h?Region=${region}&date=${rr_date}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 }

@@ -42,11 +42,17 @@ export class AccountTypesService {
   }
 
   getAccountTypes() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getOperatorAccountTypes(isOperator) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   createAccountType(type: string, user: string) {

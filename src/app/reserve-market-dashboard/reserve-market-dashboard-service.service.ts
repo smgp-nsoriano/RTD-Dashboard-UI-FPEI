@@ -22,11 +22,17 @@ export class ReserveMarketDashboardServiceService {
   }
 
   getReserveSchedules(unit:string){
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getRMRegionPrices(region) {
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices?Region=${region}`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPrices?Region=${region}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   // helper for overriding

@@ -33,7 +33,10 @@ export class TraderDashboardService {
     }
 
     getReserveSchedules(unit:string){
-      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getHAP(unit:string){
