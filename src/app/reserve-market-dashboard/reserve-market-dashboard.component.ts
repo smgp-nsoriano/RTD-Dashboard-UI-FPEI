@@ -435,15 +435,15 @@ ngAfterViewInit(){
           this["show"+ unitType +"DRcolumn"] = true // show dr column if there is value
         }
       }
-      if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < -50) && 
-        (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
-        this.alarmOutsideLimit=true;
-      }
-      if((this.dbValues[4]["RM" + unitType + "_RU_Sched"] != this.dbValues[5]["RM" + unitType + "_RU_Sched"]) || 
-        (this.dbValues[4]["RM" + unitType + "_RD_Sched"] != this.dbValues[5]["RM" + unitType + "_RD_Sched"]) ||
-        (this.dbValues[4]["RM" + unitType + "_FR_Sched"] != this.dbValues[5]["RM" + unitType + "_FR_Sched"])){
-        this.alarmRTDChanged = true;
-      }
+      // if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < -50) && 
+      //   (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
+      //   this.alarmOutsideLimit=true;
+      // }
+      // if((this.dbValues[4]["RM" + unitType + "_RU_Sched"] != this.dbValues[5]["RM" + unitType + "_RU_Sched"]) || 
+      //   (this.dbValues[4]["RM" + unitType + "_RD_Sched"] != this.dbValues[5]["RM" + unitType + "_RD_Sched"]) ||
+      //   (this.dbValues[4]["RM" + unitType + "_FR_Sched"] != this.dbValues[5]["RM" + unitType + "_FR_Sched"])){
+      //   this.alarmRTDChanged = true;
+      // }
     })
   }
 
