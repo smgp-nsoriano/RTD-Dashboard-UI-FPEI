@@ -18,7 +18,10 @@ export class ReservePortfolioService {
   }
   
   getReserveSchedules(){
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPortfolio`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalPortfolio`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getUnitRegion(){
@@ -26,7 +29,10 @@ export class ReservePortfolioService {
   }
   
   getRMRegionPrices24h(region) {
-    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalReserveRSP?Region=${region}`);
+    return this.http.get(`${this.env.apiUrl}/reservemarket/GetRegionalReserveRSP?Region=${region}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   saveGeneralRemarks(data) {

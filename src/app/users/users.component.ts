@@ -175,13 +175,13 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  getUserList() {
-    this.userServices.getUserList().subscribe(users => {
-      this.userList = users;
-    }, error => {
-      console.log(error.message);
-    });
-  }
+  // getUserList() {
+  //   this.userServices.getUserList().subscribe(users => {
+  //     this.userList = users;
+  //   }, error => {
+  //     console.log(error.message);
+  //   });
+  // }
 
   modal(modal, editing: boolean, rec: null) {
     this.isLoading = false;
