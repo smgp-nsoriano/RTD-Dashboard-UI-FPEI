@@ -21,7 +21,6 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
   styleUrls: ['./trader-dashboard.component.scss'],
 })
 export class TraderDashboardComponent implements OnInit, OnDestroy {
-
   @ViewChild('alarmModal') alarmModal : any;
 
   private unsubscribe: Subject<any> = new Subject();
@@ -804,7 +803,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
     }, 15000);
-
     this.DefaultDashboardValue();
     this.DeafultPBValue();
     this.PopulateUnits();
@@ -907,6 +905,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
   KillAlarm(){
     this.alertMessage = null;
+    this.alarmOutsideLimit=false;
+    this.alarmRTDChanged=false;
+    this.alarmHAP=false;
+    this.alarmOverride=false;
     clearInterval(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
   }
@@ -954,10 +956,16 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   DisableAlarm(){
+    console.log("trader disabling alarm");
+    this.eventService.disableAlarm();
+    this.eventService.setItem('tempValue', this.isAlarmDisable=true);
     this.isAlarmDisable = true;
   }
 
   EnableAlarm(){
+    console.log("trader enabling alarm");
+    this.eventService.enableAlarm();
+    this.eventService.setItem('tempValue', this.isAlarmDisable=false);
     this.isAlarmDisable = false;
   }
 
@@ -1880,9 +1888,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //clearInterval(this.timerData);
-    //clearInterval(this.timerDT);
-    //this.KillAlarm();
     this.bodyTag.classList.remove('bg-dark');
     this.unsubscribe.next();
     this.unsubscribe.complete();

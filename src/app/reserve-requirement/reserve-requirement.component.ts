@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { ReserveRequirementService } from './reserve-requirement.service';
 import * as moment from 'moment';
 import { EventService } from '../trader-dashboard/EventService';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 require('highcharts/modules/no-data-to-display')(Highcharts);
 
@@ -11,7 +13,8 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
   templateUrl: './reserve-requirement.component.html',
   styleUrls: ['./reserve-requirement.component.scss']
 })
-export class ReserveRequirementComponent implements OnInit {
+export class ReserveRequirementComponent implements OnInit,OnDestroy,AfterViewInit {
+  private destroy$ = new Subject<void>();
   now
   timerData
   timerDT
@@ -235,8 +238,14 @@ export class ReserveRequirementComponent implements OnInit {
 
     this.GetDataPerRegion();
     
-    //refresh button click event from Trader Dashboard to RM,RR,RP
-    this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
+  }
+
+  ngAfterViewInit(){
+  this.eventService.getClickEvent()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.ManualRefresh();
+    });
   }
 
   GetDataPerRegion() {
@@ -364,5 +373,10 @@ export class ReserveRequirementComponent implements OnInit {
   ManualRefresh(){
     console.log("Reserve Requirement Refresh Triggered");
     this.GetDataPerRegion();
+  }
+  ngOnDestroy(){
+    this.destroy$.next();
+    this.destroy$.complete();
+    
   }
 }

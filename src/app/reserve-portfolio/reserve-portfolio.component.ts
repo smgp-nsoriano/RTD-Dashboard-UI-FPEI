@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ReservePortfolioService } from './reserve-portfolio.service';
 import { UsersService } from '../users/users.service';
 import { UnitsService } from '../units/units.service';
@@ -6,6 +6,8 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { EventService } from '../trader-dashboard/EventService';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -13,7 +15,8 @@ import { EventService } from '../trader-dashboard/EventService';
   templateUrl: './reserve-portfolio.component.html',
   styleUrls: ['./reserve-portfolio.component.scss']
 })
-export class ReservePortfolioComponent implements OnInit {
+export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy {
+  private destroy$ = new Subject<void>();
   faEdit = faEdit;
   tmp = ""
   interval: string = null
@@ -187,10 +190,14 @@ export class ReservePortfolioComponent implements OnInit {
     
     this.GetInterval();
 
-    //refresh button click event from Trader Page to Reserve Portfolio
-    this.eventService.getClickEvent().subscribe(()=>{this.ManualRefresh();});
+  }
 
-
+  ngAfterViewInit(){
+    this.eventService.getClickEvent()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.ManualRefresh();
+      });
   }
 
   SetTimeFromServer(){
@@ -436,5 +443,11 @@ export class ReservePortfolioComponent implements OnInit {
       ModuleID: 1
     };
     this.userService.userLogs(data).subscribe();
+  }
+
+  ngOnDestroy(){
+    this.destroy$.next();
+    this.destroy$.complete();
+
   }
 }

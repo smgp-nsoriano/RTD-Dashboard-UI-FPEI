@@ -10,6 +10,30 @@ import { Subject} from "rxjs";
 
 
 export class EventService{
+  private audio: HTMLAudioElement;
+  stopaudio(){
+    if (this.audio) {
+      this.audio.pause();
+      
+    }
+  }
+  playAudio(url: string) {
+    if (this.audio) {
+      this.audio.pause();
+      
+    }
+    this.audio = new Audio(url);
+    const playPromise = this.audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+      }).catch(error => {
+        //console.error('Error playing audio:', error);
+      });
+
+    }
+  }
+
   private ClickEvent = new Subject<void>();
 
   Refresh(){
@@ -26,6 +50,33 @@ export class EventService{
   getPortfolioClickEvent(){
     return this.ClickEvent.asObservable();
   }
+
+    
+  private enablingAlarmClickEvent = new Subject<void>();
+  private disablingAlarmClickEvent = new Subject<void>();
+  enableAlarm(){
+    this.enablingAlarmClickEvent.next();
+  }
+  getenablingAlarmClickEvent(){
+    return this.enablingAlarmClickEvent.asObservable();
+  }
+
+  disableAlarm(){
+    this.disablingAlarmClickEvent.next();
+  }
+  getdisablingAlarmClickEvent(){
+    return this.disablingAlarmClickEvent.asObservable();
+  }
+
+  private storage: any = {};
+
+  setItem(key: string, value: any) {
+    this.storage[key] = value;
+  }
+  getItem(key: string): any {
+    return this.storage[key];
+  }
+
 
 }
 
