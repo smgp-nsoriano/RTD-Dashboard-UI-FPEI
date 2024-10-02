@@ -650,7 +650,7 @@ ngAfterViewInit(){
   }
 
   ngOnDestroy(){
-   // this.tempValue=null;
+    this.tempValue=null;
     this.alarmOutsideLimit=false;
     this.alarmRTDChanged=false;
     if (this.timerAlarmOutsideLimit) {
