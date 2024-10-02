@@ -11,29 +11,28 @@ import { BehaviorSubject, Subject} from "rxjs";
 
 export class EventService{
   private audio: HTMLAudioElement;
-  constructor() {
-    this.audio = new Audio();
+  stopaudio(){
+    if (this.audio) {
+      this.audio.pause();
+      
+    }
   }
-
   playAudio(url: string) {
-    if (!this.audio.paused) {
+    if (this.audio) {
       this.audio.pause();
-      this.audio.currentTime = 0;
+      
     }
-    this.audio.src = url;
-    this.audio.load();
-    this.audio.play();
-  }
-  stopAudio() {
-    if (!this.audio.paused) {
-      this.audio.pause();
-      this.audio.currentTime = 0;
+    this.audio = new Audio(url);
+    const playPromise = this.audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+      }).catch(error => {
+        //console.error('Error playing audio:', error);
+      });
+
     }
   }
-
-
-
-
 
   private ClickEvent = new Subject<void>();
   Refresh(){
@@ -49,23 +48,33 @@ export class EventService{
     return this.ClickEvent.asObservable();
   }
 
-  
-  private ClickEnablingEvent = new Subject<void>();
-  private ClickDisablingEvent = new Subject<void>();
-  enablingAlarm(){
-    this.ClickEnablingEvent.next();
+    
+  private enablingAlarmClickEvent = new Subject<void>();
+  private disablingAlarmClickEvent = new Subject<void>();
+  enableAlarm(){
+    this.enablingAlarmClickEvent.next();
+  }
+  getenablingAlarmClickEvent(){
+    return this.enablingAlarmClickEvent.asObservable();
   }
 
-  getEnableClickEvent(){
-    return this.ClickEnablingEvent.asObservable();
+  disableAlarm(){
+    this.disablingAlarmClickEvent.next();
+  }
+  getdisablingAlarmClickEvent(){
+    return this.disablingAlarmClickEvent.asObservable();
   }
 
-  disablingAlarm(){
-    this.ClickDisablingEvent.next();
+  private storage: any = {};
+
+  setItem(key: string, value: any) {
+    this.storage[key] = value;
   }
-  getDisableClickEvent(){
-    return this.ClickDisablingEvent.asObservable();
+  getItem(key: string): any {
+    return this.storage[key];
   }
+
+
 }
 
 

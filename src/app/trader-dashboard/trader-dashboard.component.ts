@@ -21,7 +21,6 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
   styleUrls: ['./trader-dashboard.component.scss'],
 })
 export class TraderDashboardComponent implements OnInit, OnDestroy {
-
   @ViewChild('alarmModal') alarmModal : any;
 
   private unsubscribe: Subject<any> = new Subject();
@@ -805,7 +804,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
     }, 15000);
-
     this.DefaultDashboardValue();
     this.DeafultPBValue();
     this.PopulateUnits();
@@ -905,6 +903,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
   KillAlarm(){
     this.alertMessage = null;
+    this.alarmOutsideLimit=false;
+    this.alarmRTDChanged=false;
+    this.alarmHAP=false;
+    this.alarmOverride=false;
     clearInterval(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
     clearInterval(this.timerAlarmNoConnection);
@@ -954,19 +956,17 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   DisableAlarm(){
-    console.log("trader alarm off");
-    clearTimeout(this.timerAlarmOutsideLimit);
-    clearInterval(this.timerAlarmHAP);
-    clearInterval(this.timerAlarmNoConnection);
-    this.eventService.disablingAlarm();
+    console.log("trader disabling alarm");
+    this.eventService.disableAlarm();
+    this.eventService.setItem('tempValue', this.isAlarmDisable=true);
     this.isAlarmDisable = true;
   }
 
   EnableAlarm(){
-      console.log("trader alarm On");
-      this.eventService.enablingAlarm();
-      this.isAlarmDisable = false;
-    
+    console.log("trader enabling alarm");
+    this.eventService.enableAlarm();
+    this.eventService.setItem('tempValue', this.isAlarmDisable=false);
+    this.isAlarmDisable = false;
   }
 
   ManualRefresh(){
@@ -1891,6 +1891,12 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  getCurrentInterval(interval:string){
+    this.currentInterval = interval;
+    return interval;
+  }
+
+
   HAPAudio(){
     let audio = new Audio();
     audio.src = "assets/audio/hap.mp3";
@@ -1926,10 +1932,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     audio.play();
   }
 
-  getCurrentInterval(interval:string){
-    this.currentInterval = interval;
-    return interval;
-  }
 
   ngOnDestroy() {
     clearTimeout(this.timerAlarmOutsideLimit);
