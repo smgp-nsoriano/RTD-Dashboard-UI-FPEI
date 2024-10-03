@@ -14,17 +14,16 @@ export class EventService{
   stopaudio(){
     if (this.audio) {
       this.audio.pause();
-      
+      this.audio.currentTime = 0;
     }
   }
   playAudio(url: string) {
     if (this.audio) {
       this.audio.pause();
-      
+      this.audio.currentTime = 0;
     }
     this.audio = new Audio(url);
     const playPromise = this.audio.play();
-
     if (playPromise !== undefined) {
       playPromise.then(() => {
       }).catch(error => {

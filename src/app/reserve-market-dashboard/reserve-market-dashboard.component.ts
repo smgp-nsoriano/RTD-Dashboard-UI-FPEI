@@ -4,7 +4,7 @@ import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstra
 import { UsersService } from '../users/users.service';
 import { ReserveMarketDashboardServiceService } from './reserve-market-dashboard-service.service';
 import { EventService } from '../trader-dashboard/EventService';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-reserve-market-dashboard',
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterViewInit{
   private destroy$ = new Subject<void>();
    constructor(private eventService: EventService,private RMDashboardService: ReserveMarketDashboardServiceService, private userService: UsersService, private modalService: NgbModal,) { }
-  isAlarmDisable:boolean;
+   isAlarmDisable:boolean;
   tempValue: any;
   timeoutId:any;
   isWithAlarmDisable:string;
@@ -173,24 +173,18 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
-    this.tempValue = this.eventService.getItem('tempValue');
     //refresh button click event from Trader Page to Reserve Market
     this.eventService.getClickEvent()
     .pipe(takeUntil(this.destroy$))
     .subscribe(() => {
       this.ManualRefresh();
-    });
+    }); 
 
-    if(this.tempValue==null){
-      this.tempValue=false;
-      this.TimerGetData();
-    }
     this.dashboardType = "reserveMarket";
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
-    }, 15000);
-    
+    }, 15000);    
   }
   userLogs(action:string) {
     const data = {
@@ -210,29 +204,45 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
 ngAfterViewInit(){
     this.PopulateUnits();
     this.SetIntervals();
-    this.eventService.getenablingAlarmClickEvent()
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(() => {
-    console.log("RM enabling alarm");
-    if(this.tempValue==false){
-      this.TimerGetData();
+    this.tempValue = this.eventService.getItem('tempValue');
+    if(this.tempValue==null||this.tempValue==false){
+      this.tempValue=false;
     }
-    this.tempValue=false;
-  });
+    // if(this.isAlarmDisable==false){
+    //   this.alarmOutsideLimit=false;
+    // }else if(this.isAlarmDisable==true){
+    //   this.alarmOutsideLimit=false
+    // }
+    this.eventService.getenablingAlarmClickEvent()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+     this.EnableAlarm();
+    });
 
   this.eventService.getdisablingAlarmClickEvent()
     .pipe(takeUntil(this.destroy$))
     .subscribe(() => {
-      console.log("RM disabling alarm");
-      this.alarmOutsideLimit=false;
-      this.alarmNoconnection=false;
-      this.alarmRTDChanged=false;
-      clearInterval(this.timerAlarmHAP);
-      clearInterval(this.timerAlarmOutsideLimit);
-      clearTimeout(this.timeoutId);
-      this.tempValue=true;
+      this.DisableAlarm();
     });  
-}
+  }
+
+ DisableAlarm(){
+    console.log("RM disabling alarm");
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alarmRTDChanged=false;
+    clearInterval(this.timerData);
+    clearInterval(this.timerAlarmHAP);
+    clearInterval(this.timerAlarmOutsideLimit);
+    clearTimeout(this.timeoutId);
+    this.tempValue=true;
+    this.TimerGetData();
+  }
+
+  EnableAlarm(){
+    console.log("RM enabling alarm");
+    this.tempValue=false;
+  }
   
   getCurrentInterval(interval:string){
     this.currentInterval = interval;
@@ -254,61 +264,63 @@ ngAfterViewInit(){
       clearInterval(this.timerClock);
       this.TimerSetClock(data.toString());
       this.TimerGetData();
-    });
+   });
   }
 
   TimerGetData(){
-    this.timerData = setInterval(() => {  
-      this.isAlarmDisable = this.tempValue;
-      if (+moment(this.now).second() == 3) {
-        this.RefreshData();
-      }
-      if(!this.isAlarmDisable && this.dashboardType == 'reserveMarket'){
-         if(+moment(this.now).second() == 10){
-           if(this.alarmOutsideLimit){
-              this.alertMessage = "Actual MW, Outside limits!";
-              this.OutsideLimitAudio();
-              this.timerAlarmOutsideLimit = setInterval(() => {
-              this.OutsideLimitAudio();
+      this.timerData = setInterval(() => {  
+        if (+moment(this.now).second() == 3) {
+          this.RefreshData();
+        }
+        this.isAlarmDisable=this.tempValue;
+        console.log(this.isAlarmDisable);
+        if(!this.isAlarmDisable && this.dashboardType == 'reserveMarket'){
+           if(+moment(this.now).second() == 10){
+            if(this.alarmOutsideLimit){
+              console.log(this.alarmOutsideLimit)
+                this.alertMessage = "Actual MW, Outside limits!";
+                this.OutsideLimitAudio();
+                this.timerAlarmOutsideLimit = setInterval(() => {
+                this.OutsideLimitAudio();
+              }, 4000);
               this.timeoutId = setTimeout(() => {
                 clearInterval(this.timerAlarmOutsideLimit);
                 this.alertMessage=null;
                 this.alarmOutsideLimit=false;
               }, 30000);
-            }, 4000);
-           }
-        }
-
-
-        if(+moment(this.now).minute() % 5 == 0){
-           //Alarms
-           if(+moment(this.now).second() == 5){
-               if(this.alarmRTDChanged){
-                 this.alertMessage = "RTD has changed!"
-                 this.RTDChangedAudio();
-               } 
-           }
-        
-           if(+moment(this.now).second() == 10){
-                 if(this.alarmHAP){
-                   this.alertMessage = "HAP is in use!"
-                   this.timerAlarmHAP = setInterval(() => {
-                     this.HAPAudio();
-                   }, 4000);
-               }else if(this.alarmOverride){
-                 this.alertMessage = "Override value is in use!"
-                 this.OverrideAudio();
+             }
+          }
+  
+  
+          if(+moment(this.now).minute() % 5 == 0){
+             //Alarms
+             if(+moment(this.now).second() == 5){
+                 if(this.alarmRTDChanged){
+                   this.alertMessage = "RTD has changed!"
+                   this.RTDChangedAudio();
+                 } 
+             }
+          
+             if(+moment(this.now).second() == 10){
+                   if(this.alarmHAP){
+                     this.alertMessage = "HAP is in use!"
+                     this.timerAlarmHAP = setInterval(() => {
+                       this.HAPAudio();
+                     }, 4000);
+                 }else if(this.alarmOverride){
+                   this.alertMessage = "Override value is in use!"
+                   this.OverrideAudio();
+                 }
                }
              }
-           }
-       }
-
-      
-      // if(+moment(this.now).minute() == 21 && +moment(this.now).second() == 2){
-      //     this.PlotDAPChart();
-      //     this.PlotAllUnitDAPChart();
-      // }
-    }, 1000);
+         }
+  
+        
+        // if(+moment(this.now).minute() == 21 && +moment(this.now).second() == 2){
+        //     this.PlotDAPChart();
+        //     this.PlotAllUnitDAPChart();
+        // }
+      }, 1000);
   }
 
   KillAlarm(){
@@ -318,7 +330,6 @@ ngAfterViewInit(){
     this.alarmNoconnection=false;
     clearInterval(this.timerAlarmOutsideLimit);
     clearTimeout(this.timeoutId);
-    this.eventService.stopaudio();
   }
 
   PopulateUnits(){
@@ -373,17 +384,8 @@ ngAfterViewInit(){
   }
 
   ManualRefresh() {
-    clearInterval(this.timerAlarmOutsideLimit);
-    clearInterval(this.timerAlarmNoConnection);
-    this.eventService.stopaudio();
-    this.alarmOutsideLimit=false;
-    this.alarmRTDChanged =false;
+    this.KillAlarm();
     console.log("Reserve Market Refresh Triggered");
-    this.alarmOutsideLimit=false;
-    this.alarmNoconnection=false;
-    this.alarmRTDChanged=false;
-    clearInterval(this.timerAlarmHAP);
-    clearInterval(this.timerAlarmOutsideLimit);
     this.RefreshData();
     this.PopulateUnits();
   }
@@ -435,15 +437,15 @@ ngAfterViewInit(){
           this["show"+ unitType +"DRcolumn"] = true // show dr column if there is value
         }
       }
-      // if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < -50) && 
-      //   (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
-      //   this.alarmOutsideLimit=true;
-      // }
-      // if((this.dbValues[4]["RM" + unitType + "_RU_Sched"] != this.dbValues[5]["RM" + unitType + "_RU_Sched"]) || 
-      //   (this.dbValues[4]["RM" + unitType + "_RD_Sched"] != this.dbValues[5]["RM" + unitType + "_RD_Sched"]) ||
-      //   (this.dbValues[4]["RM" + unitType + "_FR_Sched"] != this.dbValues[5]["RM" + unitType + "_FR_Sched"])){
-      //   this.alarmRTDChanged = true;
-      // }
+      if((this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < 0) && 
+        (this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null)){
+        this.alarmOutsideLimit=true;
+      }
+      if((this.dbValues[4]["RM" + unitType + "_RU_Sched"] != this.dbValues[5]["RM" + unitType + "_RU_Sched"]) && 
+        (this.dbValues[4]["RM" + unitType + "_RD_Sched"] != this.dbValues[5]["RM" + unitType + "_RD_Sched"]) &&
+        (this.dbValues[4]["RM" + unitType + "_FR_Sched"] != this.dbValues[5]["RM" + unitType + "_FR_Sched"])){
+        this.alarmRTDChanged = true;
+      }
     })
   }
 
@@ -531,25 +533,6 @@ ngAfterViewInit(){
     
     this.modalReference = this.modalService.open(content, { size: 'sm', centered: true });
   }
-
-
-  // DisableAlarm(){
-  //   console.log("RM alarm Off")
-  //     this.alertMessage =null;
-  //     this.alarmRTDChanged=false;
-  //     this.alarmOutsideLimit=false;
-  //     this.alarmNoconnection=false;
-  //     clearInterval(this.timerAlarmOutsideLimit);
-  //     clearTimeout(this.timeoutId);
-  //     this.eventService.stopAudio();
-  //     this.isAlarmDisable = true;
-  // }
-
-  // EnableAlarm(){
-  //   console.log("RM alarm On")
-  //   this.isAlarmDisable = false;
-  // }
-
   HAPAudio(){
     let audio = new Audio();
     audio.src = "assets/audio/hap.mp3";
@@ -613,25 +596,7 @@ ngAfterViewInit(){
     });
   }
 
-  //DisableAlarm(){
-    //console.log("RM disabling alarm");
-    //this.alarmOutsideLimit=false;
-    //this.alarmNoconnection=false;
-    //this.alarmRTDChanged=false;
-    //clearInterval(this.timerAlarmHAP);
-    //if (this.timerAlarmOutsideLimit) {
-      //clearInterval(this.timerAlarmOutsideLimit);
-    //}
-    //if (this.timeoutId) {
-      //clearTimeout(this.timeoutId);
-    //}
-    //this.tempValue=true;
-  //}
-
-  //EnableAlarm(){
-    //console.log("RM enabling alarm");
-    //this.tempValue = false;
-  //}
+  
 
   RTDChangedAudio(){
     let audio = new Audio();
@@ -650,9 +615,15 @@ ngAfterViewInit(){
   }
 
   ngOnDestroy(){
-    this.tempValue=null;
-    this.alarmOutsideLimit=false;
+    clearInterval(this.timerData);
+    clearInterval(this.timerDT);
+    clearTimeout(this.timerAlarmOutsideLimit);
+    clearInterval(this.timerAlarmHAP);
+    clearInterval(this.timerAlarmNoConnection);
     this.alarmRTDChanged=false;
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alertMessage =null;
     if (this.timerAlarmOutsideLimit) {
       clearInterval(this.timerAlarmOutsideLimit);
     }
