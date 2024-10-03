@@ -6,6 +6,12 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class SRService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
+  
   constructor(
     private http: HttpClient,
     private env: EnvService
@@ -58,9 +64,6 @@ export class SRService {
   }
 
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, this.opts);
   }
 }

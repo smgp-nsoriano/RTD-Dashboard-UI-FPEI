@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class UnitsService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -20,10 +25,7 @@ export class UnitsService {
   }
 
   getWebSettings(unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`, this.opts);
   }
 
   postWebSettings(
@@ -48,10 +50,7 @@ export class UnitsService {
       SheetName,
       IsActive
     };
-    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data, this.opts);
   }
 
   uploadBids(data) {

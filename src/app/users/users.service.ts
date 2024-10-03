@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class UsersService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -13,31 +18,19 @@ export class UsersService {
   ) { }
 
   getCurrentUserInfo() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, this.opts);
   }
 
   changePassword(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data, this.opts);
   }
 
   getUsers() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`, this.opts);
   }
 
   getAccountType() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, this.opts);
   }
 
   // getUserList() {
@@ -53,66 +46,39 @@ export class UsersService {
   }
 
   insertuser(data) {
-    return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data, this.opts);
   }
 
   updateuser(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/Update/${data.UserID}`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.put(`${this.env.apiUrl}/UserManagement/Update/${data.UserID}`, data, this.opts);
   }
 
   deleteuser(data) {
-    return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`, this.opts);
   }
 
   disableuser(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Disable/${data.UserID}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Disable/${data.UserID}`, this.opts);
   }
 
   enableuser(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Enable/${data.UserID}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Enable/${data.UserID}`, this.opts);
   }
 
   resetpassword(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data, this.opts);
   }
 
   getCompanySetting() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`, this.opts);
   }
 
   saveCompanySetting(data) {
-    return this.http.post(`${this.env.apiUrl}/UserManagement/SaveCompanySetting`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/UserManagement/SaveCompanySetting`, data, this.opts);
   }
 
   decrypt(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`, this.opts);
   }
 
   updateUser(user: string, type: number) {
@@ -125,16 +91,10 @@ export class UsersService {
   }
 
   userLogs(data){
-    return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data, this.opts);
   }
 
   loginLogs(data){
-    return this.http.post(`${this.env.apiUrl}/UserManagement/LoginLogs`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/UserManagement/LoginLogs`, data, this.opts);
   }
 }

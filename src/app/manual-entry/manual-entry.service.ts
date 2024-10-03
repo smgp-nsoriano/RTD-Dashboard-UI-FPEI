@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class ManualEntryService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -20,17 +25,11 @@ export class ManualEntryService {
   }
 
   getUnitList(siteId: number) {
-    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`, this.opts);
   }
 
   dataEntry(data) {
-    return this.http.post(`${this.env.apiUrl}/ManualEntry/RTDValue`, data, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.post(`${this.env.apiUrl}/ManualEntry/RTDValue`, data, this.opts);
   }
 
 
