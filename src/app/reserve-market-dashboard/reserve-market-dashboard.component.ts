@@ -273,11 +273,11 @@ ngAfterViewInit(){
           this.RefreshData();
         }
         this.isAlarmDisable=this.tempValue;
-        console.log(this.isAlarmDisable);
+        //console.log(this.isAlarmDisable);
         if(!this.isAlarmDisable && this.dashboardType == 'reserveMarket'){
            if(+moment(this.now).second() == 10){
             if(this.alarmOutsideLimit){
-              console.log(this.alarmOutsideLimit)
+              //console.log(this.alarmOutsideLimit)
                 this.alertMessage = "Actual MW, Outside limits!";
                 this.OutsideLimitAudio();
                 this.timerAlarmOutsideLimit = setInterval(() => {
@@ -364,8 +364,8 @@ ngAfterViewInit(){
   }
 
   RefreshData(){
-    this.SetIntervals();
     this.PopulateUnits();
+    this.SetIntervals();
     if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
       this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
     }
@@ -384,8 +384,6 @@ ngAfterViewInit(){
   }
 
   ManualRefresh() {
-    this.KillAlarm();
-    console.log("Reserve Market Refresh Triggered");
     this.RefreshData();
     this.PopulateUnits();
   }
