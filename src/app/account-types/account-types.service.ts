@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class AccountTypesService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -42,17 +47,11 @@ export class AccountTypesService {
   }
 
   getAccountTypes() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, this.opts);
   }
 
   getOperatorAccountTypes(isOperator) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`, this.opts);
   }
 
   createAccountType(type: string, user: string) {

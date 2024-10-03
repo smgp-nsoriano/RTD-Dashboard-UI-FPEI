@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class DashboardService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(private http: HttpClient,
     private env: EnvService) { }
@@ -16,7 +21,7 @@ export class DashboardService {
   }
   
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, this.opts);
   }
 
   getErrorMessage(siteId: number, unitId: number) {
@@ -60,6 +65,6 @@ export class DashboardService {
   }
 
   checkConnection(){
-    return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
+    return this.http.get(`${this.env.apiUrl}/Trading/Interval`, this.opts);
   }
 }

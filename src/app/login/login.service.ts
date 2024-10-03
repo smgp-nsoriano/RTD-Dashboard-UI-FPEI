@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class LoginService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -19,10 +24,7 @@ export class LoginService {
   }
 
   getCurrentUserInfo() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, this.opts);
   }
 
 }
