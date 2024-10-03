@@ -26,6 +26,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<any> = new Subject();
   bodyTag: HTMLBodyElement = document.getElementsByTagName('body')[0];
   now:any;
+  tempValue:any
   timerClock: any;
   timerDT: any;
   timerData: any;
@@ -897,7 +898,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         clearInterval(this.timerData);
         clearInterval(this.timerClock);
         this.TimerSetClock(data.toString());
-        this.TimerGetData();
+        if(this.isAlarmDisable==false){
+          this.TimerGetData();
+        }
+       
       });
   }
 
@@ -1934,6 +1938,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
+    clearInterval(this.timerData);
+    clearInterval(this.timerDT);
     clearTimeout(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
     clearInterval(this.timerAlarmNoConnection);
