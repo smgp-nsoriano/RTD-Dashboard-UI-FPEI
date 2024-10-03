@@ -20,7 +20,10 @@ export class ManualEntryService {
   }
 
   getUnitList(siteId: number) {
-    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`);
+    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   dataEntry(data) {

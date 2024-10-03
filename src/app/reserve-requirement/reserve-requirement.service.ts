@@ -12,7 +12,10 @@ export class ReserveRequirementService {
     private env: EnvService) { }
 
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getRMRegionPrices24h(region, date) {

@@ -10,15 +10,24 @@ export class ReserveMarketDashboardServiceService {
   constructor(private http: HttpClient, private env: EnvService) { }
 
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getUnitPerAccess(permissionID:number){
-    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`);
+    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getInterval(){
-    return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
+    return this.http.get(`${this.env.apiUrl}/Trading/Interval`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getReserveSchedules(unit:string){
@@ -37,7 +46,10 @@ export class ReserveMarketDashboardServiceService {
 
   // helper for overriding
   getOverrideValue(unit:string){
-    return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`);
+    return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
   // post request for override value
   saveOverrideValue(data) {

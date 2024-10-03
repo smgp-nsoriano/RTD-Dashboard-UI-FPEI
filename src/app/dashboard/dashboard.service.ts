@@ -16,7 +16,10 @@ export class DashboardService {
   }
   
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getErrorMessage(siteId: number, unitId: number) {
@@ -60,6 +63,9 @@ export class DashboardService {
   }
 
   checkConnection(){
-    return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
+    return this.http.get(`${this.env.apiUrl}/Trading/Interval`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 }

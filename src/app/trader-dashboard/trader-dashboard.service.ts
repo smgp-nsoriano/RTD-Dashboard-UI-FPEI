@@ -17,19 +17,31 @@ export class TraderDashboardService {
     }
 
     getInterval(){
-      return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
+      return this.http.get(`${this.env.apiUrl}/Trading/Interval`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getDT(){
-      return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+      return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getPrice(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/Price?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/Price?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
     
     getRTD(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/RTD?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/RTD?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getReserveSchedules(unit:string){
@@ -40,15 +52,24 @@ export class TraderDashboardService {
     }
 
     getHAP(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitHAP?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitHAP?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getDAP(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitDAP?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitDAP?UnitNumber=${unit}`), {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }};
     }
 
     getOverrideValue(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     saveOverrideValue(data) {
@@ -59,7 +80,10 @@ export class TraderDashboardService {
     }
 
     getMOTValue(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetMOTValue?UnitNumber=${unit}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetMOTValue?UnitNumber=${unit}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     saveMOTValue(data) {
@@ -71,28 +95,46 @@ export class TraderDashboardService {
  
 
     getDemand(UnitNumber:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getImportExport(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getImportExport2(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport2`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport2`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
 
     getUnitRegion(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getUnitPerAccess(permissionID:number){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     getPBRemarks(unit:string,timestamp:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetRemarks?UnitNumber=${unit}&Timestamp=${timestamp}`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetRemarks?UnitNumber=${unit}&Timestamp=${timestamp}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
     saveRemarks(data) {
@@ -110,7 +152,10 @@ export class TraderDashboardService {
     }
 
     getAllUnitDAP(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
     }
 
 

@@ -10,11 +10,17 @@ export class ReservePortfolioService {
   constructor(private http: HttpClient, private env: EnvService) { }
 
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   getUnitPerAccess(permissionID: number) {
-    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`);
+    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
   
   getReserveSchedules(){
@@ -25,7 +31,10 @@ export class ReservePortfolioService {
   }
 
   getUnitRegion(){
-    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`);
+    return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
   
   getRMRegionPrices24h(region) {

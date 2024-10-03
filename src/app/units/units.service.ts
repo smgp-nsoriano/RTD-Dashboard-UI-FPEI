@@ -20,7 +20,10 @@ export class UnitsService {
   }
 
   getWebSettings(unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`);
+    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   postWebSettings(
@@ -45,7 +48,10 @@ export class UnitsService {
       SheetName,
       IsActive
     };
-    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data);
+    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data, {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }});
   }
 
   uploadBids(data) {
