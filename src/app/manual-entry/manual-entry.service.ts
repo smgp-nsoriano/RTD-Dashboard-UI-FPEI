@@ -18,10 +18,7 @@ export class ManualEntryService {
   ) { }
 
   getSites(id: any) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`, this.opts);
   }
 
   getUnitList(siteId: number) {

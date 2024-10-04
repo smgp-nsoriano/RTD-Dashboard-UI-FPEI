@@ -19,31 +19,31 @@ export class AccountTypesService {
 
 
   getsites(data) {
-    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetSites/${data.permissionId}/${data.accountTypeId}`);
+    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetSites/${data.permissionId}/${data.accountTypeId}`, this.opts);
   }
 
   getOperatorAccess(data) {
-    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetOperatorAccess/${data.permissionId}/${data.accountTypeId}`);
+    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetOperatorAccess/${data.permissionId}/${data.accountTypeId}`, this.opts);
   }
 
   savePermission(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SavePermission/${data.accountType}/${data.createdby}/${data.isOperator}`, data);
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SavePermission/${data.accountType}/${data.createdby}/${data.isOperator}`, data, this.opts);
   }
 
   saveSite(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSite`, data);
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSite`, data, this.opts);
   }
 
   saveOperatorSite(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSiteOperator`, data);
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSiteOperator`, data, this.opts);
   }
 
   updateAccountType(data) {
-    return this.http.put(`${this.env.apiUrl}/AccountPermission/UpdateAccountType`, data);
+    return this.http.put(`${this.env.apiUrl}/AccountPermission/UpdateAccountType`, data, this.opts);
   }
 
   deleteAccountType(data) {
-    return this.http.delete(`${this.env.apiUrl}/AccountPermission/DeleteAccountType/${data.accountTypeId}`);
+    return this.http.delete(`${this.env.apiUrl}/AccountPermission/DeleteAccountType/${data.accountTypeId}`, this.opts);
   }
 
   getAccountTypes() {
@@ -54,21 +54,21 @@ export class AccountTypesService {
     return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`, this.opts);
   }
 
-  createAccountType(type: string, user: string) {
-    return this.http.post(`${this.env.apiUrl}/Admin/AddAccountType`, {
-      AccountType: type,
-      UserName: user
-    }, {
-      withCredentials: true
-    });
-  }
+  // createAccountType(type: string, user: string) {
+  //   return this.http.post(`${this.env.apiUrl}/Admin/AddAccountType`, {
+  //     AccountType: type,
+  //     UserName: user
+  //   }, {
+  //     withCredentials: true
+  //   });
+  // }
 
-  setAccountPermission(id: number, checked: boolean) {
-    return this.http.post(`${this.env.apiUrl}/Admin/SetAccountTypePermission`, {
-      AccountTypeID: id,
-      IsShowPrice: checked
-    }, {
-      withCredentials: true
-    });
-  }
+  // setAccountPermission(id: number, checked: boolean) {
+  //   return this.http.post(`${this.env.apiUrl}/Admin/SetAccountTypePermission`, {
+  //     AccountTypeID: id,
+  //     IsShowPrice: checked
+  //   }, {
+  //     withCredentials: true
+  //   });
+  // }
 }

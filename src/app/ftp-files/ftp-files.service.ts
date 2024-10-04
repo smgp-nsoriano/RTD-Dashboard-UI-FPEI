@@ -6,6 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class FtpFilesService {
+  opts = {
+    headers : {
+      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -13,23 +18,23 @@ export class FtpFilesService {
   ) { }
 
   getFTPFiles(){
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFiles`);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFiles`, this.opts);
   }
 
   getFTPList() {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPInfo`);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPInfo`, this.opts);
   }
 
   getServiceList() {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`, this.opts);
   }
 
   
   SaveFiles(data){
-    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFile`, data);
+    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFile`, data, this.opts);
   }
 
   DeleteFile(ID){
-    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFile/${+ID}`);
+    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFile/${+ID}`, this.opts);
   }
 }

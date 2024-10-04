@@ -39,11 +39,11 @@ export class UsersService {
   //   });
   // }
 
-  getPermissions() {
-    return this.http.get(`${this.env.apiUrl}/Admin/GetAccountTypeAndPermission`, {
-      withCredentials: true
-    });
-  }
+  // getPermissions() {
+  //   return this.http.get(`${this.env.apiUrl}/Admin/GetAccountTypeAndPermission`, {
+  //     withCredentials: true
+  //   });
+  // }
 
   insertuser(data) {
     return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data, this.opts);
@@ -81,14 +81,14 @@ export class UsersService {
     return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`, this.opts);
   }
 
-  updateUser(user: string, type: number) {
-    return this.http.post(`${this.env.apiUrl}/Admin/SetAccountType`, {
-      Username: user,
-      AccountTypeID: type
-    }, {
-      withCredentials: true
-    });
-  }
+  // updateUser(user: string, type: number) {
+  //   return this.http.post(`${this.env.apiUrl}/Admin/SetAccountType`, {
+  //     Username: user,
+  //     AccountTypeID: type
+  //   }, {
+  //     withCredentials: true
+  //   });
+  // }
 
   userLogs(data){
     return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data, this.opts);

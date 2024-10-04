@@ -18,10 +18,7 @@ export class TraderDashboardService {
     private env: EnvService) { }
 
     getUnitList(siteId: number) {
-      return this.http.get(`${this.env.apiUrl}/Configuration/GetAllUnit`, {
-        headers : {
-          'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }});
+      return this.http.get(`${this.env.apiUrl}/Configuration/GetAllUnit`, this.opts);
     }
 
     getInterval(){
@@ -41,10 +38,7 @@ export class TraderDashboardService {
     }
 
     getReserveSchedules(unit:string){
-      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`, this.opts);
     }
 
     getHAP(unit:string){
