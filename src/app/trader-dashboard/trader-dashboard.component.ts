@@ -898,10 +898,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         clearInterval(this.timerData);
         clearInterval(this.timerClock);
         this.TimerSetClock(data.toString());
-        if(this.isAlarmDisable==false){
-          this.TimerGetData();
-        }
-       
+        this.TimerGetData();
       });
   }
 
