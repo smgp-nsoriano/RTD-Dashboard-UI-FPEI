@@ -6,9 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class UsersService {
-  opts = {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
     }
   }
 
@@ -18,19 +20,19 @@ export class UsersService {
   ) { }
 
   getCurrentUserInfo() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCurrentUserInfoWithPermission`, this.fetch_userToken());
   }
 
   changePassword(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data, this.opts);
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data, this.fetch_userToken());
   }
 
   getUsers() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`, this.fetch_userToken());
   }
 
   getAccountType() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, this.fetch_userToken());
   }
 
   // getUserList() {
@@ -46,39 +48,39 @@ export class UsersService {
   // }
 
   insertuser(data) {
-    return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/UserManagement/Insert`, data, this.fetch_userToken());
   }
 
   updateuser(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/Update/${data.UserID}`, data, this.opts);
+    return this.http.put(`${this.env.apiUrl}/UserManagement/Update/${data.UserID}`, data, this.fetch_userToken());
   }
 
   deleteuser(data) {
-    return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`, this.opts);
+    return this.http.delete(`${this.env.apiUrl}/UserManagement/Delete/${data.UserID}`, this.fetch_userToken());
   }
 
   disableuser(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Disable/${data.UserID}`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Disable/${data.UserID}`, this.fetch_userToken());
   }
 
   enableuser(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Enable/${data.UserID}`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Enable/${data.UserID}`, this.fetch_userToken());
   }
 
   resetpassword(data) {
-    return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data, this.opts);
+    return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data, this.fetch_userToken());
   }
 
   getCompanySetting() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`, this.fetch_userToken());
   }
 
   saveCompanySetting(data) {
-    return this.http.post(`${this.env.apiUrl}/UserManagement/SaveCompanySetting`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/UserManagement/SaveCompanySetting`, data, this.fetch_userToken());
   }
 
   decrypt(data) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/UserManagement/Decrypt/${data}`, this.fetch_userToken());
   }
 
   // updateUser(user: string, type: number) {
@@ -91,10 +93,10 @@ export class UsersService {
   // }
 
   userLogs(data){
-    return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/UserManagement/UserLogs`, data, this.fetch_userToken());
   }
 
   loginLogs(data){
-    return this.http.post(`${this.env.apiUrl}/UserManagement/LoginLogs`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/UserManagement/LoginLogs`, data, this.fetch_userToken());
   }
 }

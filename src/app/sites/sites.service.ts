@@ -6,9 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class SitesService {
-  opts = {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
     }
   }
 
@@ -18,11 +20,11 @@ export class SitesService {
   ) { }
 
   getSites(companyId: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSite?CompanyID=${companyId}`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSite?CompanyID=${companyId}`, this.fetch_userToken());
   }
 
   deleteSite(siteID: number) {
-    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteSite/${siteID}`, this.opts);
+    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteSite/${siteID}`, this.fetch_userToken());
   }
 
   createOrUpdateSite(SiteID: number, SiteName: string, SiteCode: string, Address: string, Region: string, FtpPath: string) {
@@ -35,6 +37,6 @@ export class SitesService {
       FtpPath
     };
 
-    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateSite`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateSite`, data, this.fetch_userToken());
   }
 }

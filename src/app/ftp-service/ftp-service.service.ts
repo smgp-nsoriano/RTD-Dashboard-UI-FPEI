@@ -6,9 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class FtpServiceService {
-  opts = {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
     }
   }
 
@@ -18,14 +20,14 @@ export class FtpServiceService {
   ) { }
 
   getServiceList() {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`, this.fetch_userToken());
   }
 
   CreateUpdateService(data){
-    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFTPService`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFTPService`, data, this.fetch_userToken());
   }
 
   DeleteService(ID){
-    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFTPService/${+ID}`, this.opts);
+    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFTPService/${+ID}`, this.fetch_userToken());
   }
 }

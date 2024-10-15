@@ -6,9 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class FtpFilesService {
-  opts = {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
     }
   }
 
@@ -18,23 +20,23 @@ export class FtpFilesService {
   ) { }
 
   getFTPFiles(){
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFiles`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFiles`, this.fetch_userToken());
   }
 
   getFTPList() {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPInfo`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPInfo`, this.fetch_userToken());
   }
 
   getServiceList() {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFtpServices`, this.fetch_userToken());
   }
 
   
   SaveFiles(data){
-    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFile`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFile`, data, this.fetch_userToken());
   }
 
   DeleteFile(ID){
-    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFile/${+ID}`, this.opts);
+    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFile/${+ID}`, this.fetch_userToken());
   }
 }
