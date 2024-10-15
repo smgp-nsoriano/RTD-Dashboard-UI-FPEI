@@ -48,6 +48,7 @@ isLoading: boolean;
 
   loginuser() {
     this.isLoading = true;
+    localStorage.clear();
     const payload = {
       username: this.form.get('username').value,
       password: this.form.get('password').value,
