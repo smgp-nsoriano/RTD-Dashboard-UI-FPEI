@@ -861,7 +861,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
             }, 5000);
           }
         }
-
         if(+moment(this.now).minute() % 5 == 0){
           //Alarms
           if(+moment(this.now).second() == 5){
@@ -905,7 +904,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   KillAlarm(){
     this.alertMessage = null;
     this.alarmOutsideLimit=false;
-    this.alarmRTDChanged=false;
     this.alarmHAP=false;
     this.alarmOverride=false;
     clearInterval(this.timerAlarmOutsideLimit);
@@ -916,7 +914,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   RefreshData(){
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
-    this.alarmRTDChanged=false;
     this.alarmHAP=false;
     this.alarmOverride=false;
 
@@ -1687,10 +1684,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           if(rtd[4].DataStatus == "O"){
             this.alarmOverride = true;
           }
-
           if(rtd[4].Value != rtd[5].Value){
             this.alarmRTDChanged = true;
-          }
+          }else{this.alarmRTDChanged=false;}
     });
   }
 
@@ -1940,7 +1936,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     clearTimeout(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
     clearInterval(this.timerAlarmNoConnection);
-    this.alarmRTDChanged=false;
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
     this.alertMessage =null;
