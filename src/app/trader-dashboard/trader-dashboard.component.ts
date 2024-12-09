@@ -868,15 +868,15 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         const currentMinute = +moment(this.now).minute();
         const currentSecond = +moment(this.now).second();
         //const alarmMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-        console.log("Current hours:", currentHours);
-        console.log("Current minute:", currentMinute);
-        console.log("Current second:", currentSecond);
-        console.log(this.alarmRTDChanged);
+        // console.log("Current hours:", currentHours);
+        // console.log("Current minute:", currentMinute);
+        // console.log("Current second:", currentSecond);
+        // console.log(this.alarmRTDChanged);
 
         if(+moment(this.now).minute() % 5 == 0){
-          console.log("Minute is in the alarm list");
+          //console.log("Minute is in the alarm list");
           if(+moment(this.now).second() >= 4 && +moment(this.now).second()<=15){
-            console.log("Second is from 5s to 10s");
+            //console.log("Second is from 5s to 10s");
               if(this.alarmRTDChanged){
                 this.alertMessage = "RTD has changed!";
                 this.RTDChangedAudio();
