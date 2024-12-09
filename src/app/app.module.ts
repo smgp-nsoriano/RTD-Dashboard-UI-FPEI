@@ -41,7 +41,7 @@ import { PBReasonComponent } from './pbreason/pbreason.component';
 import { ReserveMarketDashboardComponent } from './reserve-market-dashboard/reserve-market-dashboard.component';
 import { ReserveRequirementComponent } from './reserve-requirement/reserve-requirement.component';
 import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio.component';
-
+import { SystemDemandDashboardComponent } from './system-demand-dashboard/system-demand-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +72,8 @@ import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio
     PBReasonComponent,
     ReserveMarketDashboardComponent,
     ReserveRequirementComponent,
-    ReservePortfolioComponent
+    ReservePortfolioComponent,
+    SystemDemandDashboardComponent
   ],
   imports: [
     BrowserModule,
