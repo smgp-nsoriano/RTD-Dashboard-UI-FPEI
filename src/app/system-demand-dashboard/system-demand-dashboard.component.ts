@@ -49,9 +49,9 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
   visDemand:number;
   minDemand:number;
   PhilDemand:number;
-  ccurrentUnitPrice: any = { name: '' }; // Initialize with an empty name
-  unitType: string = 'Price'; // Set this to your actual unit type
-  dbValues: any[] = []; // Initialize dbValues array
+  ccurrentUnitPrice: any = { name: '' };
+  unitType: string = 'Price';
+  dbValues: any[] = [];
   currentUnitPrice = {
     name: '',
     id: '',
@@ -75,7 +75,7 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
 
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.saveCurrentUnitToSession();
+        this.CurrentUnitToSession();
       }
     });
   
@@ -94,7 +94,7 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     }, 15000);
   }
 
-  saveCurrentUnitToSession() {
+  CurrentUnitToSession() {
     let inSessionStore = JSON.parse(sessionStorage.getItem("systemDemand")) || {};
     if (this.unitType && this.currentUnitPrice) {
       inSessionStore[this.unitType] = this.currentUnitPrice;
@@ -213,12 +213,12 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
   this.SMDashboardService.getSysDemand().subscribe(data => {
     let price = data;
     for (let x = 0; x <= 14; x++) {
-      this.updateDemands(price, x);
+      this.setUnitValue(price, x);
     }
     this.RefreshData();
   });
 }
-  updateDemands(price: any, index: number): void {
+  setUnitValue(price: any, index: number): void {
     this.dbValues[index] = {
       luzDemand: price[0][index].Value,
       visDemand: price[1][index].Value,
@@ -275,7 +275,7 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     this.alertMessage =null;
     this.destroy$.next();
     this.destroy$.complete();
-    this.saveCurrentUnitToSession();
+    this.CurrentUnitToSession();
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
