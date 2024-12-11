@@ -1559,7 +1559,11 @@ if(checkAS){
   }
 
   ShowBidUpload(modal:NgbModal){
-    this.dateToday = moment().format('YYYY-MM-DD');
-    this.modalReference =this.modalService.open(modal,{centered:true});
+    this.PQValidation();
+
+    if (this.errorCounts === 0){
+      this.dateToday = moment().format('YYYY-MM-DD');
+      this.modalReference =this.modalService.open(modal,{centered:true});
+    }
   }
 }
