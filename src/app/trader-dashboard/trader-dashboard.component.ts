@@ -744,6 +744,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   currentInterval: string;
   currentTimestamp: string;
   rtdValue: number;
+  rtdRound1: number;
+  rtdRound2: number;
   MOTValue: number;
   isOverride: boolean;
   isMOT: boolean;
@@ -862,12 +864,23 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           }
         }
 
+        const currentHours = +moment(this.now).hour();
+        const currentMinute = +moment(this.now).minute();
+        const currentSecond = +moment(this.now).second();
+        //const alarmMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+        // console.log("Current hours:", currentHours);
+        // console.log("Current minute:", currentMinute);
+        // console.log("Current second:", currentSecond);
+        // console.log(this.alarmRTDChanged);
+
         if(+moment(this.now).minute() % 5 == 0){
-          //Alarms
-          if(+moment(this.now).second() == 5){
+          //console.log("Minute is in the alarm list");
+          if(+moment(this.now).second() >= 4 && +moment(this.now).second()<=15){
+            //console.log("Second is from 5s to 10s");
               if(this.alarmRTDChanged){
-                 this.alertMessage = "RTD has changed!";
+                this.alertMessage = "RTD has changed!";
                 this.RTDChangedAudio();
+                this.alarmRTDChanged=false;
               } 
           }
         
@@ -882,6 +895,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
                 this.OverrideAudio();
               }
             }
+          }else{
+            this.alarmRTDChanged=false;
           }
       }
 
@@ -916,7 +931,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   RefreshData(){
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
-    this.alarmRTDChanged=false;
     this.alarmHAP=false;
     this.alarmOverride=false;
 
@@ -959,6 +973,12 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   DisableAlarm(){
     console.log("trader disabling alarm");
     this.eventService.disableAlarm();
+    this.alarmOutsideLimit=false;
+    this.alarmNoconnection=false;
+    this.alarmRTDChanged=false;
+    this.alertMessage=null;
+    clearInterval(this.timerAlarmHAP);
+    clearInterval(this.timerAlarmOutsideLimit);
     this.eventService.setItem('tempValue', this.isAlarmDisable=true);
     this.isAlarmDisable = true;
   }
@@ -1687,8 +1707,11 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           if(rtd[4].DataStatus == "O"){
             this.alarmOverride = true;
           }
-
-          if(rtd[4].Value != rtd[5].Value){
+          this.rtdRound1 = rtd[4].Value != null ? Math.round(rtd[4].Value) : null;
+          this.rtdRound2 = rtd[5].Value != null ? Math.round(rtd[5].Value) : null;
+          console.log(this.rtdRound1)
+          console.log(this.rtdRound2)
+          if(this.rtdRound1 != this.rtdRound2){
             this.alarmRTDChanged = true;
           }
     });
@@ -1940,7 +1963,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     clearTimeout(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmHAP);
     clearInterval(this.timerAlarmNoConnection);
-    this.alarmRTDChanged=false;
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
     this.alertMessage =null;

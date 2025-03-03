@@ -31,6 +31,8 @@
       </div>
      </div>
     <div class="col-lg-7 col-md-6 col-sm-12 text-right text-warning">
+      <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'system-demand'">System Demand</button>
+      <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'system-demand'" (click)="TabActive('system-demand')">System Demand</button> | 
       <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'reserve-market'">Reserve Market</button>
       <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'reserve-market'" (click)="TabActive('reserve-market')">Reserve Market</button> | 
       <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'reserve-req'">Reserve Requirements</button>
@@ -45,6 +47,10 @@
       <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'pbreason'" (click)="TabActive('pbreason')" [disabled]="isPbReason != 'true'">PB Reason</button>
     </div>
 
+    <!-- System Demand Vvew -->
+    <div class="col-lg-12 text-white" *ngIf="this.dashboardType == 'system-demand'">
+    <app-system-demand-dashboard></app-system-demand-dashboard>
+    </div>
     <!-- Reserve Market view -->
     <div class="col-lg-12 text-white" *ngIf="this.dashboardType == 'reserve-market'">
      <app-reserve-market-dashboard></app-reserve-market-dashboard>

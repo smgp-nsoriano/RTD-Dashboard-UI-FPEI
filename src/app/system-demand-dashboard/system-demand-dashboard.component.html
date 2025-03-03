@@ -1,0 +1,143 @@
+<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alertMessage!=null">
+  <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
+  <h5 class="text-danger">{{alertMessage}}</h5>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="KillAlarm()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="alert alert-success alert-dismissible fade show myAlert-top" role="alert" *ngIf="successMessage!=null">
+  <strong>{{successMessage}}</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="successMessage=null">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<!-- main table -->
+<div class="card bg-dark border-dark text-light">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <!-- main table -->
+            <div class="row mt-4">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-striped w-100">
+                        <thead>
+                            <!-- Column Description Price Php/MWh - Demand MW (System, Luzon, Visayas, Mindanao) -->
+                            <tr>
+                                <th colspan="2" rowspan="3">INTERVAL</th>
+                                <th rowspan="2">PRICE Php/MWh</th>
+                                <th colspan="2"><h6>Demand MW</h6></th>
+                                <th colspan="2"><h6>Demand MW</h6></th>
+                                <th colspan="2"><h6>Demand MW</h6></th>
+                                <th colspan="2"><h6>Demand MW</h6></th>
+                            </tr>
+                            <tr></tr>
+                            <tr>
+                                <th>
+                                  <div class="btn-group" style="width: 100% !important" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                                    <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''" [disabled]="isShowPrice != 'true'">
+                                      SELECT UNIT
+                                    </button>
+                                    <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name !== ''">
+                                      {{ currentUnitPrice.name }}
+                                    </button>
+                                    <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
+                                      <button class="dropdown-item font-weight-bold" ngbDropdownItem *ngFor="let unit of unitPrice; let i = index" (click)="selectedUnit(unit.UnitID, unitPrice, currentUnitPrice, 'Price')" [class.active]="unit.UnitID === currentUnitPrice.id">
+                                        {{ unit.UnitNumber }}
+                                      </button>
+                                    </div>
+                                  </div>
+                                </th>
+                                <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">SYSTEM</th>
+                                <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">LUZON</th>
+                                <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">VISAYAS</th>
+                                <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">MINDANAO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of dbValues; let i = index">
+                                <td *ngIf="i==0" class="text-center" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">HAP</td>
+                                <td *ngIf="i==4" class="text-center bg-danger" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
+                                <!-- HAP Data -->
+                                <td *ngIf="i&lt;4" class="text-center">{{data.TimestampLabel}}</td>
+                                <td *ngIf="i&lt;4" class="text-center">{{data.PriceSched | number: '1.0-0'}}</td>
+                                <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.PhilDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.luzDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.visDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.minDemand | number: '1.0-0'}}</td>
+                                <!-- Real time data -->
+                                <td *ngIf="i==4" class="current-interval">{{data.TimestampLabel}}</td>
+                                <td *ngIf="i==4" class="current-interval">{{data.PriceSched | number: '1.0-0'}}</td>
+                                <td *ngIf="i==4" colspan="2" class="current-interval">{{data.PhilDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i==4" colspan="2" class="current-interval">{{data.luzDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i==4" colspan="2" class="current-interval">{{data.visDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i==4" colspan="2" class="current-interval">{{data.minDemand | number: '1.0-0'}}</td>
+                                <!-- Compliance system demand price -->
+                                <td *ngIf="i==5" class="text-center" rowspan="10" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">COMPLIANCE</td>
+                                <td *ngIf="i>4" class="text-center">{{data.TimestampLabel}}</td>
+                                <td *ngIf="i>4" class="text-center">{{data.PriceSched | number: '1.0-0'}}</td>
+                                <td *ngIf="i>4" colspan="2" class="text-center">{{data.PhilDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i>4" colspan="2" class="text-center">{{data.luzDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i>4" colspan="2" class="text-center">{{data.visDemand | number: '1.0-0'}}</td>
+                                <td *ngIf="i>4" colspan="2" class="text-center">{{data.minDemand | number: '1.0-0'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modals -->
+<ng-template #Override let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title"><strong>{{selectedUnitNumber}}</strong> (MW)</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.en" [(ngModel)]="isOverride.en">
+        <label class="custom-control-label" for="isOverride.en">Override En Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.en" [disabled]="!isOverride.en">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.ru" [(ngModel)]="isOverride.ru">
+        <label class="custom-control-label" for="isOverride.ru">Override Ru Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.ru" [disabled]="!isOverride.ru">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.rd" [(ngModel)]="isOverride.rd">
+        <label class="custom-control-label" for="isOverride.rd">Override Rd Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.rd" [disabled]="!isOverride.rd">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.cr" [(ngModel)]="isOverride.cr">
+        <label class="custom-control-label" for="isOverride.cr">Override Fr Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.cr" [disabled]="!isOverride.cr">
+    </div>
+    <div class="form-group">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input bg-warning" id="isOverride.dr" [(ngModel)]="isOverride.dr">
+        <label class="custom-control-label" for="isOverride.dr">Override Dr Value</label>
+      </div>
+      <input type="number" step="0.001" class="form-control form-control-sm text-right" placeholder="0" [(ngModel)]="overrideValues.dr" [disabled]="!isOverride.dr">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-warning" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-sm btn-success" (click)="OverrideValueRM()">OK</button>
+  </div>
+</ng-template>
