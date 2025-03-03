@@ -904,6 +904,45 @@ export class BidsComponent implements OnInit {
         rrErrorCount++;
       } */
 
+      //check if RR breakpoints are incremental
+      if((this.offer.RampQuantity1 >= this.offer.RampQuantity2) && this.offer.RampQuantity2!=null){
+        msgrr.push({msg:'Ramp Rate Breakpoint 1 must be lesser than Breakpoint 2'})
+        rrErrorCount++;
+      }
+      if((this.offer.RampQuantity2 >= this.offer.RampQuantity3) && this.offer.RampQuantity3!=null){
+        msgrr.push({msg:'Ramp Rate Breakpoint 2 must be lesser than Breakpoint 3'})
+        rrErrorCount++;
+      }
+      // if((this.offer.RampQuantity3 >= this.offer.RampQuantity4) && this.offer.RampQuantity4!=null){
+      //   msgrr.push({msg:'Ramp Rate Breakpoint 3 must be lesser than Breakpoint 4'})
+      //   rrErrorCount++;
+      // }
+      // if((this.offer.RampQuantity4 >= this.offer.RampQuantity5) && this.offer.RampQuantity5!=null){
+      //   msgrr.push({msg:'Ramp Rate Breakpoint 4 must be lesser than Breakpoint 5'})
+      //   rrErrorCount++;
+      // }
+
+      if(this.offer.RampQuantity1 > +this.pmax){
+        msgrr.push({msg:'Ramp Rate Breakpoint 1 exceeded ' + this.pmax + ' MW'})
+        rrErrorCount++;
+      }
+      if(this.offer.RampQuantity2 > +this.pmax){
+        msgrr.push({msg:'Ramp Rate Breakpoint 2 exceeded ' + this.pmax + ' MW'})
+        rrErrorCount++;
+      }
+      if(this.offer.RampQuantity3 > +this.pmax){
+        msgrr.push({msg:'Ramp Rate Breakpoint 3 exceeded ' + this.pmax + ' MW'})
+        rrErrorCount++;
+      }
+      // if(this.offer.RampQuantity4 > +this.pmax){
+      //   msgrr.push({msg:'Ramp Rate Breakpoint 4 exceeded ' + this.pmax + ' MW'})
+      //   rrErrorCount++;
+      // }
+      // if(this.offer.RampQuantity5 > +this.pmax){
+      //   msgrr.push({msg:'Ramp Rate Breakpoint 5 exceeded ' + this.pmax + ' MW'})
+      //   rrErrorCount++;
+      // }
+
       this.ramprateValidation = msgrr;
       this.errorCounts = rrErrorCount + offerErrorCount;
       //console.log(this.errorCounts);
@@ -1520,7 +1559,11 @@ if(checkAS){
   }
 
   ShowBidUpload(modal:NgbModal){
-    this.dateToday = moment().format('YYYY-MM-DD');
-    this.modalReference =this.modalService.open(modal,{centered:true});
+    this.PQValidation();
+
+    if (this.errorCounts === 0){
+      this.dateToday = moment().format('YYYY-MM-DD');
+      this.modalReference =this.modalService.open(modal,{centered:true});
+    }
   }
 }
