@@ -534,7 +534,7 @@ ngAfterViewInit(){
               if (currentSecond >= 4 && currentSecond <= 15) {
                     //console.log("Second is from 5s to 15s");
                     if (this.alarmRTDChanged && !this.alarmTriggered) {
-                      //console.log("alarmRTDChanged is true");
+                      console.log("alarmRTDChanged is true");
                       this.alertMessage = "RTD has changed!";
                       this.RTDChangedAudio();
                       this.alarmRTDChanged=false;
