@@ -89,15 +89,15 @@ isLoading: boolean;
       localStorage.setItem('UserID', this.currentUserInfo.UserID);
       //if(appType=='RTD Dashboard'){
         localStorage.setItem('IsCam', 'false');
-        // if(this.currentUserInfo.IsSPDC){
-        //   this.router.navigate(['/spdc-monitoring']);
-        // }else{
+        if(this.currentUserInfo.IsSPDC){
+          this.router.navigate(['/spdc-monitoring']);
+        }else{
           if(this.currentUserInfo.IsOperator){
             this.router.navigate(['/home']);
           }else{
             this.router.navigate(['/trading']);
           }
-        // }
+        }
 
 
       // Logs UserLogin
