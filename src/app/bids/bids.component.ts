@@ -1199,7 +1199,7 @@ export class BidsComponent implements OnInit {
     );
   }
 
-  upload() {
+  upload(printPDFmodal:NgbModal) {
     
     this.updateOffer();
     this.bidLoading = true;
@@ -1219,7 +1219,7 @@ export class BidsComponent implements OnInit {
       this.transID = this.offer.TransID;
       this.dateUploaded = this.offer.DateTimeSubmitted;
       this.uploadedBy = this.offer.UploadedBy;
-
+      this.ShowPrintPDFAfterUpload(printPDFmodal)
     }, error => {
       this.bidLoading = false;
       console.log(error.message);
@@ -1565,5 +1565,9 @@ if(checkAS){
       this.dateToday = moment().format('YYYY-MM-DD');
       this.modalReference =this.modalService.open(modal,{centered:true});
     }
+  }
+
+  ShowPrintPDFAfterUpload(modal:NgbModal){
+    this.modalReference =this.modalService.open(modal,{centered:true});
   }
 }

@@ -719,9 +719,28 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-sm btn-success" *ngIf="!bidLoading" (click)="upload()">Upload</button>
+    <button class="btn btn-sm btn-success" *ngIf="!bidLoading" (click)="upload(printPDF)">Upload</button>
     <button class="btn btn-sm btn-success" *ngIf="bidLoading" disabled>Uploading..</button>
     <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template>
+
+<ng-template #printPDF let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title"></h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p>Would you like to save the PDF file?</p>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="print()">Yes, save PDF file</button>
+    <!-- <button class="btn btn-sm btn-success" *ngIf="bidLoading" disabled>Uploading..</button> -->
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">No</button>
   </div>
 </ng-template>
 
