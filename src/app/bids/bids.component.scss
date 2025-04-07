@@ -25,17 +25,28 @@
   background-color: #ffd40e !important;
 }
 
-table > thead > tr > th ,table > tbody > tr > td {
-	padding : 3px 3px;
-	vertical-align: middle;
-	font-size: 12px;
-	/*text-align: center;*/
-}
 
-.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-	padding : 2px 2px !important;
-	vertical-align: middle;
+.table th, .table td {
+  padding: 2px 2px !important;
+  vertical-align: middle;
+  font-size: 12px;
+  text-align: center;
+  @media only screen and (max-width: 600px) {
+    min-width: 80px; /* Add a minimum width to prevent compression */
+  }
+  
 }
+// table > thead > tr > th ,table > tbody > tr > td {
+// 	padding : 3px 3px;
+// 	vertical-align: middle;
+// 	font-size: 12px;
+// 	/*text-align: center;*/
+// }
+
+// .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+// 	padding : 2px 2px !important;
+// 	vertical-align: middle;
+// }
 
 .header-text{
   font-size: 15px;

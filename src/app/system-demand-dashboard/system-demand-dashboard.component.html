@@ -36,18 +36,23 @@
                             <tr>
                                 <th>
                                   <div class="btn-group" style="width: 100% !important" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-                                    <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''" [disabled]="isShowPrice != 'true'">
-                                      SELECT UNIT
-                                    </button>
+                                    <!-- <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''" [disabled]="isShowPrice !== 'true'">
+                                      01SUAL_G01
+                                    </button> -->
+                                    
+                                    <!-- Button to show the current selected unit price when it has a name -->
                                     <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name !== ''">
                                       {{ currentUnitPrice.name }}
                                     </button>
+                                    
+                                    <!-- Dropdown menu with list of units to choose from -->
                                     <div class="dropdown-menu scrollable-menu" ngbDropdownMenu>
                                       <button class="dropdown-item font-weight-bold" ngbDropdownItem *ngFor="let unit of unitPrice; let i = index" (click)="selectedUnit(unit.UnitID, unitPrice, currentUnitPrice, 'Price')" [class.active]="unit.UnitID === currentUnitPrice.id">
                                         {{ unit.UnitNumber }}
                                       </button>
                                     </div>
                                   </div>
+                                  
                                 </th>
                                 <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">SYSTEM</th>
                                 <th style="background-color: rgb(237, 183, 19); color: black;" colspan="2">LUZON</th>
