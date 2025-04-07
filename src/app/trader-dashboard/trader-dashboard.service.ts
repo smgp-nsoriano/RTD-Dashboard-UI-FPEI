@@ -72,7 +72,7 @@ export class TraderDashboardService {
       return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`, this.fetch_userToken());
     }
     getPortfolioDemand(UnitPortfolioNumber:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitPortfolioNumber}`, this.opts);
+      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitPortfolioNumber}`, this.fetch_userToken());
     }
 
     getImportExport(){
