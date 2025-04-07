@@ -31,7 +31,10 @@
   vertical-align: middle;
   font-size: 12px;
   text-align: center;
-  min-width: 80px; /* Add a minimum width to prevent compression */
+  @media only screen and (max-width: 600px) {
+    min-width: 80px; /* Add a minimum width to prevent compression */
+  }
+  
 }
 // table > thead > tr > th ,table > tbody > tr > td {
 // 	padding : 3px 3px;
