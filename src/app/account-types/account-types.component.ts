@@ -321,31 +321,31 @@ export class AccountTypesComponent implements OnInit {
     });
   }
 
-  createAccountType() {
-    const user = JSON.parse(localStorage.getItem('current_user'));
+  // createAccountType() {
+  //   const user = JSON.parse(localStorage.getItem('current_user'));
 
-    this.typeServices.createAccountType(this.accountType, user.UserName).subscribe(data => {
-      //this.getAccountTypes();
+  //   this.typeServices.createAccountType(this.accountType, user.UserName).subscribe(data => {
+  //     //this.getAccountTypes();
 
-      this.successMessage = 'Successfuly saved.';
+  //     this.successMessage = 'Successfuly saved.';
 
-      this.modalReference.close();
-    }, error => {
-      console.log(error.message);
-    });
-  }
+  //     this.modalReference.close();
+  //   }, error => {
+  //     console.log(error.message);
+  //   });
+  // }
 
-  updatePrice(event, type) {
-    const checked = event.target.checked;
+  // updatePrice(event, type) {
+  //   const checked = event.target.checked;
 
-    this.typeServices.setAccountPermission(type.AccountTypeID, checked).subscribe(data => {
-     // this.getAccountTypes();
-      this.successMessage = 'Successfully saved';
-      this.getCurrentUserInfo();
-    }, error => {
-      console.log(error.message);
-    });
-  }
+  //   this.typeServices.setAccountPermission(type.AccountTypeID, checked).subscribe(data => {
+  //    // this.getAccountTypes();
+  //     this.successMessage = 'Successfully saved';
+  //     this.getCurrentUserInfo();
+  //   }, error => {
+  //     console.log(error.message);
+  //   });
+  // }
 
   getCurrentUserInfo() {
     this.userServices.getCurrentUserInfo().subscribe(info => {

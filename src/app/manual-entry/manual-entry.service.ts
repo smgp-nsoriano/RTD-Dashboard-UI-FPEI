@@ -6,9 +6,11 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class ManualEntryService {
-  opts = {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
     }
   }
 
@@ -18,18 +20,15 @@ export class ManualEntryService {
   ) { }
 
   getSites(id: any) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`, {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }});
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`, this.fetch_userToken());
   }
 
   getUnitList(siteId: number) {
-    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`, this.opts);
+    return this.http.get(`${this.env.apiUrl}/ManualEntry/GetUnit?SiteID=${siteId}`, this.fetch_userToken());
   }
 
   dataEntry(data) {
-    return this.http.post(`${this.env.apiUrl}/ManualEntry/RTDValue`, data, this.opts);
+    return this.http.post(`${this.env.apiUrl}/ManualEntry/RTDValue`, data, this.fetch_userToken());
   }
 
 

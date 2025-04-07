@@ -6,6 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class FileSheetService {
+  fetch_userToken(){
+    return {
+      headers : {
+        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+      }
+    }
+  }
 
   constructor(
     private http: HttpClient,
@@ -13,14 +20,14 @@ export class FileSheetService {
   ) { }
 
   getSheetList(id) {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFileSheet/${id}`);
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetFTPFileSheet/${id}`, this.fetch_userToken());
   }
 
   saveSheet(data){
-    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFileSheet`, data);
+    return this.http.post(`${this.env.apiUrl}/MarketMap/SaveFileSheet`, data, this.fetch_userToken());
   }
 
   deleteSheet(id){
-    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFileSheet/${+id}`);
+    return this.http.delete(`${this.env.apiUrl}/MarketMap/DeleteFileSheet/${+id}`, this.fetch_userToken());
   }
 }
