@@ -1,4 +1,4 @@
-import { Component, OnInit,AfterViewInit ,OnDestroy} from '@angular/core';
+import { ChangeDetectorRef,Component, OnInit,AfterViewInit ,OnDestroy} from '@angular/core';
 import { Router,NavigationEnd } from '@angular/router';
 import {takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -8,6 +8,7 @@ import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstra
 import { SystemDemandDashboardServiceService } from './system-demand-dashboard.service';
 import { EventService } from '../trader-dashboard/EventService';
 import { UsersService } from '../users/users.service';
+import { UnitSelectionService } from '../unit-selection.service';
 
 @Component({
   selector: 'app-system-demand-dashboard',
@@ -18,6 +19,8 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
   private destroy$ = new Subject<void>();
   constructor(
     private router: Router,
+    private unitPriceService: UnitSelectionService,
+    private cdr: ChangeDetectorRef,
     private userService: UsersService,
     private eventService: EventService,
     private SMDashboardService: SystemDemandDashboardServiceService) { }
@@ -60,25 +63,12 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
   };
 
 
-
-  ngOnInit() {
-    let inSessionStore = JSON.parse(sessionStorage.getItem("systemDemand"));
-    if (inSessionStore && inSessionStore[this.unitType]) {
-      this.currentUnitPrice = inSessionStore[this.unitType];
-      if (this.currentUnitPrice && this.currentUnitPrice.name) {
-        this.SetUnitPrice(this.currentUnitPrice.name);
-      }
-      else{
-        this.currentUnitPrice.name = "SELECT UNIT";
-      }
-    }
-
-    this.routerSubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.CurrentUnitToSession();
-      }
-    });
   
+  ngOnInit() {
+    const unitType = this.unitType || "defaultType";
+    this.initializeUnitFromSession(this.currentUnitPrice, unitType);
+    this.unitPriceService.setCurrentUnitPrice(this.currentUnitPrice);
+
   this.isShowPrice = localStorage.getItem('IsShowPrice');
     this.bodyTag.classList.add('bg-dark');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -92,14 +82,6 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
     }, 15000);
-  }
-
-  CurrentUnitToSession() {
-    let inSessionStore = JSON.parse(sessionStorage.getItem("systemDemand")) || {};
-    if (this.unitType && this.currentUnitPrice) {
-      inSessionStore[this.unitType] = this.currentUnitPrice;
-      sessionStorage.setItem("systemDemand", JSON.stringify(inSessionStore));
-    }
   }
 
   ngAfterViewInit(){
@@ -230,38 +212,75 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     if (!unitNumber || unitNumber === 'SELECT UNIT') {
       return;
     }
-    this.SMDashboardService.getSystemPrice(unitNumber).subscribe(data => {
-      let price = data;
-      for (let x = 0; x <= 14; x++) {
-        this.dbValues[x].PriceSched = price[3][x].Value;
-        this.dbValues[x].luzDemand = price[0][x].Value;
-        this.dbValues[x].visDemand = price[1][x].Value;
-        this.dbValues[x].minDemand = price[2][x].Value;
-        this.dbValues[x].PhilDemand = price[0][x].Value + price[1][x].Value + price[2][x].Value
-      }
-    });
+
+    if (unitNumber === '01SUAL_G01') {
+      // Perform logic to set the corresponding values for '01SUAL_G01'
+      this.SMDashboardService.getSystemPrice(unitNumber).subscribe(data => {
+        let price = data;
+        for (let x = 0; x <= 14; x++) {
+          this.dbValues[x].PriceSched = price[3][x].Value;
+          this.dbValues[x].luzDemand = price[0][x].Value;
+          this.dbValues[x].visDemand = price[1][x].Value;
+          this.dbValues[x].minDemand = price[2][x].Value;
+          this.dbValues[x].PhilDemand = price[0][x].Value + price[1][x].Value + price[2][x].Value;
+        }
+      });
+    }else {
+      this.SMDashboardService.getSystemPrice(unitNumber).subscribe(data => {
+        let price = data;
+        for (let x = 0; x <= 14; x++) {
+          this.dbValues[x].PriceSched = price[3][x].Value;
+          this.dbValues[x].luzDemand = price[0][x].Value;
+          this.dbValues[x].visDemand = price[1][x].Value;
+          this.dbValues[x].minDemand = price[2][x].Value;
+          this.dbValues[x].PhilDemand = price[0][x].Value + price[1][x].Value + price[2][x].Value
+        }
+      });
+    }
   }
 
+  
 
   selectedUnit(id: number, units, currentUnit, unitType: string) {
+   
     const selected = units.find(unit => unit.UnitID === id);
     this.unitType = unitType;
-   
     let inSessionStore = JSON.parse(sessionStorage.getItem("systemDemand")) || {};
     inSessionStore[this.unitType] = selected;
     sessionStorage.setItem("systemDemand", JSON.stringify(inSessionStore));
-   
     currentUnit.id = selected.UnitID;
     currentUnit.name = selected.UnitNumber;
-  
     if (currentUnit.name === 'SELECT UNIT') {
-      for (let x = 0; x <= 14; x++) {
-        this.dbValues[x].PriceSched = null;
-      }
+        for (let x = 0; x <= 14; x++) {
+            this.dbValues[x].PriceSched = null;
+        }
     } else {
-      this.SetUnitPrice(currentUnit.name);
+        this.SetUnitPrice(currentUnit.name);
     }
+    this.unitPriceService.setCurrentUnitPrice(this.currentUnitPrice);
+}
+
+initializeUnitFromSession(currentUnit, unitType) {
+  let inSessionStore = JSON.parse(sessionStorage.getItem("systemDemand")) || {};
+  const savedUnit = inSessionStore[unitType];
+
+  if (savedUnit) {
+      currentUnit.id = savedUnit.UnitID;
+      currentUnit.name = savedUnit.UnitNumber;
+      if (currentUnit.name !== 'SELECT UNIT') {
+          this.SetUnitPrice(currentUnit.name);
+      }
+      else{
+        currentUnit.name = "01SUAL_G01";
+        this.SetUnitPrice(currentUnit.name);
+      }
+  } else {
+      currentUnit.name = "01SUAL_G01";
+      this.SetUnitPrice(currentUnit.name);
   }
+  this.unitPriceService.setCurrentUnitPrice(this.currentUnitPrice);
+}
+
 
   userLogs(action:string){
     const data = {
@@ -275,7 +294,6 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     this.alertMessage =null;
     this.destroy$.next();
     this.destroy$.complete();
-    this.CurrentUnitToSession();
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }

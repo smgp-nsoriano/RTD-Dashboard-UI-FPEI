@@ -2,13 +2,14 @@ import { Component, OnInit ,OnDestroy,ViewChild} from '@angular/core';
 import { first, takeUntil } from 'rxjs/operators';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
-import { interval, Subject } from 'rxjs';
+import { Subscription, interval, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsersService } from '../users/users.service';
 import { faRetweet,faBellSlash,faEdit } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TraderDashboardService } from './trader-dashboard.service'
 import { EventService } from './EventService';
+import { UnitSelectionService } from '../unit-selection.service';
 // import { DatePipe } from '@angular/common';
 
 declare const require;
@@ -22,7 +23,7 @@ require('highcharts/modules/no-data-to-display')(Highcharts);
 })
 export class TraderDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('alarmModal') alarmModal : any;
-
+  private subscription: Subscription;
   private unsubscribe: Subject<any> = new Subject();
   bodyTag: HTMLBodyElement = document.getElementsByTagName('body')[0];
   now:any;
@@ -60,6 +61,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     bColor:'',
     fColor:''
   };
+
+  portfolioCurrentUnitPrice = {
+    name: '',
+    id: '',
+    bColor:'',
+    fColor:''
+  }
 
   unit1;
   currentUnit1 = {
@@ -775,6 +783,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UsersService,
+    private unitPriceService:UnitSelectionService,
     private modalService: NgbModal,
     private traderDashboardService: TraderDashboardService,
     private eventService: EventService,
@@ -786,6 +795,15 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.subscription = this.unitPriceService.currentUnitPrice$.subscribe(unitPrice => {
+      if (unitPrice) {
+        this.portfolioCurrentUnitPrice = unitPrice;
+      } else {
+        this.portfolioCurrentUnitPrice.name = "01SUAL_G01" ;
+      }
+    });    
+
+
     this.isImport = true;
     this.CheckUserType();
     this.isOverrideShow = localStorage.getItem('IsOverride');
@@ -812,7 +830,10 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     this.TimerGetData();
     this.GetDemand();
     this.PlotAllUnitDAPChart();
+    this.GetPortfolioDemand();
     //this.SetData();
+
+
   }
 
   CheckUserType(){
@@ -952,8 +973,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     if(type == 'portfolio'){
       this.GetUnitPerRegion();
     }
-    this.GetDemand();
-  
+    // this.GetDemand();
+    this.GetPortfolioDemand();
   }
 
   DisableAlarm(){
@@ -1361,15 +1382,26 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.RMunit3 = data;
     });
   }
-
-  PlotDemandChart(luzDemand,visDemand,minDemand){
+  PlotDemandChart(luzDemand,visDemand,minDemand,priceDemand){
     const luz = [];
     const viz = [];
     const min = [];
-
+    const price = [];
     this.DEMANDseriesOptions = [];
     Object.keys(luzDemand).forEach(element => {
       luz.push([luzDemand[element].TimestampLabel, luzDemand[element].Value]);
+    });
+
+    Object.keys(visDemand).forEach(element => {
+      viz.push([visDemand[element].TimestampLabel, visDemand[element].Value]);
+    });
+
+    Object.keys(minDemand).forEach(element => {
+      min.push([minDemand[element].TimestampLabel, minDemand[element].Value]);
+    });
+
+    Object.keys(priceDemand).forEach(element => {
+      price.push([priceDemand[element].TimestampLabel, priceDemand[element].Value]);
     });
 
     this.DEMANDseriesOptions.push(
@@ -1378,34 +1410,70 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         color: '#3df463',
         data: luz
       },
-    );
-
-    Object.keys(visDemand).forEach(element => {
-      viz.push([visDemand[element].TimestampLabel, visDemand[element].Value]);
-    });
-    this.DEMANDseriesOptions.push(
       {
         name: 'VIZ',
         color: '#3a87ff',
         data: viz
       },
-    );
-    
-    Object.keys(minDemand).forEach(element => {
-      min.push([minDemand[element].TimestampLabel, minDemand[element].Value]);
-    });
-
-    this.DEMANDseriesOptions.push(
       {
         name: 'MIN',
         color: '#ff9454',
         data: min
-      },
+      },{
+        name: 'PRICE',
+        color: 'yellow',
+        data: price,
+        yAxis:1
+      }
     );
 
     this.DEMANDOptions.series = this.DEMANDseriesOptions;
     this.updateFlag = true;
   }
+  // PlotDemandChart(luzDemand,visDemand,minDemand,){
+  //   const luz = [];
+  //   const viz = [];
+  //   const min = [];
+
+  //   this.DEMANDseriesOptions = [];
+  //   Object.keys(luzDemand).forEach(element => {
+  //     luz.push([luzDemand[element].TimestampLabel, luzDemand[element].Value]);
+  //   });
+
+  //   this.DEMANDseriesOptions.push(
+  //     {
+  //       name: 'LUZ',
+  //       color: '#3df463',
+  //       data: luz
+  //     },
+  //   );
+
+  //   Object.keys(visDemand).forEach(element => {
+  //     viz.push([visDemand[element].TimestampLabel, visDemand[element].Value]);
+  //   });
+  //   this.DEMANDseriesOptions.push(
+  //     {
+  //       name: 'VIZ',
+  //       color: '#3a87ff',
+  //       data: viz
+  //     },
+  //   );
+    
+  //   Object.keys(minDemand).forEach(element => {
+  //     min.push([minDemand[element].TimestampLabel, minDemand[element].Value]);
+  //   });
+
+  //   this.DEMANDseriesOptions.push(
+  //     {
+  //       name: 'MIN',
+  //       color: '#ff9454',
+  //       data: min
+  //     },
+  //   );
+
+  //   this.DEMANDOptions.series = this.DEMANDseriesOptions;
+  //   this.updateFlag = true;
+  // }
 
   PlotDemandPorfolioChart(luzDemand,visDemand,minDemand,priceDemand){
     const luz = [];
@@ -1607,6 +1675,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   SetImport(val){
     this.isImport = val;
     this.GetDemand();
+    this.GetPortfolioDemand();
   }
 
   GetDemand(){
@@ -1619,6 +1688,42 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
 
     this.traderDashboardService.getDemand(priceUnitNumber).subscribe(data=>{
+      let currentDemands = data[0]['PIValue'];
+      let hLuzdemand = data[1]['PIValue'];
+      let hVisdemand = data[2]['PIValue'];
+      let hMindemand = data[3]['PIValue'];
+      let hPricedemand = data[4]['PIValue'];
+
+      this.luzDemand = currentDemands[0]['Value'];
+      this.visDemand = currentDemands[1]['Value'];
+      this.minDemand = currentDemands[2]['Value'];
+      this.PhilDemand = (+this.luzDemand) +  (+this.visDemand) + (+this.minDemand);
+      // this.PlotDemandChart(hLuzdemand,hVisdemand,hMindemand,hPricedemand);
+      this.PlotDemandChart(hLuzdemand,hVisdemand,hMindemand,hPricedemand);
+    });
+
+    this.traderDashboardService.getImportExport().subscribe(data => {
+      this.PlotImportExportChart(data[0]['PIValue'],data[1]['PIValue'],data[2]['PIValue']);
+      // if(this.isImport){
+      //   this.PlotImportExportChart(data[0]['PIValue'],data[1]['PIValue'],data[2]['PIValue']);
+      // }else{
+      //   this.PlotImportExportChart(data[3]['PIValue'],data[4]['PIValue'],data[5]['PIValue']);
+      // }
+    });
+    //this.SetImportExport();
+    //this.SetData();
+  }
+
+  GetPortfolioDemand(){
+    let priceUnitNumber:string;
+    if(this.portfolioCurrentUnitPrice.name != '' && this.portfolioCurrentUnitPrice.name != 'SELECT UNIT'){
+      priceUnitNumber = this.portfolioCurrentUnitPrice.name;
+    }else{
+      priceUnitNumber = "";
+    }
+
+
+    this.traderDashboardService.getPortfolioDemand(priceUnitNumber).subscribe(data=>{
       let currentDemands = data[0]['PIValue'];
       let hLuzdemand = data[1]['PIValue'];
       let hVisdemand = data[2]['PIValue'];
@@ -1935,6 +2040,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
+    
+      // Unsubscribe to avoid memory leaks
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+    
+
     clearInterval(this.timerData);
     clearInterval(this.timerDT);
     clearTimeout(this.timerAlarmOutsideLimit);
