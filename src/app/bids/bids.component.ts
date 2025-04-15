@@ -1485,72 +1485,136 @@ if(checkAS){
       'Q5',
     ];
 
-    let headerASRD = [
-      'P1',
-      'Q1',
-      'P2',
-      'Q2',
-      'P3',
-      'Q3',
-      'P4',
-      'Q4',
-      'P5',
-      'Q5',
-    ];
+    // let headerASRD = [
+    //   'P1',
+    //   'Q1',
+    //   'P2',
+    //   'Q2',
+    //   'P3',
+    //   'Q3',
+    //   'P4',
+    //   'Q4',
+    //   'P5',
+    //   'Q5',
+    // ];
+
+    const leftMargin = 30;
+    const topMargin = 30;
+    const colSpacing = 60;  // current horizontal gap between AS RU and AS RD * Change it if you want to adjust the gap between each tables
+    const colWidth = 80;
     
     doc.addPage();
-
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text( "RESERVED" , 30, 15);
-
+    doc.text("RESERVED", leftMargin, 15);
+    
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text( "AS RU" , 30, 28);
-    doc.table(30, 30, resultASRU 
-      ,headerAS
-      , { autoSize: true
-        , fontSize:8
-        , headerBackgroundColor: "#e33f37"
-        , headerTextColor:"white"
-        , padding: 1
-        });
-
+    doc.text("AS RU", leftMargin, topMargin - 5);
+    doc.table(leftMargin, topMargin, resultASRU, headerAS, {
+      autoSize: true,
+      fontSize: 8,
+      headerBackgroundColor: "#e33f37",
+      headerTextColor: "white",
+      padding: 1
+    });
+    
+    const col2X = leftMargin + colWidth + colSpacing;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text( "AS RD" , 98, 28);
-    doc.table(98, 30, resultASRD 
-      ,headerASRD
-      , { autoSize: true
-        , fontSize:8
-        , headerBackgroundColor: "#e33f37"
-        , headerTextColor:"white"
-        , padding: 1
-        });
-
+    doc.text("AS RD", col2X, topMargin - 5);
+    doc.table(col2X, topMargin, resultASRD, headerAS, {
+      autoSize: true,
+      fontSize: 8,
+      headerBackgroundColor: "#e33f37",
+      headerTextColor: "white",
+      padding: 1
+    });
+    
+    doc.addPage();
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("RESERVED", leftMargin, 15);
+    
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text( "AS FR" , 157, 28);
-    doc.table(157, 30, resultASFR 
-          ,headerASRD
-          , { autoSize: true
-            , fontSize:8
-            , headerBackgroundColor: "#e33f37"
-            , headerTextColor:"white"
-            , padding: 1
-            });
-
+    doc.text("AS FR", leftMargin, topMargin - 5);
+    doc.table(leftMargin, topMargin, resultASFR, headerAS, {
+      autoSize: true,
+      fontSize: 8,
+      headerBackgroundColor: "#e33f37",
+      headerTextColor: "white",
+      padding: 1
+    });
+    
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text( "AS DR" , 216, 28); 
-    doc.table(216, 30, resultASDR 
-          ,headerASRD
-          , { autoSize: true
-            , fontSize:8
-            , headerBackgroundColor: "#e33f37"
-            , headerTextColor:"white"
-            , padding: 1
-            });
+    doc.text("AS DR", col2X, topMargin - 5);
+    doc.table(col2X, topMargin, resultASDR, headerAS, {
+      autoSize: true,
+      fontSize: 8,
+      headerBackgroundColor: "#e33f37",
+      headerTextColor: "white",
+      padding: 1
+    });
+
+    // doc.addPage();
+
+    // doc.setFontSize(18);
+    // doc.setFont("helvetica", "bold");
+    // doc.text( "RESERVED" , 30, 15);
+
+    // doc.setFontSize(12);
+    // doc.setFont("helvetica", "bold");
+    // doc.text( "AS RU" , 30, 28);
+    // doc.table(30, 30, resultASRU 
+    //   ,headerAS
+    //   , { autoSize: true
+    //     , fontSize:8
+    //     , headerBackgroundColor: "#e33f37"
+    //     , headerTextColor:"white"
+    //     , padding: 1
+    //     });
+
+
+
+    
+
+    // doc.setFontSize(12);
+    // doc.setFont("helvetica", "bold");
+    // doc.text( "AS RD" , 98, 28);
+    // doc.table(98, 30, resultASRD 
+    //   ,headerASRD
+    //   , { autoSize: true
+    //     , fontSize:8
+    //     , headerBackgroundColor: "#e33f37"
+    //     , headerTextColor:"white"
+    //     , padding: 1
+    //     });
+
+    // doc.setFontSize(12);
+    // doc.setFont("helvetica", "bold");
+    // doc.text( "AS FR" , 157, 28);
+    // doc.table(157, 30, resultASFR 
+    //       ,headerASRD
+    //       , { autoSize: true
+    //         , fontSize:8
+    //         , headerBackgroundColor: "#e33f37"
+    //         , headerTextColor:"white"
+    //         , padding: 1
+    //         });
+
+    // doc.setFontSize(12);
+    // doc.setFont("helvetica", "bold");
+    // doc.text( "AS DR" , 216, 28); 
+    // doc.table(216, 30, resultASDR 
+    //       ,headerASRD
+    //       , { autoSize: true
+    //         , fontSize:8
+    //         , headerBackgroundColor: "#e33f37"
+    //         , headerTextColor:"white"
+    //         , padding: 1
+    //         });
     }
     
     doc.save(this.unitNumber + "_" + moment(this.dateFormatted).format('YYYYMMDD') + ".pdf");
