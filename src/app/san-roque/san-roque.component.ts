@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { first, takeUntil } from 'rxjs/operators';
-
 import { SRService } from './san-roque.service';
 import * as moment from 'moment';
 import { interval, Subject } from 'rxjs';
@@ -16,6 +15,8 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
   bodyTag: HTMLBodyElement = document.getElementsByTagName('body')[0];
   now:any;
   faRetweet = faRetweet;
+
+  selectedView = 'main';
 
   unit1: string;
   unit2: string;
@@ -151,7 +152,6 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
   }
 
   ManualRefresh(){
-    this.SetTimeFromServer();
     this.getData();
     this.getDataHourly();
   }
