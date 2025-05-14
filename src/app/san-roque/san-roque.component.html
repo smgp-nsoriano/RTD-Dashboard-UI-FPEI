@@ -11,156 +11,451 @@
 </div>
 
 <main class="container-fluid">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card bg-dark border-dark text-light">
-        <div class="card-body h-100">
-          <div class="row">
-            <div class="col-6">
-              <div class="col-12 current-time text-warning">
-                SPDC PLANT
-                <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRetweet" size="lg"></fa-icon></button>
+   <ng-container *ngIf="selectedView === 'alternate'">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card bg-dark border-dark text-light">
+          <div class="card-body h-100">
+            <div class="row">
+              <div class="col-6">
+                <div class="col-12 current-time text-warning">
+                  SPDC PLANT
+                  <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRetweet" size="lg"></fa-icon></button>
+                </div>  
+              </div>
+              <div class="col-6 text-right">
+                <div class="col-12 current-time text-warning">
+                  {{ FormatClock() }}
+                </div>
               </div>
             </div>
-            <div class="col-6 text-right">
-              <div class="col-12 current-time text-warning">
-                {{ FormatClock() }}
-              </div>
+            <div class="text-right p-2">
+              <label for="viewSelect" class="mr-2 text-white label-style">Select View:</label>
+              <select id="viewSelect" [(ngModel)]="selectedView" class="form-control d-inline-block w-auto option-style">
+                <option value="main">Vertical View</option>
+                <option value="alternate">Horizontal View</option>
+              </select>
             </div>
-            
-          </div>
-          <div class="row">
-            <div class="col-sm-12 mb-1">
-              LEGEND:
-              <span class="badge bg-light text-danger legend-status ml-5">R</span> - RTD in use
-              <span class="badge bg-light text-danger legend-status ml-5">H</span> - HAP in use
-              <span class="badge bg-light text-danger legend-status ml-5">O</span> - Override in use
-            </div>
-  
-            <div class="col-sm-2 col-md-2 col-lg-2">
-              <div class="p-2 mb-1 text-center font-weight-bold bg-danger">
-                CURRENT INTERVAL
-              </div>
-            </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
-              <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger">
-                ACTUAL MW OUTSIDE LIMITS
-              </div>
-            </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
-              <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white">
-                ACTUAL MW WITHIN LIMITS
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            
-            <div class="col-md-12">
-              <div class="table-responsive mt-3">
-                <table class="table table-sm table-bordered fixed-table">
-                  <thead>
-                    <tr>
-                      <th class="text-center" rowspan="2" style="width: 5%;">INTERVAL</th>
-                      <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit1BColor" [style.color]="unit1FColor" style="width: 15%;">{{ unit1 }}</th>
-                      <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
-                      <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit2BColor" [style.color]="unit2FColor" style="width: 15%;">{{ unit2 }}</th>
-                      <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
-                      <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit3BColor" [style.color]="unit3FColor" style="width: 15%;">{{ unit3 }}</th>
-                      <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
-                    </tr>
-                    <tr>
-                      <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
-                      <th class="text-center" style="width: 5%;">MW</th>
-                      <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
-                      <th class="text-center" style="width: 5%;">MW</th>
-                      <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
-                      <th class="text-center" style="width: 5%;">MW</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    
-                    <tr *ngFor="let forecast of unit1AheadRTD; let i = index">
-                      <td class="text-center" style="width: 5%;">{{ formatDate(forecast.TimeStamp) }}</td>
-                      <td class="text-center" colspan="2" style="width: 5%;">{{ forecast.RTDValue | number: '1.2-2' }}</td>
-                      <td class="text-center dap-column" style="width: 5%;">{{ unit1AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
-                      <td class="text-center" colspan="2" style="width: 5%;">{{ unit2AheadRTD[i]?.RTDValue | number: '1.2-2' }}</td>
-                      <td class="text-center dap-column" style="width: 5%;">{{ unit2AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
-                      <td class="text-center" colspan="2" style="width: 5%;">{{ unit3AheadRTD[i]?.RTDValue | number: '1.2-2' }}</td>
-                      <td class="text-center dap-column" style="width: 5%;">{{ unit3AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
-                    </tr>
+            <div class="row">
               
-                    <tr class="current-interval">
-                   
-                      <td class="text-center" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
-                        {{ formatDate(unit1CurrentRTD?.TimeStamp)}}
-                      </td>
-                      
-                      <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
-                        {{ unit1CurrentRTD?.RTDValue != null ? (unit1CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
-                      </td>
-                      
-                      <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
-                        {{ unit1CurrentRTDH?.DAPValue != null ? (unit1CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
-                      </td>
-                      
-                      <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking2" [class.bg-warning]="isRTDBlinking2">
-                        {{ unit2CurrentRTD?.RTDValue != null ? (unit2CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
-                      </td>
-                      
-                      <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking2" [class.bg-warning]="isRTDBlinking2">
-                        {{ unit2CurrentRTDH?.DAPValue != null ? (unit2CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
-                      </td>
-                      
-                      <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking3" [class.bg-warning]="isRTDBlinking3">
-                        {{ unit3CurrentRTD?.RTDValue != null ? (unit3CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
-                      </td>
-                      
-                      <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking3" [class.bg-warning]="isRTDBlinking3">
-                        {{ unit3CurrentRTDH?.DAPValue != null ? (unit3CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
-                      </td>
-                      
-
-                    
-                      <tr *ngFor="let past of unit1PastRTD; let i = index" [class.alarm]="alarmOutsideLimit">
-                        <td class="text-center" style="width: 5%;">{{ formatDate(past.TimeStamp) }}</td>
-                        <td class="text-center" style="width: 5%;">
-                          {{ past.RTDValue | number: '1.2-2' }}
-                        </td>
-                        <td class="text-center" style="width: 5%;" [class.actual]="past.IsLimit" [class.flagged]="!past.IsLimit">
-                          {{ past.ActualValue | number: '1.0-0' }}
-                        </td>
-                        <td class="text-center dap-column" style="width: 5%;">
-                          {{ unit1PastRTDH[i]?.DAPValue | number: '1.0-0' }}
-                        </td>
-                        <td class="text-center" style="width: 5%;">
-                          {{ unit2PastRTD[i]?.RTDValue | number: '1.2-2' }}
-                        </td>
-                        <td class="text-center" style="width: 5%;" [class.actual]="unit2PastRTD[i]?.IsLimit" [class.flagged]="!unit2PastRTD[i]?.IsLimit">
-                          {{ unit2PastRTD[i]?.ActualValue | number: '1.0-0' }}
-                        </td>
-                        <td class="text-center dap-column" style="width: 5%;">
-                          {{ unit2PastRTDH[i]?.DAPValue | number: '1.0-0' }}
-                        </td>
-                        <td class="text-center" style="width: 5%;">
-                          {{ unit3PastRTD[i]?.RTDValue | number: '1.2-2' }}
-                        </td>
-                        <td class="text-center" style="width: 5%;" [class.actual]="unit3PastRTD[i]?.IsLimit" [class.flagged]="!unit3PastRTD[i]?.IsLimit">
-                          {{ unit3PastRTD[i]?.ActualValue | number: '1.0-0' }}
-                        </td>
-                        <td class="text-center dap-column" style="width: 5%;">
-                          {{ unit3PastRTDH[i]?.DAPValue | number: '1.0-0' }}
-                        </td>
+              <div class="col-md-12">
+                <div class="table-responsive mt-3">
+                  <table class="table table-sm table-bordered fixed-table">
+                    <thead>
+                      <tr>
+                        <th class="text-center" rowspan="2" style="width: 5%;">INTERVAL</th>
+                        <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit1BColor" [style.color]="unit1FColor" style="width: 15%;">{{ unit1 }}</th>
+                        <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
+                        <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit2BColor" [style.color]="unit2FColor" style="width: 15%;">{{ unit2 }}</th>
+                        <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
+                        <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit3BColor" [style.color]="unit3FColor" style="width: 15%;">{{ unit3 }}</th>
+                        <th class="text-center dap-column" style="width: 5%;">DAP (MW)</th>
                       </tr>
+                      <tr>
+                        <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
+                        <th class="text-center" style="width: 5%;">MW</th>
+                        <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
+                        <th class="text-center" style="width: 5%;">MW</th>
+                        <th class="text-center" colspan="2" style="width: 5%;">RTD (MW)</th>
+                        <th class="text-center" style="width: 5%;">MW</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       
+                      <tr *ngFor="let forecast of unit1AheadRTD; let i = index">
+                        <td class="text-center" style="width: 5%;">{{ formatDate(forecast.TimeStamp) }}</td>
+                        <td class="text-center" colspan="2" style="width: 5%;">{{ forecast.RTDValue | number: '1.2-2' }}</td>
+                        <td class="text-center dap-column" style="width: 5%;">{{ unit1AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
+                        <td class="text-center" colspan="2" style="width: 5%;">{{ unit2AheadRTD[i]?.RTDValue | number: '1.2-2' }}</td>
+                        <td class="text-center dap-column" style="width: 5%;">{{ unit2AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
+                        <td class="text-center" colspan="2" style="width: 5%;">{{ unit3AheadRTD[i]?.RTDValue | number: '1.2-2' }}</td>
+                        <td class="text-center dap-column" style="width: 5%;">{{ unit3AheadRTDH[i]?.DAPValue | number: '1.0-0' }}</td>
+                      </tr>
+                
+                      <tr class="current-interval">
+                     
+                        <td class="text-center" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
+                          {{ formatDate(unit1CurrentRTD?.TimeStamp)}}
+                        </td>
+                        
+                        <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
+                          {{ unit1CurrentRTD?.RTDValue != null ? (unit1CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
+                        </td>
+                        
+                        <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
+                          {{ unit1CurrentRTDH?.DAPValue != null ? (unit1CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
+                        </td>
+                        
+                        <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking2" [class.bg-warning]="isRTDBlinking2">
+                          {{ unit2CurrentRTD?.RTDValue != null ? (unit2CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
+                        </td>
+                        
+                        <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking2" [class.bg-warning]="isRTDBlinking2">
+                          {{ unit2CurrentRTDH?.DAPValue != null ? (unit2CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
+                        </td>
+                        
+                        <td class="text-center" colspan="2" style="width: 5%;" [class.bg-danger]="!isRTDBlinking3" [class.bg-warning]="isRTDBlinking3">
+                          {{ unit3CurrentRTD?.RTDValue != null ? (unit3CurrentRTD?.RTDValue | number: '1.2-2') : 'N/A' }}
+                        </td>
+                        
+                        <td class="text-center dap-column" style="width: 5%;" [class.bg-danger]="!isRTDBlinking3" [class.bg-warning]="isRTDBlinking3">
+                          {{ unit3CurrentRTDH?.DAPValue != null ? (unit3CurrentRTDH?.DAPValue | number: '1.0-0') : 'N/A' }}
+                        </td>
+                        
+  
                       
-                  </tbody>
-                </table>
+                        <tr *ngFor="let past of unit1PastRTD; let i = index" [class.alarm]="alarmOutsideLimit">
+                          <td class="text-center" style="width: 5%;">{{ formatDate(past.TimeStamp) }}</td>
+                          <td class="text-center" style="width: 5%;">
+                            {{ past.RTDValue | number: '1.2-2' }}
+                          </td>
+                          <td class="text-center" style="width: 5%;" [class.actual]="past.IsLimit" [class.flagged]="!past.IsLimit">
+                            {{ past.ActualValue | number: '1.0-0' }}
+                          </td>
+                          <td class="text-center dap-column" style="width: 5%;">
+                            {{ unit1PastRTDH[i]?.DAPValue | number: '1.0-0' }}
+                          </td>
+                          <td class="text-center" style="width: 5%;">
+                            {{ unit2PastRTD[i]?.RTDValue | number: '1.2-2' }}
+                          </td>
+                          <td class="text-center" style="width: 5%;" [class.actual]="unit2PastRTD[i]?.IsLimit" [class.flagged]="!unit2PastRTD[i]?.IsLimit">
+                            {{ unit2PastRTD[i]?.ActualValue | number: '1.0-0' }}
+                          </td>
+                          <td class="text-center dap-column" style="width: 5%;">
+                            {{ unit2PastRTDH[i]?.DAPValue | number: '1.0-0' }}
+                          </td>
+                          <td class="text-center" style="width: 5%;">
+                            {{ unit3PastRTD[i]?.RTDValue | number: '1.2-2' }}
+                          </td>
+                          <td class="text-center" style="width: 5%;" [class.actual]="unit3PastRTD[i]?.IsLimit" [class.flagged]="!unit3PastRTD[i]?.IsLimit">
+                            {{ unit3PastRTD[i]?.ActualValue | number: '1.0-0' }}
+                          </td>
+                          <td class="text-center dap-column" style="width: 5%;">
+                            {{ unit3PastRTDH[i]?.DAPValue | number: '1.0-0' }}
+                          </td>
+                        </tr>
+                        
+                        
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col-sm-12 mb-1">
+                LEGEND:
+                <span class="badge bg-light text-danger legend-status ml-5" >R</span> - RTD in use  <span class="badge bg-light text-danger legend-status ml-5" >H</span> - HAP in use <span class="badge bg-light text-danger legend-status ml-5" >O</span> - Override in use
+              </div>
+
+              <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="p-2 mb-1 text-center font-weight-bold bg-danger">
+                  CURRENT INTERVAL
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger">
+                  ACTUAL MW OUTSIDE LIMITS
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white">
+                  ACTUAL MW WITHIN LIMITS
+                </div>
+              </div>
+            </div>
+            
           </div>
-          
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-container *ngIf="selectedView === 'main'">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card bg-dark border-dark text-light">
+          <div class="card-body h-100">
+            <div class="row">
+              <div class="col-6">
+                <div class="col-12 current-time text-warning">
+                  SPDC PLANT
+                  <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRetweet" size="lg"></fa-icon></button>
+                </div>
+                
+              </div>
+              <div class="col-6 text-right">
+                <div class="col-12 current-time text-warning">
+                  {{ FormatClock() }}
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right p-2">
+              <label for="viewSelect" class="mr-2 text-white label-style">Select View:</label>
+              <select id="viewSelect" [(ngModel)]="selectedView" class="form-control d-inline-block w-auto option-style">
+                <option value="main">Vertical View</option>
+                <option value="alternate">Horizontal View</option>
+              </select>
+            </div>
+            <div class="row align-items-center h-100">
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                  <div class="col-8">
+                    <div class="table-responsive mt-3">
+                          <table class="table table-sm table-bordered">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                                <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit1BColor" [style.color]="unit1FColor" >{{ unit1 }}</th>
+                                <th class="text-center" style="width: 5%" rowspan="2" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE (Php/MWh)</th>
+                              </tr>
+                              <tr>
+                                <th class="text-center" colspan="2">RTD (MW)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let forecast of unit1AheadRTD; let i = index">
+                                    <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                    <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.2-2' }}</td>
+                                    <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr class="current-interval" [class.bg-danger]="!isRTDBlinking1" [class.bg-warning]="isRTDBlinking1">
+                                  <td class="text-center">{{ formatDate(unit1CurrentRTD?.TimeStamp) }}</td>
+                                  <td class="text-center" colspan="2">
+                                    {{ unit1CurrentRTD?.RTDValue | number: '1.2-2' }}
+                                    <div class="badge bg-light text-danger data-status">
+                                      {{unit1CurrentRTD.DataStatus}}
+                                    </div>
+                                  </td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ unit1CurrentRTD?.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr *ngFor="let past of unit1PastRTD; let i = index">
+                                  <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                                  <td class="text-center w-50">{{ past.RTDValue | number: '1.2-2' }}</td>
+                                  <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
+                                    {{ past.PriceValue | number: '1.0-0' }}
+                                  </td>
+                                </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="table-responsive mt-3">
+                          <table class="table table-sm table-bordered">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                                <th class="text-center" style="width: 10%">DAP</th>
+                              </tr>
+                              <tr>
+                                <th class="text-center">MW</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let forecast of unit1AheadRTDH; let i = index">
+                                    <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                    <td class="text-center">{{ forecast.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr class="current-interval bg-danger">
+                                  <td class="text-center">{{ formatDate(unit1CurrentRTDH?.TimeStamp) }}</td>
+                                  <td class="text-center">{{ unit1CurrentRTDH?.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr *ngFor="let past of unit1PastRTDH; let i = index">
+                                  <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                                  <td class="text-center w-50">{{ past.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-8">
+                    <div class="table-responsive mt-3">
+                          <table class="table table-sm table-bordered">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                                <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit2BColor" [style.color]="unit2FColor" >{{ unit2 }}</th>
+                                <th class="text-center" style="width: 5%" rowspan="2" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE (Php/MWh)</th>
+                              </tr>
+                              <tr>
+                                <th class="text-center" colspan="2">RTD (MW)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let forecast of unit2AheadRTD; let i = index">
+                                    <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                    <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.2-2' }}</td>
+                                    <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr class="current-interval" [class.bg-danger]="!isRTDBlinking2" [class.bg-warning]="isRTDBlinking2">
+                                  <td class="text-center">{{ formatDate(unit2CurrentRTD?.TimeStamp) }}</td>
+                                  <td class="text-center" colspan="2">
+                                    {{ unit2CurrentRTD?.RTDValue | number: '1.2-2' }}
+                                    <div class="badge bg-light text-danger data-status">
+                                      {{unit2CurrentRTD.DataStatus}}
+                                    </div>
+                                  </td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ unit2CurrentRTD?.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr *ngFor="let past of unit2PastRTD; let i = index">
+                                  <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                                  <td class="text-center w-50">{{ past.RTDValue | number: '1.2-2' }}</td>
+                                  <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
+                                    {{ past.PriceValue | number: '1.0-0' }}
+                                  </td>
+                                </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="table-responsive mt-3">
+                          <table class="table table-sm table-bordered">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                                <th class="text-center" style="width: 5%">DAP</th>
+                              </tr>
+                              <tr>
+                                <th class="text-center">MW</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let forecast of unit2AheadRTDH; let i = index">
+                                    <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                    <td class="text-center">{{ forecast.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr class="current-interval bg-danger">
+                                  <td class="text-center">{{ formatDate(unit2CurrentRTDH?.TimeStamp) }}</td>
+                                  <td class="text-center" >{{ unit2CurrentRTDH?.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr *ngFor="let past of unit2PastRTDH; let i = index">
+                                  <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                                  <td class="text-center w-50">{{ past.DAPValue | number: '1.0-0' }}</td>
+                                </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-8">
+                    <div class="table-responsive mt-3">
+                          <table class="table table-sm table-bordered">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                                <th class="text-center font-weight-bolder" colspan="2" [style.backgroundColor]="unit3BColor" [style.color]="unit3FColor" >{{ unit3 }}</th>
+                                <th class="text-center" style="width: 5%" rowspan="2" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE (Php/MWh)</th>
+                              </tr>
+                              <tr>
+                                <th class="text-center" colspan="2">RTD (MW)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let forecast of unit3AheadRTD; let i = index">
+                                    <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                    <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.2-2' }}</td>
+                                    <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr class="current-interval" [class.bg-danger]="!isRTDBlinking3" [class.bg-warning]="isRTDBlinking3">
+                                  <td class="text-center">{{ formatDate(unit3CurrentRTD?.TimeStamp) }}</td>
+                                  <td class="text-center" colspan="2">
+                                    {{ unit3CurrentRTD?.RTDValue | number: '1.2-2' }}
+                                    <div class="badge bg-light text-danger data-status">
+                                      {{unit3CurrentRTD.DataStatus}}
+                                    </div>
+                                  </td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ unit3CurrentRTD?.PriceValue | number: '1.0-0' }}</td>
+                                </tr>
+  
+                                <tr *ngFor="let past of unit3PastRTD; let i = index">
+                                  <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                                  <td class="text-center w-50">{{ past.RTDValue | number: '1.2-2' }}</td>
+                                  <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
+                                  <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
+                                    {{ past.PriceValue | number: '1.0-0' }}
+                                  </td>
+                                </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="table-responsive mt-3">
+                      <table class="table table-sm table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
+                            <th class="text-center" style="width: 5%">DAP</th>
+                          </tr>
+                          <tr>
+                            <th class="text-center" style="width: 5%">(MW)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                         
+                            <tr *ngFor="let forecast of unit3AheadRTDH; let i = index">
+                                <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
+                                <td class="text-center">{{ forecast.DAPValue | number: '1.0-0' }}</td>
+                            </tr>
+  
+                            <tr class="current-interval bg-danger">
+                              <td class="text-center">{{ formatDate(unit3CurrentRTDH?.TimeStamp) }}</td>
+                              <td class="text-center">{{ unit3CurrentRTDH?.DAPValue | number: '1.0-0' }}</td>
+                            </tr>
+  
+                            <tr *ngFor="let past of unit3PastRTDH; let i = index">
+                              <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
+                              <td class="text-center w-50">{{ past.DAPValue | number: '1.0-0' }}</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 mb-1">
+                    LEGEND:
+                    <span class="badge bg-light text-danger legend-status ml-5" >R</span> - RTD in use  <span class="badge bg-light text-danger legend-status ml-5" >H</span> - HAP in use <span class="badge bg-light text-danger legend-status ml-5" >O</span> - Override in use
+                  </div>
+  
+                  <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="p-2 mb-1 text-center font-weight-bold bg-danger">
+                      CURRENT INTERVAL
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger">
+                      ACTUAL MW OUTSIDE LIMITS
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white">
+                      ACTUAL MW WITHIN LIMITS
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </main>
+      
