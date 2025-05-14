@@ -3,7 +3,7 @@
 </header>
 
 
-<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alarmRTDMessage!=null">
+<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alarmRTDMessage != null">
   <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
   <h5 class="text-danger">{{alarmRTDMessage}}</h5>
   <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="stopAlarm()">
@@ -11,21 +11,21 @@
   </button>
 </div>
 
-<main class="container-fluid">
-  <!--<ngb-alert *ngIf="errorMessage" type="danger" (close)="errorMessage = null">{{ errorMessage }}</ngb-alert>-->
+<main class="container-fluid py-3">
   <div class="row">
     <div class="col-lg-12">
       <div class="card bg-dark border-dark text-light">
-        <div class="card-body h-100">
-          <div class="row">
-            <div class="col-8">
-              <div class="row">
-                <div class="col-4 mt-5">
-                  <div class="row">
-                    <div class="col-12 current-time text-warning">
-                      {{ FormatClock() }}
-                      <button class="btn btn-outline-success text-white ml-4" (click)="ManualRefresh()"><fa-icon [icon]="faRetweet" size="lg"></fa-icon></button>
-                      <!--<button (click)="OpenAlarmModal()" class="btn btn-sm btn-success"> <fa-icon [icon]="faClock" size="sm" ></fa-icon> Open alarm</button>-->
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-md-8">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="col-sm-6 col-md-4">
+                    <div class="d-flex align-items-center text-warning current-time mb-3 ">
+                      <span class="small">{{ FormatClock() }}</span>
+                      <button class="btn btn-outline-success ms-2 text-white" (click)="ManualRefresh()">
+                        <fa-icon [icon]="faRetweet" size="lg"></fa-icon>
+                      </button>
                     </div>
                   </div>
                   <div class="row">
@@ -106,166 +106,146 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- BIG RED SQUARE -->
-                <div *ngIf="isBat" class="col-8">
-                  <div class="border border-white text-center font-weight-bold bg-danger border-4" style="height: 130px; vertical-align:middle; font-size: 85px; font-family: 'Open Sans', sans-serif">
+                  
+                <div *ngIf="isBat" class="col-8 mx-auto mb-2">
+                  <!-- Timestamp Box -->
+                  <div class="border border-white text-center font-weight-bold bg-danger border-4"
+                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
-                  <div class="border-4 border border-white text-center font-weight-bold parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 320px; font-size: 215px; font-family: 'Open Sans', sans-serif">
-                    <!-- LABEL -->
+                
+                  <!-- ENERGY Box -->
+                  <div class="border-4 border border-white text-center font-weight-bold parent-container"
+                       [class.bg-danger]="!isRTDBlinking"
+                       [class.bg-warning]="isRTDBlinking"
+                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     <div class="data-label">ENERGY</div>
-                    <!-- VALUE -->
                     <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
                     <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
-                    <!-- BADGE DATA STATUS -->
-                    <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
+                
+                    <!-- BADGE DATA STATUS - UPPER RIGHT -->
+                    <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2"
+                         *ngIf="currentUnit.name != ''">
                       {{ current?.DataStatus }}
                     </div>
+                
                     <!-- BADGE DECIMAL PLACES -->
-                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                    <div class="badge bg-light text-danger data-decimal"
+                         *ngIf="currentUnit.name != '' && isWithDecimal">
                       .{{ getDecimal(current?.RTDValue) }}
                     </div>
                   </div>
+                
                   <div class="d-flex">
-                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
-                      <!-- LABEL -->
+                    <!-- RR-UP Box -->
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
+                         [class.bg-danger]="!isRTDBlinking"
+                         [class.bg-warning]="isRTDBlinking"
+                         style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">RR-UP</div>
-                      <!-- VALUE -->
                       <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRU) }}</span>
                       <span *ngIf="!isWithDecimal">{{ current?.RRU | number: '1.0-0' }}</span>
-                      <!-- BADGE DATA STATUS -->
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
                         {{ current?.RUDataStatus }}
                       </div>
-                      <!-- BADGE DECIMAL PLACES -->
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
                         .{{ getDecimal(current?.RRU) }}
                       </div>
                     </div>
-                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
-                      <!-- LABEL -->
+                
+                    <!-- RR-DOWN Box -->
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
+                         [class.bg-danger]="!isRTDBlinking"
+                         [class.bg-warning]="isRTDBlinking"
+                         style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">RR-DOWN</div>
-                      <!-- VALUE -->
                       <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRD) }}</span>
                       <span *ngIf="!isWithDecimal">{{ current?.RRD | number: '1.0-0' }}</span>
-                      <!-- BADGE DATA STATUS -->
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
                         {{ current?.RDDataStatus }}
                       </div>
-                      <!-- BADGE DECIMAL PLACES -->
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
                         .{{ getDecimal(current?.RRD) }}
                       </div>
                     </div>
-                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 137px; font-size: 80px; font-family: 'Open Sans', sans-serif">
-                      <!-- LABEL -->
+                
+                    <!-- CONTINGENCY Box -->
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
+                         [class.bg-danger]="!isRTDBlinking"
+                         [class.bg-warning]="isRTDBlinking"
+                         style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">CONTINGENCY</div>
-                      <!-- VALUE -->
                       <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.Contingency) }}</span>
                       <span *ngIf="!isWithDecimal">{{ current?.Contingency | number: '1.0-0' }}</span>
-                      <!-- BADGE DATA STATUS -->
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
                         {{ current?.ConDataStatus }}
                       </div>
-                      <!-- BADGE DECIMAL PLACES -->
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
                         .{{ getDecimal(current?.Contingency) }}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div *ngIf="!isBat" class="col-8">
-                  <div class="border border-white text-center font-weight-bold bg-danger border-4" style="height: 130px; vertical-align:middle; font-size: 85px; font-family: 'Open Sans', sans-serif">
+                
+                <!-- Second Block if isBat is false -->
+                <div *ngIf="!isBat" class="col-8 mx-auto mb-2">
+                  <!-- Timestamp Box -->
+                  <div class="border border-white text-center font-weight-bold bg-danger border-4"
+                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
-                  <div class="border-4 border border-white text-center font-weight-bold parent-container" [class.bg-danger]="!isRTDBlinking" [class.bg-warning]="isRTDBlinking" style="height: 457px; font-size: 315px; font-family: 'Open Sans', sans-serif">
-                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
-                    <div class="badge bg-light text-danger data-status" *ngIf="currentUnit.name != ''">
-                      {{ current?.DataStatus }}
-                    </div>
-                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal" >
-                      .{{ getDecimal(current?.RTDValue) }}
-                    </div>
+                
+                  <!-- RTDValue Box -->
+                  <div class="border-4 border-white text-center font-weight-bold parent-container"
+                  [class.bg-danger]="!isRTDBlinking"
+                  [class.bg-warning]="isRTDBlinking"
+                  style="height: 520px; vertical-align: middle; font-size: 270px; font-family: 'Open Sans', sans-serif; position: relative;">
+                  <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
+                  <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
+
+                  <!-- BADGE DATA STATUS - UPPER RIGHT -->
+                  <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2"
+                    *ngIf="currentUnit.name != ''">
+                  {{ current?.DataStatus }}
+                  </div>
+
+                  <!-- BADGE DECIMAL PLACES -->
+                  <div class="badge bg-light text-danger data-decimal"
+                    *ngIf="currentUnit.name != '' && isWithDecimal">
+                  .{{ getDecimal(current?.RTDValue) }}
+                  </div>
                   </div>
                 </div>
-              </div>
-              
-              
-              <!--
-              <div class="table-responsive mt-3">
-                <table class="table table-sm table-bordered">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width: 5%" rowspan="2">INTERVAL</th>
-                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name === ''"></th>
-                      <th class="text-center font-weight-bolder" colspan="2" *ngIf="currentUnit.name !== ''" [style.backgroundColor]="currentUnit.bColor" [style.color]="currentUnit.fColor" >{{ currentUnit.name }}</th>
-                      <th class="text-center" style="width: 5%" *ngIf="currentUserInfo?.IsShowPrice === true">PRICE</th>
-                    </tr>
-                    <tr>
-                      <th class="text-center" colspan="2">RTD, MW</th>
-                      <th class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">Php/MWh</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let forecast of forecasts; let i = index">
-                      <td class="text-center">{{ formatDate(forecast.TimeStamp) }}</td>
-                      <td class="text-center" colspan="2">{{ forecast.RTDValue | number: '1.0-0' }}</td>
-                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ forecast.PriceValue | number: '1.0-0' }}</td>
-                    </tr>
-
-                    <tr class="current-interval">
-                      <td class="text-center">{{ formatDate(current?.TimeStamp) }}</td>
-                      <td class="text-center" colspan="2">{{ current?.RTDValue | number: '1.0-0' }}</td>
-                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">{{ current?.PriceValue | number: '1.0-0' }}</td>
-                    </tr>
-
-                    <tr *ngFor="let past of pasts; let i = index">
-                      <td class="text-center">{{ formatDate(past.TimeStamp) }}</td>
-                      <td class="text-center w-50">{{ past.RTDValue | number: '1.0-0' }}</td>
-                      <td class="text-center w-50" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" >{{ past.ActualValue | number: '1.0-0' }}</td>
-                      <td class="text-center" *ngIf="currentUserInfo?.IsShowPrice === true">
-                        {{ past.PriceValue | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              -->
-
+              </div>  
             </div>
-            <div class="col-4">
-              <div class="row">
-                <div class="col-sm-12 border border-white p-2 border-4">
+            
+            <div class="col-12 col-md-4"> <!-- Ensure full width on mobile -->
+              <div class="row align-items-center h-100 ms-3">
+                
+                <!-- Hour Ahead Chart -->
+                <div class="col-sm-12 border border-white p-2 border-4 d-flex flex-column">
                   <h4 class="text-warning font-weight-bold">HOUR AHEAD</h4>
-
                   <highcharts-chart
-                  [Highcharts]="Highcharts"
-                  [constructorType]="'chart'"
-                  [options]="HADOptions"
-                  [(update)]="updateFlag"
-                  [oneToOne]="true"
-                  style="width: 100%; height: 230px; display: block;"></highcharts-chart>
+                    [Highcharts]="Highcharts"
+                    [constructorType]="'chart'"
+                    [options]="HADOptions"
+                    [(update)]="updateFlag"
+                    [oneToOne]="true"
+                    class="highcharts-container"
+                    style="width: 100%; height: 260px; display: block;"></highcharts-chart>
                 </div>
-
-                <div class="col-sm-12 mt-2 border border-white p-2 border-4">
-                  <h4 class="text-warning font-weight-bold">
-                    DAY AHEAD
-
-                    <!--<div class="btn-group float-right">
-                      <button class="btn btn-sm btn-warning" (click)="filterDap(true)">CURRENT</button>
-                      <button class="btn btn-sm btn-danger" (click)="filterDap(false)">NEXT DAY</button>
-                    </div>-->
-                  </h4>
-
+            
+                <!-- Day Ahead Chart -->
+                <div class="col-sm-12 border border-white p-2 border-4 d-flex flex-column">
+                  <h4 class="text-warning font-weight-bold">DAY AHEAD</h4>
                   <highcharts-chart
-                  [Highcharts]="Highcharts"
-                  [constructorType]="'chart'"
-                  [options]="DAHOptions"
-                  [(update)]="updateFlag"
-                  [oneToOne]="true"
-                  style="width: 100%; height: 230px; display: block;"></highcharts-chart>
+                    [Highcharts]="Highcharts"
+                    [constructorType]="'chart'"
+                    [options]="DAHOptions"
+                    [(update)]="updateFlag"
+                    [oneToOne]="true"
+                    class="highcharts-container"
+                    style="width: 100%; height: 260px; display: block;"></highcharts-chart>
                 </div>
               </div>
             </div>
