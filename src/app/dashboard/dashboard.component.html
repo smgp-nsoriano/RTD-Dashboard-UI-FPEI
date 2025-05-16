@@ -199,7 +199,7 @@
                   <div class="border-4 border-white text-center font-weight-bold parent-container"
                   [class.bg-danger]="!isRTDBlinking"
                   [class.bg-warning]="isRTDBlinking"
-                  style="height: 520px; vertical-align: middle; font-size: 270px; font-family: 'Open Sans', sans-serif; position: relative;">
+                  style="height: 450px; vertical-align: middle; font-size: 280px; font-family: 'Open Sans', sans-serif; position: relative;">
                   <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
                   <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
 
@@ -232,7 +232,7 @@
                     [(update)]="updateFlag"
                     [oneToOne]="true"
                     class="highcharts-container"
-                    style="width: 100%; height: 260px; display: block;"></highcharts-chart>
+                    style="width: 100%; height: 220px; display: block;"></highcharts-chart>
                 </div>
             
                 <!-- Day Ahead Chart -->
@@ -245,7 +245,7 @@
                     [(update)]="updateFlag"
                     [oneToOne]="true"
                     class="highcharts-container"
-                    style="width: 100%; height: 260px; display: block;"></highcharts-chart>
+                    style="width: 100%; height: 220px; display: block;"></highcharts-chart>
                 </div>
               </div>
             </div>
