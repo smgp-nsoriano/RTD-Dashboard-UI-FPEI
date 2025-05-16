@@ -1079,6 +1079,8 @@ export class BidsComponent implements OnInit {
     }, error => {
       this.loading = false;
       console.log(error.message);
+      this.successUploadMessage = error.message;
+      this.SetTimeoutSuccessUploadMessage();
     });
   }
 
