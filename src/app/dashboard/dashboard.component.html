@@ -111,7 +111,7 @@
                 <div *ngIf="isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
                   <div class="border border-white text-center font-weight-bold bg-danger border-4"
-                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                       style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
                 
@@ -120,9 +120,9 @@
                         [class.bg-danger]="!isRTDBlinking"
                         [class.bg-warning]="isRTDBlinking"
                         [ngStyle]="{
-                          height: '350px',
+                          height: '280px',
                           verticalAlign: 'middle',
-                          fontSize: '280px',
+                          fontSize: '220px',
                           fontFamily: '\'Open Sans\', sans-serif',
                           lineHeight: '1.2',
                           overflow: 'hidden',
@@ -200,15 +200,23 @@
                 <div *ngIf="!isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
                   <div class="border border-white text-center font-weight-bold bg-danger border-4"
-                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                       style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
                 
                   <!-- RTDValue Box -->
-                  <div class="border-4 border-white text-center font-weight-bold parent-container"
-                  [class.bg-danger]="!isRTDBlinking"
-                  [class.bg-warning]="isRTDBlinking"
-                  style="height: 450px; vertical-align: middle; font-size: 280px; font-family: 'Open Sans', sans-serif; position: relative;">
+                  <div class="border-4 border border-white text-center font-weight-bold parent-container"
+                        [class.bg-danger]="!isRTDBlinking"
+                        [class.bg-warning]="isRTDBlinking"
+                        [ngStyle]="{
+                          height: '400px',
+                          verticalAlign: 'middle',
+                          fontSize: '280px',
+                          fontFamily: '\'Open Sans\', sans-serif',
+                          lineHeight: '1.5',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap'
+                        }">
                   <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
                   <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
 
@@ -241,7 +249,7 @@
                     [(update)]="updateFlag"
                     [oneToOne]="true"
                     class="highcharts-container"
-                    style="width: 100%; height: 220px; display: block;"></highcharts-chart>
+                    style="width: 100%; height: 200px; display: block;"></highcharts-chart>
                 </div>
             
                 <!-- Day Ahead Chart -->
@@ -254,7 +262,7 @@
                     [(update)]="updateFlag"
                     [oneToOne]="true"
                     class="highcharts-container"
-                    style="width: 100%; height: 220px; display: block;"></highcharts-chart>
+                    style="width: 100%; height: 200px; display: block;"></highcharts-chart>
                 </div>
               </div>
             </div>
