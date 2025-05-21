@@ -1,5 +1,7 @@
+.parent-container {
+  position: relative;
+}
 @media (max-width: 768px) {
-
   .parent-container {
     display: -moz-flex;
     width: 100% !important;

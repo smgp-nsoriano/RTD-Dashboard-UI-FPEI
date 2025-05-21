@@ -106,7 +106,8 @@
                     </div>
                   </div>
                 </div>
-                  
+                
+                 <!-- First Block if isBat is True -->
                 <div *ngIf="isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
                   <div class="border border-white text-center font-weight-bold bg-danger border-4"
@@ -116,9 +117,17 @@
                 
                   <!-- ENERGY Box -->
                   <div class="border-4 border border-white text-center font-weight-bold parent-container"
-                       [class.bg-danger]="!isRTDBlinking"
-                       [class.bg-warning]="isRTDBlinking"
-                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                        [class.bg-danger]="!isRTDBlinking"
+                        [class.bg-warning]="isRTDBlinking"
+                        [ngStyle]="{
+                          height: '350px',
+                          verticalAlign: 'middle',
+                          fontSize: '280px',
+                          fontFamily: '\'Open Sans\', sans-serif',
+                          lineHeight: '1.2',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap'
+                        }">
                     <div class="data-label">ENERGY</div>
                     <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
                     <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
