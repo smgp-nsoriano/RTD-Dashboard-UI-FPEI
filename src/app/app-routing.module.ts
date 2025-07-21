@@ -22,6 +22,8 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {TraderDashboardComponent} from './trader-dashboard/trader-dashboard.component';
 import {PortfolioComponent} from './portfolio/portfolio.component';
 import {PBReasonComponent} from './pbreason/pbreason.component';
+import { BidsViewerComponent } from './bids-Viewer/bids-viewer.component';
+import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
 const routes: Routes = [
   //{ path: '', component: TestComponent},
   { path: '', component: LoginComponent },
@@ -37,13 +39,14 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
   { path: 'types', component: AccountTypesComponent, canActivate: [AuthGuard] },
   { path: 'bids/:unitId/:unitNumber', component: BidsComponent, canActivate: [AuthGuard] },
+  { path: 'bids-viewer/:bidHistoryId/:unitNumber/:uploadedBy/:transactionId/:dateUploaded/:transactionDate/:status', component: BidsViewerComponent, canActivate: [AuthGuard] },
+  { path: 'bids-viewer-export/:bidHistoryId/:unitNumber/:uploadedBy/:transactionId/:dateUploaded/:transactionDate/:status', component: BidsViewerExportComponent, canActivate: [AuthGuard] },
   { path: 'units', component: UnitsComponent, canActivate: [AuthGuard] },
   { path: 'web-list', component: WebListComponent, canActivate: [AuthGuard] },
   { path: 'sites', component: SitesComponent, canActivate: [AuthGuard] },
   { path: 'dap', component: DapComponent, canActivate: [AuthGuard] },
   { path: 'spdc-monitoring', component: SanRoqueComponent, canActivate: [AuthGuard] },
   { path: 'manual-entry', component: ManualEntryComponent, canActivate: [AuthGuard] }];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

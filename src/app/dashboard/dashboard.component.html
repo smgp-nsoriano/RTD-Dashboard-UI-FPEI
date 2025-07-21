@@ -200,40 +200,63 @@
                 <div *ngIf="!isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
                   <div class="border border-white text-center font-weight-bold bg-danger border-4"
-                       style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                     {{ formatDate(current?.TimeStamp) }}
                   </div>
-                
-                  <!-- RTDValue Box -->
-                  <div class="border-4 border border-white text-center font-weight-bold parent-container"
-                        [class.bg-danger]="!isRTDBlinking"
-                        [class.bg-warning]="isRTDBlinking"
-                        [ngStyle]="{
-                          height: '400px',
-                          verticalAlign: 'middle',
-                          fontSize: '280px',
-                          fontFamily: '\'Open Sans\', sans-serif',
-                          lineHeight: '1.5',
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap'
-                        }">
-                  <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
-                  <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
 
-                  <!-- BADGE DATA STATUS - UPPER RIGHT -->
-                  <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2"
-                    *ngIf="currentUnit.name != ''">
-                  {{ current?.DataStatus }}
+                  <!-- RTDValue BOX -->
+                  <div class="border-4 border-white text-center font-weight-bold parent-container"
+                    [class.bg-danger]="!isRTDBlinking"
+                    [class.bg-warning]="isRTDBlinking"
+                    [ngStyle]="{
+                      height: IsNetLoad ? '300px' : '400px',
+                      verticalAlign: 'middle',
+                      fontSize: '280px',
+                      fontFamily: '\'Open Sans\', sans-serif',
+                      position: 'relative',
+                      lineHeight: IsNetLoad ? '1' : null,
+                      overflow: IsNetLoad ? 'hidden' : null,
+                      whiteSpace: IsNetLoad ? 'nowrap' : null
+                      
+                    }">
+
+                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
+
+                    <!-- BADGE DATA STATUS - UPPER RIGHT -->
+                    <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2"
+                      *ngIf="currentUnit.name !== ''">
+                      {{ current?.DataStatus }}
+                    </div>
+
+                    <!-- BADGE DECIMAL PLACES -->
+                    <div class="badge bg-light text-danger data-decimal"
+                      *ngIf="currentUnit.name !== '' && isWithDecimal">
+                      .{{ getDecimal(current?.RTDValue) }}
+                    </div>
                   </div>
 
-                  <!-- BADGE DECIMAL PLACES -->
-                  <div class="badge bg-light text-danger data-decimal"
-                    *ngIf="currentUnit.name != '' && isWithDecimal">
-                  .{{ getDecimal(current?.RTDValue) }}
-                  </div>
-                  </div>
+            <!-- CURRENT NET LOAD -->
+              <div *ngIf="isNetloadUnit() && IsNetLoad" 
+                class="border border-white border-4 d-flex" 
+                style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
+
+                <div style="flex: 2; background: white; color: #e40000; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
+                  Current Net Load:
                 </div>
+                <div
+                  [ngStyle]="current?.NetLoadValue == null ? {
+                    'font-weight': 'bold',
+                    'font-size': '30px',
+                    'font-family': 'Courier New'
+                  } : {}"
+                  style="flex: 2; background: #e40000; font-size: 60px; color: #ffd40e; display: flex; align-items: center; justify-content: center;">
+                  {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
+                </div>
+              </div>
+
               </div>  
+            </div>
             </div>
             
             <div class="col-12 col-md-4"> <!-- Ensure full width on mobile -->

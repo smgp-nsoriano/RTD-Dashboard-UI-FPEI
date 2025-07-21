@@ -69,6 +69,11 @@ export class UnitsService {
     return this.http.post(`${this.env.apiUrl}/MarketData/CreateBidNew`, data, this.fetch_userToken());
   }
 
+  logBid(unitId, unitNumber, offers,controlMode) {
+    const data = {unitId, unitNumber, offers,controlMode};
+    return this.http.post(`${this.env.apiUrl}/MarketData/LogBid`, data, this.fetch_userToken());
+  }
+
   downloadBid(unitId, unitNumber, offers,controlMode) {
     const data = {unitId, unitNumber, offers, controlMode};    
     return this.http.post(`${this.env.apiUrl}/MarketData/BidXML`, data, this.fetch_userToken());

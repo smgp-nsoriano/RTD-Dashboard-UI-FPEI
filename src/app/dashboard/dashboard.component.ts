@@ -351,13 +351,27 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isAcknowledgeAlarm:boolean;
   isWithAlarm:boolean;
   isWithDecimal:boolean;
-
+  IsNetLoad: boolean
   currentUserInfo;
   modalRef: NgbModalRef;
   alarmMessage: string;
   alarmRTDMessage:string;
   blinkerTimer:any;
+
+
+
   isRTDBlinking:boolean;
+
+    // Blink flags for each box
+  isRRUBlinking = false;
+  isRRDBlinking = false;
+  isContingencyBlinking = false;
+
+  // Previous values
+  previousRRU: number | null = null;
+  previousRRD: number | null = null;
+  previousContingency: number | null = null;
+  
   isBat:boolean;
 
   order: string = 'TimeStamp';
@@ -371,7 +385,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     }
 
   ngOnInit() {
-  
+    this.IsNetLoad = false;
     this.isWithDecimal = false; 
     this.bodyTag.classList.add('bg-dark');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
@@ -419,40 +433,64 @@ export class DashboardComponent implements OnInit, OnDestroy{
     }, 1000);
   }
 
-  timerGetData(){
+  timerGetData() {
     this.timerData = setInterval(() => {
-      if(+moment(this.now).second() == 4){
+      if (+moment(this.now).second() === 4) {
         this.getData();
       }
-
-      if(+moment(this.now).minute() % 5 == 0){
-        if(+moment(this.now).second() == 7){
-          if(this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null){
-            if(this.current['RTDValue'] != this.pasts[0]['RTDValue']){
-              this.alarmRTDMessage = "RTD has change!";
-              this.blinkerTimer = setInterval(() => {
-                if(+moment(this.now).second() % 2 == 1){
-                  this.isRTDBlinking = true;
-                }else{
-                  this.isRTDBlinking = false;
-                }
-              },1000);
-              this.RTDChangedAudio();
-              this.timerAlarm = setInterval(() => {
-                clearInterval(this.blinkerTimer);
-                this.isRTDBlinking = false;
-                this.stopAlarm();
-              },60000);
-            }else{
+  
+      if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
+        // === RTD (Energy) ===
+        if (this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null) {
+          if (this.current['RTDValue'] !== this.pasts[0]['RTDValue']) {
+            this.alarmRTDMessage = "RTD has changed!";
+            this.blinkerTimer = setInterval(() => {
+              this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
+              console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
+            }, 1000);
+            this.RTDChangedAudio();
+            this.timerAlarm = setTimeout(() => {
               clearInterval(this.blinkerTimer);
               this.isRTDBlinking = false;
               this.stopAlarm();
-            }
+            }, 60000);
+          } else {
+            clearInterval(this.blinkerTimer);
+            this.isRTDBlinking = false;
+            this.stopAlarm();
+          }
+        }
+  
+        // === RR-UP (RRU) ===
+        if (this.current['RRU'] != null && this.pasts[0]['RRU'] != null) {
+          if (this.current['RRU'] !== this.pasts[0]['RRU']) {
+            this.isRRUBlinking = true;
+            console.log('RR-UP for unit', this.currentUnit.name, ':', this.isRRUBlinking);
+            setTimeout(() => this.isRRUBlinking = false, 2000);
+          }
+        }
+  
+        // === RR-DOWN (RRD) ===
+        if (this.current['RRD'] != null && this.pasts[0]['RRD'] != null) {
+          if (this.current['RRD'] !== this.pasts[0]['RRD']) {
+            this.isRRDBlinking = true;
+            console.log('RR-Down for unit', this.currentUnit.name, ':', this.isRRDBlinking);
+            setTimeout(() => this.isRRDBlinking = false, 2000);
+          }
+        }
+  
+        // === Contingency ===
+        if (this.current['Contingency'] != null && this.pasts[0]['Contingency'] != null) {
+          if (this.current['Contingency'] !== this.pasts[0]['Contingency']) {
+            this.isContingencyBlinking = true;
+            console.log('Contigency for unit', this.currentUnit.name, ':', this.isContingencyBlinking);
+            setTimeout(() => this.isContingencyBlinking = false, 2000);
           }
         }
       }
     }, 1000);
   }
+  
 
   ManualRefresh(){
     this.SetTimeFromServer();
@@ -482,6 +520,24 @@ export class DashboardComponent implements OnInit, OnDestroy{
       }
   }
 
+
+  // // current unit available for current net load
+  // private readonly netloadUnits = ['01MSINLO_G01', '01MSINLO_G02', '01MSINLO_G03'];
+  // isNetloadUnit(): boolean {
+  //   return this.netloadUnits.includes(this.currentUnit.name);
+  // }
+  // getNetLoadHeight(): string {
+  //   return this.isNetloadUnit() ? '120px' : '0px';
+  // }
+
+ isNetloadUnit(): boolean {
+    return this.IsNetLoad;
+  }
+
+  getNetLoadHeight(): string {
+    return this.IsNetLoad ? '120px' : '0px';
+  } 
+
   getData() {
 
     this.dashboardService.checkConnection().subscribe(data=>{
@@ -495,26 +551,40 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
     this.dashboardService.getCurrentRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
       this.current = data;
-      this.isWithAlarm = this.current.IsWithAlarm;
-      this.isWithDecimal = this.current.IsWithDecimal;
-      if(this.current['DataStatus'] == "H"){
-        this.stopAlarm();
-        this.alarmRTDMessage = "HAP is in use.";
-        this.HAPAudio();
-        this.timerAlarm = setInterval(() => {
+      if (this.current) {
+        this.isWithAlarm = this.current.IsWithAlarm;
+        this.isWithDecimal = this.current.IsWithDecimal;
+        this.IsNetLoad = this.current.IsNetLoad;
+        console.log('IsNetLoad for unit', this.currentUnit.name, ':', this.IsNetLoad);
+        console.log('Energy for unit', this.currentUnit.name, ':', this.isRTDBlinking);
+        console.log('RR-Up for unit', this.currentUnit.name, ':', this.isRRUBlinking);
+        console.log('RR-Down for unit', this.currentUnit.name, ':', this.isRRDBlinking);
+        console.log('Contigency for unit', this.currentUnit.name, ':', this.isContingencyBlinking);  
+        if (this.current['DataStatus'] === "H") {
           this.stopAlarm();
-        },5000);
-      }else if(this.current['DataStatus'] == "O"){
-        this.stopAlarm();
-        this.alarmRTDMessage = "Override value is in use.";
-        this.OverrideAudio();
-        this.timerAlarm = setInterval(() => {
+          this.alarmRTDMessage = "HAP is in use.";
+          this.HAPAudio();
+          this.timerAlarm = setInterval(() => {
+            this.stopAlarm();
+          }, 5000);
+        } else if (this.current['DataStatus'] === "O") {
           this.stopAlarm();
-        },5000);
+          this.alarmRTDMessage = "Override value is in use.";
+          this.OverrideAudio();
+          this.timerAlarm = setInterval(() => {
+            this.stopAlarm();
+          }, 5000);
+        }
+      } else {
+        this.isWithAlarm = false;
+        this.isWithDecimal = false;
+        this.IsNetLoad = false;
       }
     }, error => {
       console.log(error.message);
       this.alarmRTDMessage = "Connection to server problem.";
+      this.IsNetLoad = false;
+      this.current = {}; // prevent undefined reference
     });
 
     this.dashboardService.getAheadRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
@@ -527,14 +597,16 @@ export class DashboardComponent implements OnInit, OnDestroy{
       this.pasts = data;
       
       //&& this.pasts[5].ActualValue != null
-      if(this.pasts[5].IsLimit == false && this.pasts[5].ActualValue != null){
-        this.stopAlarm();
-        if(this.isWithAlarm){
-          this.alarmRTDMessage = "Actual MW, outside the limits";
-          this.OutsideLimitAudio();
-          this.timerAlarm = setInterval(() => {
-            this.stopAlarm();
-          },5000);
+      if (this.pasts && this.pasts.length > 5 && this.pasts[5] != null) {
+        if (this.pasts[5].IsLimit === false && this.pasts[5].ActualValue != null) {
+          this.stopAlarm();
+          if (this.isWithAlarm) {
+            this.alarmRTDMessage = "Actual MW, outside the limits";
+            this.OutsideLimitAudio();
+            this.timerAlarm = setInterval(() => {
+              this.stopAlarm();
+            }, 5000);
+          }
         }
       }
     }, error => {
