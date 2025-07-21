@@ -1,3 +1,99 @@
+.table-responsive {
+  background-color: transparent !important;
+}
+
+.table {
+  background-color: transparent !important;
+  border-collapse: collapse;
+
+  th,
+  td {
+    border: 1px solid #444 !important;
+    vertical-align: middle;
+  }
+}
+
+.bid-logs-table {
+  thead {
+    background-color: hsl(49, 100%, 53%);
+    color: rgb(9, 9, 9) !important;
+
+    th {
+      font-weight: bold;
+      font-family: 'Open Sans', sans-serif;
+      color: rgb(9, 9, 9) !important;
+    }
+  }
+
+  tbody {
+    td {
+      color: #ffffff !important;
+      background-color: transparent !important;
+      font-weight: 500;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05); // subtle gray stripe
+    }
+
+    tr:nth-child(odd) {
+      background-color: transparent; // keep black
+    }
+
+    tr:hover {
+      background-color: #bd2626;
+    }
+  }
+
+  th:last-child,
+  td:last-child {
+    width: 160px;
+    min-width: 160px;
+    max-width: 200px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  td:last-child .btn {
+    min-width: 75px;
+    margin-right: 4px;
+    padding: 3px 6px;
+    font-size: 13px;
+  }
+
+
+  .btn-outline-primary {
+    color: hsl(49, 100%, 53%);
+    border-color: hsl(49, 100%, 53%);
+  }
+
+  .btn-outline-primary:hover {
+    background-color: hsl(49, 100%, 53%);
+    color: black;
+  }
+
+  .text-success {
+    color: #00ff00 !important;
+    font-weight: bold;
+  }
+
+  .text-danger {
+    color: #ff4d4d !important;
+    font-weight: bold;
+  }
+
+  .text-muted {
+    color: #ccc !important;
+    background-color: transparent !important;
+  }
+
+}
+
+
+
+
+
 .table {
   tr {
     &:not(.current-interval) {

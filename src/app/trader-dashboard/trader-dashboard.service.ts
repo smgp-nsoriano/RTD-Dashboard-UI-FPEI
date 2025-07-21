@@ -108,7 +108,11 @@ export class TraderDashboardService {
       return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`, this.fetch_userToken());
     }
 
+    getBidLogsHistory(unitId: string, date: string) {
+      return this.http.get(`${this.env.apiUrl}/Trading/GetBidLogsHistory?UnitNumber=${unitId}&SelectedDate=${date}`, this.fetch_userToken());
+    }
 
-
-
+    getBidArchiveByHistoryID(bidHistoryId: number) {
+      return this.http.get(`${this.env.apiUrl}/Trading/GetBidArchiveByHistoryID?bidHistoryId=${bidHistoryId}`, this.fetch_userToken());
+    }
 }
