@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { AccountTypesComponent } from './account-types/account-types.component';
 import { LoginComponent } from './login/login.component';
 import { BidsComponent } from './bids/bids.component';
+import { BidsViewerComponent } from './bids-Viewer/bids-viewer.component';
 import { SettingsComponent } from './bids/settings/settings.component';
 import { UnitsComponent } from './units/units.component';
 import { WebListComponent } from './web-list/web-list.component';
@@ -42,7 +43,7 @@ import { ReserveMarketDashboardComponent } from './reserve-market-dashboard/rese
 import { ReserveRequirementComponent } from './reserve-requirement/reserve-requirement.component';
 import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio.component';
 import { SystemDemandDashboardComponent } from './system-demand-dashboard/system-demand-dashboard.component';
-
+import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -73,7 +74,9 @@ import { SystemDemandDashboardComponent } from './system-demand-dashboard/system
     ReserveMarketDashboardComponent,
     ReserveRequirementComponent,
     ReservePortfolioComponent,
-    SystemDemandDashboardComponent
+    SystemDemandDashboardComponent,
+    BidsViewerComponent,
+    BidsViewerExportComponent
   ],
   imports: [
     BrowserModule,
