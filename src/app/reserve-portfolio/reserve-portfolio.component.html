@@ -80,10 +80,10 @@
       <tr *ngFor="let data of maintable; let i = index">
         <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regions[data.region]}}</td>
         <td class="text-left">{{data.unitDisplayName}}</td>
-        <td>{{data.rtd_en | number: '1.0-0'}}</td>
-        <td>{{data.rtd_ru | number: '1.0-0'}}</td>
-        <td>{{data.rtd_rd | number: '1.0-0'}}</td>
-        <td>{{data.rtd_cr | number: '1.0-0'}}</td>
+        <td>{{data.rtd_en | number: '1.2-2'}}</td>
+        <td>{{data.rtd_ru | number: '1.2-2'}}</td>
+        <td>{{data.rtd_rd | number: '1.2-2'}}</td>
+        <td>{{data.rtd_cr | number: '1.2-2'}}</td>
         <td [class.neg-actual]="data.actual < 0" [attr.title]="data.actual">{{data.actual | number: '1.0-0'}}</td>
         <td>{{data.mop}}</td>
         <td>{{data.price_en | number: '1.0-0'}}</td>

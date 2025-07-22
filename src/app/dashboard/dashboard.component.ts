@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy,ViewChild} from '@angular/core';
+import { Component, OnInit, OnDestroy,ViewChild,ChangeDetectorRef} from '@angular/core';
 import { first, takeUntil } from 'rxjs/operators';
 import * as Highcharts from 'highcharts';
 import { DashboardService } from './dashboard.service';
@@ -366,16 +366,24 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isRRUBlinking = false;
   isRRDBlinking = false;
   isContingencyBlinking = false;
-
+  testMode: boolean = false; // set to false in production
   // Previous values
   previousRRU: number | null = null;
   previousRRD: number | null = null;
   previousContingency: number | null = null;
-  
+
+  shouldBlinkRRU: boolean = false;
+  shouldBlinkRRD: boolean = false;
+  shouldBlinkContingency: boolean = false;
+  blinkerRRUTimer: any;
+  blinkerRRDTimer: any;
+  blinkerContingencyTimer: any;
+
   isBat:boolean;
 
   order: string = 'TimeStamp';
   constructor(private dashboardService: DashboardService,
+    private cdRef: ChangeDetectorRef,
     private userService: UsersService,
     private modalService: NgbModal,
     private router: Router,
@@ -394,7 +402,20 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.forecasts = [];
     this.getData();
     this.SetTimeFromServer();
-
+    
+    // setInterval(() => {
+    //   clearInterval(this.blinkerRRUTimer);
+    //   this.blinkerRRUTimer = setInterval(() => {
+    //     this.isRRUBlinking = !this.isRRUBlinking;
+    //     console.log('TEST BLINK:', this.isRRUBlinking);
+    //   }, 1000); // toggle every second
+  
+    //   // stop toggling after 10s
+    //   setTimeout(() => {
+    //     clearInterval(this.blinkerRRUTimer);
+    //     this.isRRUBlinking = false;
+    //   }, 10000);
+    // }, 15000); // rerun blinking cycle every 15s
     //interval(1000).subscribe(() => {
     //  this.setData();
     //});
@@ -434,62 +455,90 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
 
   timerGetData() {
-    this.timerData = setInterval(() => {
-      if (+moment(this.now).second() === 4) {
-        this.getData();
-      }
-  
-      if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
-        // === RTD (Energy) ===
-        if (this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null) {
-          if (this.current['RTDValue'] !== this.pasts[0]['RTDValue']) {
-            this.alarmRTDMessage = "RTD has changed!";
-            this.blinkerTimer = setInterval(() => {
-              this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
-              console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
-            }, 1000);
-            this.RTDChangedAudio();
-            this.timerAlarm = setTimeout(() => {
-              clearInterval(this.blinkerTimer);
-              this.isRTDBlinking = false;
-              this.stopAlarm();
-            }, 60000);
-          } else {
+  this.timerData = setInterval(() => {
+    if (+moment(this.now).second() === 4) {
+      this.getData();
+    }
+
+    if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
+
+      // === RTD (Energy) ===
+      if (this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null) {
+        if (this.current['RTDValue'] !== this.pasts[0]['RTDValue']) {
+          this.alarmRTDMessage = "RTD has changed!";
+          clearInterval(this.blinkerTimer); // clear if already running
+
+          this.blinkerTimer = setInterval(() => {
+            this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
+            console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
+          }, 1000);
+
+          this.RTDChangedAudio();
+
+          this.timerAlarm = setTimeout(() => {
             clearInterval(this.blinkerTimer);
             this.isRTDBlinking = false;
             this.stopAlarm();
-          }
-        }
-  
-        // === RR-UP (RRU) ===
-        if (this.current['RRU'] != null && this.pasts[0]['RRU'] != null) {
-          if (this.current['RRU'] !== this.pasts[0]['RRU']) {
-            this.isRRUBlinking = true;
-            console.log('RR-UP for unit', this.currentUnit.name, ':', this.isRRUBlinking);
-            setTimeout(() => this.isRRUBlinking = false, 2000);
-          }
-        }
-  
-        // === RR-DOWN (RRD) ===
-        if (this.current['RRD'] != null && this.pasts[0]['RRD'] != null) {
-          if (this.current['RRD'] !== this.pasts[0]['RRD']) {
-            this.isRRDBlinking = true;
-            console.log('RR-Down for unit', this.currentUnit.name, ':', this.isRRDBlinking);
-            setTimeout(() => this.isRRDBlinking = false, 2000);
-          }
-        }
-  
-        // === Contingency ===
-        if (this.current['Contingency'] != null && this.pasts[0]['Contingency'] != null) {
-          if (this.current['Contingency'] !== this.pasts[0]['Contingency']) {
-            this.isContingencyBlinking = true;
-            console.log('Contigency for unit', this.currentUnit.name, ':', this.isContingencyBlinking);
-            setTimeout(() => this.isContingencyBlinking = false, 2000);
-          }
+          }, 60000); // 1 minute
+        } else {
+          clearInterval(this.blinkerTimer);
+          this.isRTDBlinking = false;
+          this.stopAlarm();
         }
       }
-    }, 1000);
-  }
+
+      // === RR-UP (RRU) ===
+      if (this.current['RRU'] !== this.pasts[0]['RRU']) {
+        clearInterval(this.blinkerRRUTimer); // Clear previous timer
+
+        this.blinkerRRUTimer = setInterval(() => {
+          this.isRRUBlinking = !this.isRRUBlinking;
+          this.cdRef.detectChanges(); // Force Angular to update UI
+        }, 1000); // Toggle every second
+
+        setTimeout(() => {
+          clearInterval(this.blinkerRRUTimer);
+          this.isRRUBlinking = false;
+          this.cdRef.detectChanges();
+        }, 60000); // Stop blinking after 30 minutes
+      }
+
+      // === RR-DOWN (RRD) ===
+      if (this.current['RRD'] !== this.pasts[0]['RRD']) {
+        clearInterval(this.blinkerRRDTimer);
+
+        this.blinkerRRDTimer = setInterval(() => {
+          this.isRRDBlinking = !this.isRRDBlinking;
+          this.cdRef.detectChanges();
+        }, 1000);
+
+        setTimeout(() => {
+          clearInterval(this.blinkerRRDTimer);
+          this.isRRDBlinking = false;
+          this.cdRef.detectChanges();
+        }, 60000);
+      }
+
+      // === Contingency ===
+      if (this.current['Contingency'] !== this.pasts[0]['Contingency']) {
+        clearInterval(this.blinkerContingencyTimer);
+
+        this.blinkerContingencyTimer = setInterval(() => {
+          this.isContingencyBlinking = !this.isContingencyBlinking;
+          this.cdRef.detectChanges();
+        }, 1000);
+
+        setTimeout(() => {
+          clearInterval(this.blinkerContingencyTimer);
+          this.isContingencyBlinking = false;
+          this.cdRef.detectChanges();
+        }, 60000);
+      }
+
+    }
+  }, 1000); // Every second
+}
+
   
 
   ManualRefresh(){
@@ -550,24 +599,63 @@ export class DashboardComponent implements OnInit, OnDestroy{
     });
 
     this.dashboardService.getCurrentRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
+      if (!data) {
+        return;
+      }
+      // Store previous values before updating
+      const prevRRU = this.previousRRU;
+      const prevRRD = this.previousRRD;
+      const prevContingency = this.previousContingency;
+    
       this.current = data;
+    
+      // If in test mode, override with mock values
+      if (this.testMode) {
+        this.current.RRU = Math.floor(Math.random() * 100);
+        this.current.RRD = Math.floor(Math.random() * 100);
+        this.current.Contingency = Math.floor(Math.random() * 100);
+        console.log('Test Mode ON - Mock Values:', this.current);
+      }
+    
+      // Apply blinking state if values changed
+      this.isRRUBlinking = prevRRU !== null && this.current.RRU !== prevRRU;
+      this.isRRDBlinking = prevRRD !== null && this.current.RRD !== prevRRD;
+      this.isContingencyBlinking = prevContingency !== null && this.current.Contingency !== prevContingency;
+    
+      if (this.isRRUBlinking) {
+        setTimeout(() => this.isRRUBlinking = false, 1000);
+      }
+      if (this.isRRDBlinking) {
+        setTimeout(() => this.isRRDBlinking = false, 1000);
+      }
+      if (this.isContingencyBlinking) {
+        setTimeout(() => this.isContingencyBlinking = false, 1000);
+      }
+    
+      // Debugging logs
+      console.log('RRU Blink:', this.isRRUBlinking, 'Current:', this.current.RRU, 'Prev:', prevRRU);
+      console.log('RRD Blink:', this.isRRDBlinking, 'Current:', this.current.RRD, 'Prev:', prevRRD);
+      console.log('Contingency Blink:', this.isContingencyBlinking, 'Current:', this.current.Contingency, 'Prev:', prevContingency);
+    
+      // Update previous values
+      this.previousRRU = this.current.RRU;
+      this.previousRRD = this.current.RRD;
+      this.previousContingency = this.current.Contingency;
+    
+      // Alarm and flag logic
       if (this.current) {
         this.isWithAlarm = this.current.IsWithAlarm;
         this.isWithDecimal = this.current.IsWithDecimal;
         this.IsNetLoad = this.current.IsNetLoad;
-        console.log('IsNetLoad for unit', this.currentUnit.name, ':', this.IsNetLoad);
-        console.log('Energy for unit', this.currentUnit.name, ':', this.isRTDBlinking);
-        console.log('RR-Up for unit', this.currentUnit.name, ':', this.isRRUBlinking);
-        console.log('RR-Down for unit', this.currentUnit.name, ':', this.isRRDBlinking);
-        console.log('Contigency for unit', this.currentUnit.name, ':', this.isContingencyBlinking);  
-        if (this.current['DataStatus'] === "H") {
+    
+        if (this.current.DataStatus === "H") {
           this.stopAlarm();
           this.alarmRTDMessage = "HAP is in use.";
           this.HAPAudio();
           this.timerAlarm = setInterval(() => {
             this.stopAlarm();
           }, 5000);
-        } else if (this.current['DataStatus'] === "O") {
+        } else if (this.current.DataStatus === "O") {
           this.stopAlarm();
           this.alarmRTDMessage = "Override value is in use.";
           this.OverrideAudio();
@@ -580,12 +668,16 @@ export class DashboardComponent implements OnInit, OnDestroy{
         this.isWithDecimal = false;
         this.IsNetLoad = false;
       }
+    
     }, error => {
       console.log(error.message);
       this.alarmRTDMessage = "Connection to server problem.";
       this.IsNetLoad = false;
-      this.current = {}; // prevent undefined reference
+      this.current = {} as any; // Use empty fallback
     });
+    
+    
+    
 
     this.dashboardService.getAheadRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
       this.forecasts = data;

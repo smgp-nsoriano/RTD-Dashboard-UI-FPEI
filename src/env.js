@@ -2,7 +2,7 @@
   window.__env = window.__env || {};
 
   // API URL
-  window.__env.apiUrl = 'https://smcgphtrading.sanmiguel.com.ph/TradingAPIV2';
+  window.__env.apiUrl = 'https://smcgphtrading.sanmiguel.com.ph/TradingAPIV2_Staging';
   window.__env.apiUrlV1 = 'https://smcgphtrading.sanmiguel.com.ph/';
 
   // Whether or not to enable debug mode

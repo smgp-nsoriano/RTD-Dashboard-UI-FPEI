@@ -2149,8 +2149,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     const unitNumber = log.UnitNumber 
       || (this.currentUnit1 && this.currentUnit1.name) 
       || (this.currentUnitBids && this.currentUnitBids.name);
-  
-    // ✅ Safe fallback without optional chaining
     const baseTag = document.getElementsByTagName('base')[0];
     const baseHref = baseTag && baseTag.getAttribute('href') ? baseTag.getAttribute('href') : '/';
   
@@ -2202,91 +2200,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     return `${baseHref}bids-viewer/${bidHistoryId}/${unit}/${uploadedBy}/${transactionId}/${dateUploaded}/${transactionDate}/${status}`;
   }
   
-  
-  
-  
-  
-  
-  
-  
-  
-
-  // viewBidLog(log: any): void {
-  //   let unit: string = '';
-  
-  //   if (log && log.UnitNumber) {
-  //     unit = log.UnitNumber;
-  //   } else if (this.currentUnit1 && this.currentUnit1.name) {
-  //     unit = this.currentUnit1.name;
-  //   }
-  
-  //   if (log && log.BidHistoryID && unit) {
-  //     this.router.navigate([
-  //       '/bids-viewer',
-  //       log.BidHistoryID,
-  //       unit,
-  //       log.UploadedBy || 'unknown',
-  //       log.TransactionID || 'unknown',
-  //       log.DateUploaded || moment().toISOString(),
-  //       log.TransactionDate || moment().toISOString()
-  //     ]);
-  //   } else {
-  //     console.error('Missing BidHistoryID or UnitNumber:', log);
-  //     alert('Incomplete log entry.');
-  //   }
-  // }
-  
-  
-  
-  
-  
-  
-  
-  
-  // selectedLogsUnit(id:number,units, currentUnit, unitType:string){
-  //   const selected = units.find(unit => unit.UnitID === id);
-  //   const date = Highcharts.dateFormat
-  //   currentUnit.id = selected.UnitID;
-  //   currentUnit.name = selected.UnitNumber; 
-
-  //   if(currentUnit.name=='SELECT UNIT'){
-
-  //     console.log(unitType +"UnitNUmber" == null)
-
-  //      }else{
-  //       this.traderDashboardService.getBidLogsHistory(currentUnit.name,unitType).subscribe(data=>
-  //         {
-  //           console.log('Logs_Unit: ' + currentUnit.name);
-  //           console.log('Selected date:', this.selectedDate);
-  //         });
-          
-  //     }
-  // }
-
-  // selectedLogsUnit(id: number, units: any[], currentUnit: any): void {
-  //   const selected = units.find(unit => unit.UnitID === id);
-  //   if (selected) {
-  //     currentUnit.id = selected.UnitID;
-  //     currentUnit.name = selected.UnitNumber;
-  //     this.currentUnit1 = currentUnit;
-  //     this.BidLogsHistory();
-  //   }
-  // }
-
-  // onDateChange(): void {
-  //   this.BidLogsHistory();
-  // }
-
-  // BidLogsHistory(): void {
-  //   if (this.currentUnit1.name !== '' && this.selectedDate) {
-  //     this.traderDashboardService
-  //       .getBidLogsHistory(this.currentUnit1.name, this.selectedDate)
-  //       .subscribe(data => {
-  //         console.log('Logs_Unit:', this.currentUnit1.name);
-  //         console.log('Selected date:', this.selectedDate);
-  //       });
-  //   }
-  // }
   selectedLogsUnit(id: number, units: any[], currentUnit: any): void {
     const selected = units.find(unit => unit.UnitID === id);
     if (selected) {
@@ -2323,13 +2236,5 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
         });
     }
   }
-  
-  
-
-
-
-
-
-
 
 }
