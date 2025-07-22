@@ -1226,6 +1226,16 @@ export class BidsComponent implements OnInit {
       this.bidLoading = false;
       console.log(error.message);
     });
+
+    this.unitService.logBid(this.unitId, this.unitNumber, this.offers, this.controlModeValue).subscribe(data => {
+      console.log(this.offer)
+    }, error => {
+      this.bidLoading = false;
+      console.log(error.message);
+    });
+
+
+
   }
 
   formatDate(date) {
