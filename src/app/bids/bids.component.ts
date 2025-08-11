@@ -1233,12 +1233,6 @@ export class BidsComponent implements OnInit {
       this.bidLoading = false;
       console.log(error.message);
     });
-
-<<<<<<< HEAD
-
-
-=======
->>>>>>> reserve_decimal_blinkstate
   }
 
   formatDate(date) {
