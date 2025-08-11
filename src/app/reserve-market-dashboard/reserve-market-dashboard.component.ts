@@ -422,7 +422,32 @@ ngAfterViewInit(){
     }
   }, 1000);
 }
+checkAndClearPreviewOnReload() {
+  const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
+  const now = new Date();
+  const nowMinutes = now.getMinutes();
 
+  if (!lastClearedISO) {
+    // No previous clear, so do it now
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on first-time load.");
+    return;
+  }
+
+  const lastCleared = new Date(lastClearedISO);
+  const diffMs = now.getTime() - lastCleared.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+
+  if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
+    // Either it's been > 5 mins, or we're at a new 5-min boundary
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on reload based on timestamp check.");
+  } else {
+    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
+  }
+}
 clearPreviewValues() {
   const unitNumber = this.selectedUnitNumber;
   const previewKeys = [
@@ -452,32 +477,6 @@ clearPreviewValues() {
   }
 
   console.log("Preview values cleared.");
-}
-checkAndClearPreviewOnReload() {
-  const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
-  const now = new Date();
-  const nowMinutes = now.getMinutes();
-
-  if (!lastClearedISO) {
-    // No previous clear, so do it now
-    this.clearPreviewValues();
-    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on first-time load.");
-    return;
-  }
-
-  const lastCleared = new Date(lastClearedISO);
-  const diffMs = now.getTime() - lastCleared.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-
-  if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
-    // Either it's been > 5 mins, or we're at a new 5-min boundary
-    this.clearPreviewValues();
-    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on reload based on timestamp check.");
-  } else {
-    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
-  }
 }
 
   SetReserveMarketValue(unitNumber: string, unitType: string) {
@@ -563,16 +562,15 @@ checkAndClearPreviewOnReload() {
           }
       
           if (isPreviewSlot) {
-            if (newValue !== null) {
-              this.dbValues[x][key] = newValue;
-              localStorage.setItem(previewStorageKey, newValue.toString());
+            if (newValue !== null && newValue !== undefined && newValue !== '') {
+                this.dbValues[x][key] = newValue;
+                localStorage.setItem(previewStorageKey, newValue.toString());
             } else {
-              const stored = localStorage.getItem(previewStorageKey);
-              this.dbValues[x][key] = stored !== null ? +stored : null;
+                this.dbValues[x][key] = null;
             }
-          } else {
-            this.dbValues[x][key] = newValue;
-          }
+        } else {
+            this.dbValues[x][key] = (newValue !== '' ? newValue : null);
+        }
         }
       
         // === Status ===
