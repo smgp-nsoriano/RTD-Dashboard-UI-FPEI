@@ -489,21 +489,21 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
       // === RR-UP (RRU) ===
       if (this.current['RRU'] !== this.pasts[0]['RRU']) {
-        clearInterval(this.blinkerRRUTimer); // Clear previous timer
+        clearInterval(this.blinkerRRUTimer);
 
         this.blinkerRRUTimer = setInterval(() => {
           this.isRRUBlinking = !this.isRRUBlinking;
-          this.cdRef.detectChanges(); // Force Angular to update UI
-        }, 1000); // Toggle every second
+          this.cdRef.detectChanges();
+        }, 1000);
 
         setTimeout(() => {
           clearInterval(this.blinkerRRUTimer);
           this.isRRUBlinking = false;
           this.cdRef.detectChanges();
-        }, 60000); // Stop blinking after 30 minutes
+        }, 30000);
       }
 
-      // === RR-DOWN (RRD) ===
+      
       if (this.current['RRD'] !== this.pasts[0]['RRD']) {
         clearInterval(this.blinkerRRDTimer);
 
@@ -516,7 +516,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           clearInterval(this.blinkerRRDTimer);
           this.isRRDBlinking = false;
           this.cdRef.detectChanges();
-        }, 60000);
+        }, 30000);
       }
 
       // === Contingency ===
@@ -532,7 +532,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           clearInterval(this.blinkerContingencyTimer);
           this.isContingencyBlinking = false;
           this.cdRef.detectChanges();
-        }, 60000);
+        }, 30000);
       }
 
     }
@@ -550,6 +550,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.alarmRTDMessage = null;
     clearInterval(this.blinkerTimer);
     this.isRTDBlinking = false;
+    this.isContingencyBlinking = false;
+    this.isRRUBlinking=false;
+    this.isRRDBlinking = false;
     clearInterval(this.timerAlarm);
   }
 
@@ -623,19 +626,19 @@ export class DashboardComponent implements OnInit, OnDestroy{
       this.isContingencyBlinking = prevContingency !== null && this.current.Contingency !== prevContingency;
     
       if (this.isRRUBlinking) {
-        setTimeout(() => this.isRRUBlinking = false, 1000);
+        setTimeout(() => this.isRRUBlinking = false, 20000);
       }
       if (this.isRRDBlinking) {
-        setTimeout(() => this.isRRDBlinking = false, 1000);
+        setTimeout(() => this.isRRDBlinking = false, 20000);
       }
       if (this.isContingencyBlinking) {
-        setTimeout(() => this.isContingencyBlinking = false, 1000);
+        setTimeout(() => this.isContingencyBlinking = false, 20000);
       }
     
       // Debugging logs
-      console.log('RRU Blink:', this.isRRUBlinking, 'Current:', this.current.RRU, 'Prev:', prevRRU);
-      console.log('RRD Blink:', this.isRRDBlinking, 'Current:', this.current.RRD, 'Prev:', prevRRD);
-      console.log('Contingency Blink:', this.isContingencyBlinking, 'Current:', this.current.Contingency, 'Prev:', prevContingency);
+      // console.log('RRU Blink:', this.isRRUBlinking, 'Current:', this.current.RRU, 'Prev:', prevRRU);
+      // console.log('RRD Blink:', this.isRRDBlinking, 'Current:', this.current.RRD, 'Prev:', prevRRD);
+      // console.log('Contingency Blink:', this.isContingencyBlinking, 'Current:', this.current.Contingency, 'Prev:', prevContingency);
     
       // Update previous values
       this.previousRRU = this.current.RRU;

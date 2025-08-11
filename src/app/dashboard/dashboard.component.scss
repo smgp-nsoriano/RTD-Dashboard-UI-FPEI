@@ -1,16 +1,16 @@
 .blink-green {
   animation: blink-green 1s infinite alternate;
-  background-color: #dc3545; /* red base */
 }
 
 @keyframes blink-green {
   0% {
-    background-color: #1f973f;
+    background-color: #e40000; // Bootstrap green
   }
   100% {
-    background-color: #0a6e24; // green
+    background-color: #0c8428; // Bootstrap red
   }
 }
+
 
 .parent-container {
   position: relative;
