@@ -276,32 +276,32 @@
                     <td *ngIf="i&lt;4" class="text-center">{{data.U1ENPrice | number: '1.0-0'}}</td>
                     <!-- <td *ngIf="i&lt;4" class="text-center">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
                     <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU1_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i==0" class="text-center" rowspan="4"></td>
-                    <td *ngIf="i&lt;4 && showU1DRcolumn" class="text-center">{{data.RMU1_DR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4 && showU1DRcolumn" class="text-center">{{data.RMU1_DR_Sched | number: '1.1-1'}}</td>
                     <!-- 2nd unit -->
                     <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU2_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i==0" class="text-center" rowspan="4"></td>
-                    <td *ngIf="i&lt;4 && showU2DRcolumn" class="text-center">{{data.RMU2_DR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4 && showU2DRcolumn" class="text-center">{{data.RMU2_DR_Sched | number: '1.1-1'}}</td>
                     <!-- 3rd unit -->
                     <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i&lt;4" class="text-center">{{data.RMU3_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i==0" class="text-center" rowspan="4"></td>
-                    <td *ngIf="i&lt;4 && showU3DRcolumn" class="text-center">{{data.RMU3_DR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i&lt;4 && showU3DRcolumn" class="text-center">{{data.RMU3_DR_Sched | number: '1.1-1'}}</td>
                     
                     <!-- cells ON red:RTD -->
                     <td *ngIf="i==4" class="text-center bg-danger" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
                     <td *ngIf="i==4" class="current-interval">{{ getCurrentInterval(data.TimestampLabel) }}</td>
-                    <td *ngIf="i==4" class="current-interval">{{data.RURMPrice | number: '1.2-2'}}</td>
-                    <td *ngIf="i==4" class="current-interval">{{data.RDRMPrice | number: '1.2-2'}}</td>
-                    <td *ngIf="i==4" class="current-interval">{{data.CRRMPrice | number: '1.2-2'}}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.RURMPrice | number: '1.1-1'}}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.RDRMPrice | number: '1.1-1'}}</td>
+                    <td *ngIf="i==4" class="current-interval">{{data.CRRMPrice | number: '1.1-1'}}</td>
                     <!-- 1st unit -->
                     <td *ngIf="i==4" class="current-interval">{{data.U1ENPrice | number: '1.0-0'}}</td>
                     <!-- <td *ngIf="i==4" class="current-interval">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
@@ -310,15 +310,15 @@
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_EN_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU1_RU_Sched | number: '1.2-2'}}
+                      {{data.RMU1_RU_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_RU_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU1_RD_Sched | number: '1.2-2'}}
+                      {{data.RMU1_RD_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_RD_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU1_FR_Sched | number: '1.2-2'}}
+                      {{data.RMU1_FR_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit1.name!='' && RMcurrentUnit1.name!='SELECT UNIT'">{{data.RMU1_FR_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval"></td>
@@ -329,15 +329,15 @@
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_EN_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU2_RU_Sched | number: '1.2-2'}}
+                      {{data.RMU2_RU_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_RU_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU2_RD_Sched | number: '1.2-2'}}
+                      {{data.RMU2_RD_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_RD_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU2_FR_Sched | number: '1.2-2'}}
+                      {{data.RMU2_FR_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit2.name!='' && RMcurrentUnit2.name!='SELECT UNIT'">{{data.RMU2_FR_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval"></td>
@@ -348,15 +348,15 @@
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_EN_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU3_RU_Sched | number: '1.2-2'}}
+                      {{data.RMU3_RU_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_RU_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU3_RD_Sched | number: '1.2-2'}}
+                      {{data.RMU3_RD_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_RD_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval">
-                      {{data.RMU3_FR_Sched | number: '1.2-2'}}
+                      {{data.RMU3_FR_Sched | number: '1.1-1'}}
                       <div class="badge bg-light text-danger data-status" *ngIf="RMcurrentUnit3.name!='' && RMcurrentUnit3.name!='SELECT UNIT'">{{data.RMU3_FR_Status}}</div>
                     </td>
                     <td *ngIf="i==4" class="current-interval"></td>
@@ -372,23 +372,23 @@
                     <td *ngIf="i>4">{{data.U1ENPrice | number: '1.0-0'}}</td>
                     <!-- <td *ngIf="i>4">{{data.U1RMPrice | number: '1.0-0'}}</td> -->
                     <td *ngIf="i>4">{{data.RMU1_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i>4">{{data.RMU1_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU1_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU1_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU1_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i>4" class="actual">{{data.RMU1_Actual_Sched | number: '1.0-0'}}</td>
                     <td *ngIf="i>4 && showU1DRcolumn">{{data.RMU1_DR_Sched | number: '1.0-0'}}</td>
                     <!-- 2nd unit -->
                     <td *ngIf="i>4">{{data.RMU2_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i>4">{{data.RMU2_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU2_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU2_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU2_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i>4" class="actual">{{data.RMU2_Actual_Sched | number: '1.0-0'}}</td>
                     <td *ngIf="i>4 && showU2DRcolumn">{{data.RMU2_DR_Sched | number: '1.0-0'}}</td>
                     <!-- 3rd unit -->
                     <td *ngIf="i>4">{{data.RMU3_EN_Sched | number: '1.0-0'}}</td>
-                    <td *ngIf="i>4">{{data.RMU3_RU_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU3_RD_Sched | number: '1.2-2'}}</td>
-                    <td *ngIf="i>4">{{data.RMU3_FR_Sched | number: '1.2-2'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_RU_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_RD_Sched | number: '1.1-1'}}</td>
+                    <td *ngIf="i>4">{{data.RMU3_FR_Sched | number: '1.1-1'}}</td>
                     <td *ngIf="i>4" class="actual">{{data.RMU3_Actual_Sched | number: '1.0-0'}}</td>
                     <td *ngIf="i>4 && showU3DRcolumn">{{data.RMU3_DR_Sched | number: '1.0-0'}}</td>
                   </tr>
