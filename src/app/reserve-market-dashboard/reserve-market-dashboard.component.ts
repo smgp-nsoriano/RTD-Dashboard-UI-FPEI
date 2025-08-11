@@ -6,6 +6,7 @@ import { ReserveMarketDashboardServiceService } from './reserve-market-dashboard
 import { EventService } from '../trader-dashboard/EventService';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { keys } from 'highcharts';
 @Component({
   selector: 'app-reserve-market-dashboard',
   templateUrl: './reserve-market-dashboard.component.html',
@@ -27,6 +28,10 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
   timerAlarmOutsideLimit:any;
   timerAlarmNoConnection:any;
   timerAlarmHAP:any;
+
+  previewCleared = false;
+  private lastClearedMinute: number | null = null;
+
 
   ENtempStorage1: number;
   ENtempStorage2: number;
@@ -180,7 +185,6 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
   
-
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
@@ -195,7 +199,7 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
-    }, 15000);    
+    }, 15000); 
   }
   userLogs(action:string) {
     const data = {
@@ -216,6 +220,8 @@ ngAfterViewInit(){
     this.alarmTriggered=false;
     this.PopulateUnits();
     this.SetIntervals();
+    this.checkAndClearPreviewOnReload(); 
+    this.clearAllPreviewValuesAtIntervals();
     this.TimerGetData();
     this.tempValue = this.eventService.getItem('tempValue');
     if(this.tempValue==null||this.tempValue==false){
@@ -323,6 +329,9 @@ ngAfterViewInit(){
   RefreshData(){
     this.PopulateUnits();
     this.SetIntervals();
+    this.clearAllPreviewValuesAtIntervals
+    this.initializePreviewFromLocalStorage
+    this.clearPreviewValues
     if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
       this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
     }
@@ -361,57 +370,256 @@ ngAfterViewInit(){
     })
   }
 
-  SetReserveMarketValue(unitNumber:string, unitType:string){
-    this.RMDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
-      // let res = 
-      //   [{"Type":"EN","ReserveSchedules":[{"Tagname":"HAPEG_EN_01LIMAY_BAT_MW.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"FR","ReserveSchedules":[{"Tagname":"HAPEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_FR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"RD","ReserveSchedules":[{"Tagname":"HAPEG_RD_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_RD_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_RD_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_RD_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_RD_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"RU","ReserveSchedules":[{"Tagname":"HAPEG_RU_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_RU_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_RU_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_RU_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":123.0,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_RU_01LIMAY_BAT_MW.MV","Schedule":40.0,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"DR","ReserveSchedules":[{"Tagname":"HAPEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_DR_01LIMAY_BAT_MW.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"EN Price","ReserveSchedules":[{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]},
-      //   {"Type":"RM Price","ReserveSchedules":[{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:20:00","Interval":"21:20"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":123,"Price":null,"Timestamp":"2024-02-07T21:15:00","Interval":"21:15"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T21:10:00","Interval":"21:10"},{"Tagname":"HAPEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T21:05:00","Interval":"21:05"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T21:00:00","Interval":"21:00"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:55:00","Interval":"20:55"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:50:00","Interval":"20:50"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:45:00","Interval":"20:45"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:40:00","Interval":"20:40"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:35:00","Interval":"20:35"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:30:00","Interval":"20:30"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:25:00","Interval":"20:25"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:20:00","Interval":"20:20"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:15:00","Interval":"20:15"},{"Tagname":"RTDEG_EN_01LIMAY_BAT_P.MV","Schedule":null,"Price":null,"Timestamp":"2024-02-07T20:10:00","Interval":"20:10"}]}]
-      // ;
-      let res = data;
-      for( let x = 0; x <= 14; x++ ) {
-        if(unitType === "enPrice"){
-          this.dbValues[x]["U1ENPrice"] = res[5].ReserveSchedules[x].Schedule;
-        }
-        // this.dbValues[x][unitType + "RMPrice"] = null; // res[6].ReserveSchedules[x].Schedule
-        this.dbValues[x]["RM" + unitType + "_EN_Sched"] = res[0].ReserveSchedules[x].Schedule;
-        this.dbValues[x]["RM" + unitType + "_RU_Sched"] = res[3].ReserveSchedules[x].Schedule;
-        this.dbValues[x]["RM" + unitType + "_RD_Sched"] = res[2].ReserveSchedules[x].Schedule;
-        this.dbValues[x]["RM" + unitType + "_FR_Sched"] = res[1].ReserveSchedules[x].Schedule;
-        this.dbValues[x]["RM" + unitType + "_DR_Sched"] = res[4].ReserveSchedules[x].Schedule;
-        this.dbValues[x]["RM" + unitType + "_EN_Status"] = res[0].ReserveSchedules[x].DataStatus;
-        this.dbValues[x]["RM" + unitType + "_RU_Status"] = res[3].ReserveSchedules[x].DataStatus;
-        this.dbValues[x]["RM" + unitType + "_RD_Status"] = res[2].ReserveSchedules[x].DataStatus;
-        this.dbValues[x]["RM" + unitType + "_FR_Status"] = res[1].ReserveSchedules[x].DataStatus;
-        this.dbValues[x]["RM" + unitType + "_Actual_Sched"] = res[0].ReserveSchedules[x].Actual // null for now no actual yet;
-        if (res[4].ReserveSchedules[x].Schedule !== null) {
-          this["show"+ unitType +"DRcolumn"] = true // show dr column if there is value
+  initializePreviewFromLocalStorage(unitNumber: string, unitType: string) {
+    const now = new Date();
+  
+    const previewFields = [
+      { key: `preview_${unitNumber}_U1ENPrice`, column: "U1ENPrice" },
+      { key: `preview_${unitNumber}_${unitType}_EN_Sched`, column: `RM${unitType}_EN_Sched` },
+      { key: `preview_${unitNumber}_${unitType}_RU_Sched`, column: `RM${unitType}_RU_Sched` },
+      { key: `preview_${unitNumber}_${unitType}_RD_Sched`, column: `RM${unitType}_RD_Sched` },
+      { key: `preview_${unitNumber}_${unitType}_FR_Sched`, column: `RM${unitType}_FR_Sched` },
+      { key: `preview_${unitNumber}_${unitType}_DR_Sched`, column: `RM${unitType}_DR_Sched` },
+    ];
+  
+    for (const { key, column } of previewFields) {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          let value: number | null = null;
+  
+          if (key.includes("U1ENPrice")) {
+            const parsed = JSON.parse(stored);
+            const timestamp = new Date(parsed.timestamp);
+            const diffMinutes = (now.getTime() - timestamp.getTime()) / 60000;
+            if (diffMinutes <= 5) {
+              value = parsed.value;
+            }
+          } else {
+            value = +stored;
+          }
+          if (value != null) {
+            this.dbValues[3][column] = value; // Index 3 is the 4th column
+          }
+        } catch {
+          localStorage.removeItem(key);
         }
       }
-      //console.log(this.dbValues[5]["RM" + unitType + "_Actual_Sched"])
-      if(this.dbValues[5]["RM" + unitType + "_Actual_Sched"] < 0 && 
-        this.dbValues[5]["RM" + unitType + "_Actual_Sched"] != null){
-        this.alarmOutsideLimit=true;
-      }
-      this.RUtempStorage1 = this.dbValues[4]["RM" + unitType + "_RU_Sched"] != null ? Math.round(this.dbValues[4]["RM" + unitType + "_RU_Sched"]) : null;
-      this.RUtempStorage2 = this.dbValues[5]["RM" + unitType + "_RU_Sched"] != null ? Math.round(this.dbValues[5]["RM" + unitType + "_RU_Sched"]) : null;
-      this.RDtempStorage1 = this.dbValues[4]["RM" + unitType + "_RD_Sched"] != null ? Math.round(this.dbValues[4]["RM" + unitType + "_RD_Sched"]) : null;
-      this.RDtempStorage2 = this.dbValues[5]["RM" + unitType + "_RD_Sched"] != null ? Math.round(this.dbValues[5]["RM" + unitType + "_RD_Sched"]) : null;
-      this.FRtempStorage1 = this.dbValues[4]["RM" + unitType + "_FR_Sched"] != null ? Math.round(this.dbValues[4]["RM" + unitType + "_FR_Sched"]) : null;
-      this.FRtempStorage2 = this.dbValues[5]["RM" + unitType + "_FR_Sched"] != null ? Math.round(this.dbValues[5]["RM" + unitType + "_FR_Sched"]) : null;
+    }
+  }
+  
+  clearAllPreviewValuesAtIntervals() {
+  setInterval(() => {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
 
-      if ((this.RUtempStorage1 != null && this.RUtempStorage2 != null && this.RUtempStorage1 !== this.RUtempStorage2) ||
-        (this.RDtempStorage1 != null && this.RDtempStorage2 != null && this.RDtempStorage1 !== this.RDtempStorage2) ||
-        (this.FRtempStorage1 != null && this.FRtempStorage2 != null && this.FRtempStorage1 !== this.FRtempStorage2)) {
-        this.alarmRTDChanged = true;
-      }
-    })
+    if (minutes % 5 === 0 && seconds === 5 && this.lastClearedMinute !== minutes) {
+      this.lastClearedMinute = minutes;
+      this.clearPreviewValues();
+      this.previewCleared = true;
+      localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    }
+  }, 1000);
+}
+
+clearPreviewValues() {
+  const unitNumber = this.selectedUnitNumber;
+  const previewKeys = [
+    `preview_${unitNumber}_U1ENPrice`,
+    `preview_${unitNumber}_U1RUPrice`,
+    `preview_${unitNumber}_U1RDPrice`,
+    `preview_${unitNumber}_U1FRPrice`,
+    `preview_${unitNumber}_U1CRPrice`,
+    `preview_${unitNumber}_EN_Sched`,
+    `preview_${unitNumber}_RU_Sched`,
+    `preview_${unitNumber}_RD_Sched`,
+    `preview_${unitNumber}_FR_Sched`,
+    `preview_${unitNumber}_CR_Sched`,
+    `preview_${unitNumber}_DR_Sched`,
+  ];
+
+  for (const key of previewKeys) {
+    localStorage.removeItem(key);
   }
 
+  if (this.dbValues[3]) {
+    const previewFields = [
+      "U1ENPrice", "U1RUPrice", "U1RDPrice", "U1FRPrice", "U1CRPrice",
+      "EN_Sched", "RU_Sched", "RD_Sched", "FR_Sched", "DR_Sched"
+    ];
+    previewFields.forEach(field => this.dbValues[3][field] = null);
+  }
+
+  console.log("Preview values cleared.");
+}
+checkAndClearPreviewOnReload() {
+  const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
+  const now = new Date();
+  const nowMinutes = now.getMinutes();
+
+  if (!lastClearedISO) {
+    // No previous clear, so do it now
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on first-time load.");
+    return;
+  }
+
+  const lastCleared = new Date(lastClearedISO);
+  const diffMs = now.getTime() - lastCleared.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+
+  if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
+    // Either it's been > 5 mins, or we're at a new 5-min boundary
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on reload based on timestamp check.");
+  } else {
+    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
+  }
+}
+
+  SetReserveMarketValue(unitNumber: string, unitType: string) {
+    this.initializePreviewFromLocalStorage(unitNumber, unitType);
+    this.RMDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
+      let res = data as any[];
+      const now = new Date();
+      for (let x = 0; x <= 14; x++) {
+        const isPreviewSlot = x === 3;  
+        // === Handle EN Price Preview ===
+        if (unitType === "enPrice") {
+          const previewKey = `preview_${unitNumber}_U1ENPrice`;
+          const clearKey = `${previewKey}_cleared`;
+          let enPrice = null;
+      
+          if (res.length > 5 && res[5].ReserveSchedules && res[5].ReserveSchedules[x]) {
+            enPrice = res[5].ReserveSchedules[x].Schedule;
+          }
+      
+          if (isPreviewSlot) {
+            const stored = localStorage.getItem(previewKey);
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+      
+            // === Clear at hh:mm:05 (i.e., every 5 mins + 5 sec) ===
+            const shouldClear = (minutes % 5 === 0 && seconds >= 5 && seconds < 7);
+            // === Load value again after 1 minute and 5 sec ===
+            const allowRestore = (minutes % 5 === 1 && seconds >= 7);
+      
+            if (shouldClear) {
+              // Clear value and mark as cleared
+              localStorage.removeItem(previewKey);
+              localStorage.setItem(clearKey, now.toISOString());
+              this.dbValues[x]["U1ENPrice"] = null;
+            } else if (enPrice !== null) {
+              // Save fresh backend value and reset clear flag
+              this.dbValues[x]["U1ENPrice"] = enPrice;
+              localStorage.setItem(previewKey, JSON.stringify({
+                value: enPrice,
+                timestamp: now.toISOString()
+              }));
+              localStorage.removeItem(clearKey);
+            } else if (stored && allowRestore) {
+              const cleared = localStorage.getItem(clearKey);
+              if (!cleared) {
+                try {
+                  const parsed = JSON.parse(stored);
+                  this.dbValues[x]["U1ENPrice"] = parsed.value;
+                } catch {
+                  localStorage.removeItem(previewKey);
+                  this.dbValues[x]["U1ENPrice"] = null;
+                }
+              } else {
+                this.dbValues[x]["U1ENPrice"] = null;
+              }
+            } else {
+              this.dbValues[x]["U1ENPrice"] = null;
+            }
+      
+          } else {
+            // Regular (non-preview) values
+            this.dbValues[x]["U1ENPrice"] = enPrice;
+          }
+        }
+      
+        // === Other Reserve Schedules ===
+        const schedFields = [
+          { field: "EN_Sched", index: 0 },
+          { field: "RU_Sched", index: 3 },
+          { field: "RD_Sched", index: 2 },
+          { field: "FR_Sched", index: 1 },
+          { field: "DR_Sched", index: 4 }
+        ];
+      
+        for (const { field, index } of schedFields) {
+          const key = `RM${unitType}_${field}`;
+          const previewStorageKey = `preview_${unitNumber}_${unitType}_${field}`;
+          let newValue = null;
+      
+          if (res.length > index && res[index].ReserveSchedules && res[index].ReserveSchedules[x]) {
+            newValue = res[index].ReserveSchedules[x].Schedule;
+          }
+      
+          if (isPreviewSlot) {
+            if (newValue !== null) {
+              this.dbValues[x][key] = newValue;
+              localStorage.setItem(previewStorageKey, newValue.toString());
+            } else {
+              const stored = localStorage.getItem(previewStorageKey);
+              this.dbValues[x][key] = stored !== null ? +stored : null;
+            }
+          } else {
+            this.dbValues[x][key] = newValue;
+          }
+        }
+      
+        // === Status ===
+        this.dbValues[x][`RM${unitType}_EN_Status`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x ? res[0].ReserveSchedules[x].DataStatus : null;
+        this.dbValues[x][`RM${unitType}_RU_Status`] = res.length > 3 && res[3].ReserveSchedules && res[3].ReserveSchedules.length > x ? res[3].ReserveSchedules[x].DataStatus : null;
+        this.dbValues[x][`RM${unitType}_RD_Status`] = res.length > 2 && res[2].ReserveSchedules && res[2].ReserveSchedules.length > x ? res[2].ReserveSchedules[x].DataStatus : null;
+        this.dbValues[x][`RM${unitType}_FR_Status`] = res.length > 1 && res[1].ReserveSchedules && res[1].ReserveSchedules.length > x ? res[1].ReserveSchedules[x].DataStatus : null;
+      
+        // === Actual ===
+        this.dbValues[x][`RM${unitType}_Actual_Sched`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x
+          ? res[0].ReserveSchedules[x].Actual : null;
+      
+        // === Show DR Column ===
+        if (res.length > 4 && res[4].ReserveSchedules && res[4].ReserveSchedules.length > x &&
+          res[4].ReserveSchedules[x].Schedule !== null && res[4].ReserveSchedules[x].Schedule !== undefined) {
+          this["show" + unitType + "DRcolumn"] = true;
+        }
+      }
+      
+  
+      // === Alarm for negative actual value ===
+      const actualValue = this.dbValues[5][`RM${unitType}_Actual_Sched`];
+      if (actualValue !== null && actualValue < 0) {
+        this.alarmOutsideLimit = true;
+      }
+  
+      // === Blinking Logic ===
+      const getRounded = (val: any) => val != null ? Math.round(val) : null;
+      this.RUtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RU_Sched`]);
+      this.RUtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RU_Sched`]);
+      this.RDtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RD_Sched`]);
+      this.RDtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RD_Sched`]);
+      this.FRtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_FR_Sched`]);
+      this.FRtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_FR_Sched`]);
+  
+      if (
+        (this.RUtempStorage1 !== null && this.RUtempStorage2 !== null && this.RUtempStorage1 !== this.RUtempStorage2) ||
+        (this.RDtempStorage1 !== null && this.RDtempStorage2 !== null && this.RDtempStorage1 !== this.RDtempStorage2) ||
+        (this.FRtempStorage1 !== null && this.FRtempStorage2 !== null && this.FRtempStorage1 !== this.FRtempStorage2)
+      ) {
+        this.alarmRTDChanged = true;
+      }
+    });
+  }
+  
+  
+  
   selectedPrice(id:number, units, currentUnit, unitType:string) {
     const selected = units.find(unit => unit.UnitID === id);
 
@@ -469,7 +677,6 @@ ngAfterViewInit(){
       }
     } else {
       this.SetReserveMarketValue(currentUnit.name, unitType);
-
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
   }
