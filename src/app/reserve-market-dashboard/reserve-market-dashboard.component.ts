@@ -31,7 +31,9 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
 
   previewCleared = false;
   private lastClearedMinute: number | null = null;
-
+  lastUnitNumber: string | null = null; // Add to your component class
+  lastSelectedUnit: string | null = null;
+  unitChangedFlag: boolean = false;
 
   ENtempStorage1: number;
   ENtempStorage2: number;
@@ -329,9 +331,6 @@ ngAfterViewInit(){
   RefreshData(){
     this.PopulateUnits();
     this.SetIntervals();
-    this.clearAllPreviewValuesAtIntervals
-    this.initializePreviewFromLocalStorage
-    this.clearPreviewValues
     if(this.currentRegion.name != '' && this.currentRegion.name != 'SELECT UNIT'){
       this.SetReserveMarketPricesValue(this.currentRegion.id, "price");
     }
@@ -479,142 +478,175 @@ clearPreviewValues() {
   console.log("Preview values cleared.");
 }
 
-  SetReserveMarketValue(unitNumber: string, unitType: string) {
-    this.initializePreviewFromLocalStorage(unitNumber, unitType);
-    this.RMDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
-      let res = data as any[];
-      const now = new Date();
-      for (let x = 0; x <= 14; x++) {
-        const isPreviewSlot = x === 3;  
-        // === Handle EN Price Preview ===
-        if (unitType === "enPrice") {
-          const previewKey = `preview_${unitNumber}_U1ENPrice`;
-          const clearKey = `${previewKey}_cleared`;
-          let enPrice = null;
+SetReserveMarketValue(unitNumber: string, unitType: string) {
+  let unitChangedFlag = false;
+
+  // Detect unit change
+  if (this.lastUnitNumber !== unitNumber) {
+    unitChangedFlag = true;
+    this.lastUnitNumber = unitNumber;
+  }
+
+  if (this.unitChangedFlag) {
+    for (let x= 0; x<= 14; x++) {
+      this.dbValues[x]["RM" + unitType + "_EN_Sched"] = null;
+      this.dbValues[x]["RM" + unitType + "_RU_Sched"] = null;
+      this.dbValues[x]["RM" + unitType + "_RD_Sched"] = null;
+      this.dbValues[x]["RM" + unitType + "_FR_Sched"] = null;
+      this.dbValues[x]["RM" + unitType + "_DR_Sched"] = null;
+    }
+    this.unitChangedFlag = false; // reset so we don't clear again
+  }
+
+  this.initializePreviewFromLocalStorage(unitNumber, unitType);
+
+  this.RMDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
+    let res = data as any[];
+
+    for (let x = 0; x <= 14; x++) {
+      const isPreviewSlot = x === 3;
+
+      // === Handle EN Price Preview ===
+      if (unitType === "enPrice") {
+        const previewKey = `preview_${unitNumber}_U1ENPrice`;
+        const clearKey = `${previewKey}_cleared`;
+        let enPrice = null;
+
+        if (res.length > 5 && res[5].ReserveSchedules && res[5].ReserveSchedules[x]) {
+          enPrice = res[5].ReserveSchedules[x].Schedule;
+        }
+
+        if (isPreviewSlot) {
+          const stored = localStorage.getItem(previewKey);
+          const now = new Date();
+          const seconds = now.getSeconds();
+          const minutes = now.getMinutes();
       
-          if (res.length > 5 && res[5].ReserveSchedules && res[5].ReserveSchedules[x]) {
-            enPrice = res[5].ReserveSchedules[x].Schedule;
-          }
+          const shouldClear = (minutes % 5 === 0 && seconds >= 5 && seconds < 7);
+          const allowRestore = (minutes % 5 === 1 && seconds >= 7);
       
-          if (isPreviewSlot) {
-            const stored = localStorage.getItem(previewKey);
-            const now = new Date();
-            const seconds = now.getSeconds();
-            const minutes = now.getMinutes();
-      
-            // === Clear at hh:mm:05 (i.e., every 5 mins + 5 sec) ===
-            const shouldClear = (minutes % 5 === 0 && seconds >= 5 && seconds < 7);
-            // === Load value again after 1 minute and 5 sec ===
-            const allowRestore = (minutes % 5 === 1 && seconds >= 7);
-      
-            if (shouldClear) {
-              // Clear value and mark as cleared
-              localStorage.removeItem(previewKey);
-              localStorage.setItem(clearKey, now.toISOString());
-              this.dbValues[x]["U1ENPrice"] = null;
-            } else if (enPrice !== null) {
-              // Save fresh backend value and reset clear flag
+          if (enPrice !== null) {
+              // Always use backend value if available
               this.dbValues[x]["U1ENPrice"] = enPrice;
               localStorage.setItem(previewKey, JSON.stringify({
-                value: enPrice,
-                timestamp: now.toISOString()
+                  value: enPrice,
+                  timestamp: now.toISOString()
               }));
               localStorage.removeItem(clearKey);
-            } else if (stored && allowRestore) {
-              const cleared = localStorage.getItem(clearKey);
-              if (!cleared) {
-                try {
+          } else if (stored && allowRestore && !unitChangedFlag) {
+              // Restore last stored value if backend not ready
+              try {
                   const parsed = JSON.parse(stored);
                   this.dbValues[x]["U1ENPrice"] = parsed.value;
-                } catch {
+              } catch {
                   localStorage.removeItem(previewKey);
-                  this.dbValues[x]["U1ENPrice"] = null;
-                }
-              } else {
-                this.dbValues[x]["U1ENPrice"] = null;
               }
-            } else {
-              this.dbValues[x]["U1ENPrice"] = null;
-            }
+          }
+      } else {
+          this.dbValues[x]["U1ENPrice"] = enPrice;
+      }
       
+      }
+
+      // === Other Reserve Schedules ===
+      const schedFields = [
+        { field: "EN_Sched", index: 0 },
+        { field: "RU_Sched", index: 3 },
+        { field: "RD_Sched", index: 2 },
+        { field: "FR_Sched", index: 1 },
+        { field: "DR_Sched", index: 4 }
+      ];
+
+      for (const { field, index } of schedFields) {
+        const key = `RM${unitType}_${field}`;
+        const previewStorageKey = `preview_${unitNumber}_${unitType}_${field}`;
+        let newValue = null;
+
+        if (res.length > index && res[index].ReserveSchedules && res[index].ReserveSchedules[x]) {
+          newValue = res[index].ReserveSchedules[x].Schedule;
+        }
+
+        if (isPreviewSlot) {
+          const storedVal = localStorage.getItem(previewStorageKey);
+          const now = new Date();
+          const seconds = now.getSeconds();
+          const minutes = now.getMinutes();
+        
+          const shouldClear = (minutes % 5 === 0 && seconds >= 5 && seconds < 7);
+          const allowRestore = (minutes % 5 === 1 && seconds >= 7);
+        
+          if (shouldClear && !unitChangedFlag) {
+            localStorage.removeItem(previewStorageKey);
+            this.dbValues[x][key] = null;
+          } else if (newValue !== null && newValue !== undefined && newValue !== '') {
+            // Fresh backend value is available
+            this.dbValues[x][key] = newValue;
+            localStorage.setItem(previewStorageKey, newValue.toString());
+          } else if (storedVal) {
+            // Use cached value if backend hasn't supplied new value yet
+            try {
+              this.dbValues[x][key] = parseFloat(storedVal);
+            } catch {
+              localStorage.removeItem(previewStorageKey);
+              this.dbValues[x][key] = null;
+            }
           } else {
-            // Regular (non-preview) values
-            this.dbValues[x]["U1ENPrice"] = enPrice;
+            // No new or cached value: leave current value as-is
+            // this prevents flashing null
           }
-        }
-      
-        // === Other Reserve Schedules ===
-        const schedFields = [
-          { field: "EN_Sched", index: 0 },
-          { field: "RU_Sched", index: 3 },
-          { field: "RD_Sched", index: 2 },
-          { field: "FR_Sched", index: 1 },
-          { field: "DR_Sched", index: 4 }
-        ];
-      
-        for (const { field, index } of schedFields) {
-          const key = `RM${unitType}_${field}`;
-          const previewStorageKey = `preview_${unitNumber}_${unitType}_${field}`;
-          let newValue = null;
-      
-          if (res.length > index && res[index].ReserveSchedules && res[index].ReserveSchedules[x]) {
-            newValue = res[index].ReserveSchedules[x].Schedule;
-          }
-      
-          if (isPreviewSlot) {
-            if (newValue !== null && newValue !== undefined && newValue !== '') {
-                this.dbValues[x][key] = newValue;
-                localStorage.setItem(previewStorageKey, newValue.toString());
-            } else {
-                this.dbValues[x][key] = null;
-            }
         } else {
-            this.dbValues[x][key] = (newValue !== '' ? newValue : null);
+          this.dbValues[x][key] = (newValue !== '' ? newValue : null);
         }
-        }
-      
-        // === Status ===
-        this.dbValues[x][`RM${unitType}_EN_Status`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x ? res[0].ReserveSchedules[x].DataStatus : null;
-        this.dbValues[x][`RM${unitType}_RU_Status`] = res.length > 3 && res[3].ReserveSchedules && res[3].ReserveSchedules.length > x ? res[3].ReserveSchedules[x].DataStatus : null;
-        this.dbValues[x][`RM${unitType}_RD_Status`] = res.length > 2 && res[2].ReserveSchedules && res[2].ReserveSchedules.length > x ? res[2].ReserveSchedules[x].DataStatus : null;
-        this.dbValues[x][`RM${unitType}_FR_Status`] = res.length > 1 && res[1].ReserveSchedules && res[1].ReserveSchedules.length > x ? res[1].ReserveSchedules[x].DataStatus : null;
-      
-        // === Actual ===
-        this.dbValues[x][`RM${unitType}_Actual_Sched`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x
-          ? res[0].ReserveSchedules[x].Actual : null;
-      
-        // === Show DR Column ===
-        if (res.length > 4 && res[4].ReserveSchedules && res[4].ReserveSchedules.length > x &&
-          res[4].ReserveSchedules[x].Schedule !== null && res[4].ReserveSchedules[x].Schedule !== undefined) {
-          this["show" + unitType + "DRcolumn"] = true;
-        }
+        
       }
-      
-  
-      // === Alarm for negative actual value ===
-      const actualValue = this.dbValues[5][`RM${unitType}_Actual_Sched`];
-      if (actualValue !== null && actualValue < 0) {
-        this.alarmOutsideLimit = true;
+
+      // === Status ===
+      this.dbValues[x][`RM${unitType}_EN_Status`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x
+        ? res[0].ReserveSchedules[x].DataStatus : null;
+      this.dbValues[x][`RM${unitType}_RU_Status`] = res.length > 3 && res[3].ReserveSchedules && res[3].ReserveSchedules.length > x
+        ? res[3].ReserveSchedules[x].DataStatus : null;
+      this.dbValues[x][`RM${unitType}_RD_Status`] = res.length > 2 && res[2].ReserveSchedules && res[2].ReserveSchedules.length > x
+        ? res[2].ReserveSchedules[x].DataStatus : null;
+      this.dbValues[x][`RM${unitType}_FR_Status`] = res.length > 1 && res[1].ReserveSchedules && res[1].ReserveSchedules.length > x
+        ? res[1].ReserveSchedules[x].DataStatus : null;
+
+      // === Actual ===
+      this.dbValues[x][`RM${unitType}_Actual_Sched`] = res.length > 0 && res[0].ReserveSchedules && res[0].ReserveSchedules.length > x
+        ? res[0].ReserveSchedules[x].Actual : null;
+
+      // === Show DR Column ===
+      if (res.length > 4 && res[4].ReserveSchedules && res[4].ReserveSchedules.length > x &&
+        res[4].ReserveSchedules[x].Schedule !== null && res[4].ReserveSchedules[x].Schedule !== undefined) {
+        this["show" + unitType + "DRcolumn"] = true;
       }
-  
-      // === Blinking Logic ===
-      const getRounded = (val: any) => val != null ? Math.round(val) : null;
-      this.RUtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RU_Sched`]);
-      this.RUtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RU_Sched`]);
-      this.RDtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RD_Sched`]);
-      this.RDtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RD_Sched`]);
-      this.FRtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_FR_Sched`]);
-      this.FRtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_FR_Sched`]);
-  
-      if (
-        (this.RUtempStorage1 !== null && this.RUtempStorage2 !== null && this.RUtempStorage1 !== this.RUtempStorage2) ||
-        (this.RDtempStorage1 !== null && this.RDtempStorage2 !== null && this.RDtempStorage1 !== this.RDtempStorage2) ||
-        (this.FRtempStorage1 !== null && this.FRtempStorage2 !== null && this.FRtempStorage1 !== this.FRtempStorage2)
-      ) {
-        this.alarmRTDChanged = true;
-      }
-    });
-  }
+    }
+
+    // === Alarm for negative actual value ===
+    const actualValue = this.dbValues[5][`RM${unitType}_Actual_Sched`];
+    if (actualValue !== null && actualValue < 0) {
+      this.alarmOutsideLimit = true;
+    }
+
+    // === Blinking Logic ===
+    const getRounded = (val: any) => val != null ? Math.round(val) : null;
+    this.RUtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RU_Sched`]);
+    this.RUtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RU_Sched`]);
+    this.RDtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RD_Sched`]);
+    this.RDtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RD_Sched`]);
+    this.FRtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_FR_Sched`]);
+    this.FRtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_FR_Sched`]);
+
+    if (
+      (this.RUtempStorage1 !== null && this.RUtempStorage2 !== null && this.RUtempStorage1 !== this.RUtempStorage2) ||
+      (this.RDtempStorage1 !== null && this.RDtempStorage2 !== null && this.RDtempStorage1 !== this.RDtempStorage2) ||
+      (this.FRtempStorage1 !== null && this.FRtempStorage2 !== null && this.FRtempStorage1 !== this.FRtempStorage2)
+    ) {
+      this.alarmRTDChanged = true;
+    }
+  });
+}
+
+
   
   
   
@@ -654,11 +686,19 @@ clearPreviewValues() {
   selectedUnit(id:number, units, currentUnit, unitType:string) {
     const selected = units.find(unit => unit.UnitID === id);
 
-    // everytime a user selects a region save it to his sessionstorage
+    // save in session
     let inSessionStore = JSON.parse(sessionStorage.getItem("reserveMarket"))
     inSessionStore[unitType] = selected;
     sessionStorage.setItem("reserveMarket", JSON.stringify(inSessionStore))
     
+    // detect unit change
+    if (this.lastSelectedUnit !== selected.UnitNumber) {
+        this.unitChangedFlag = true;
+        this.lastSelectedUnit = selected.UnitNumber;
+    } else {
+        this.unitChangedFlag = false;
+    }
+
     currentUnit.id = selected.UnitID;
     currentUnit.name = selected.UnitNumber; 
 
@@ -677,7 +717,9 @@ clearPreviewValues() {
       this.SetReserveMarketValue(currentUnit.name, unitType);
       this.userLogs('RTD_Unit: ' + currentUnit.name);
     }
-  }
+}
+
+
 
   OpenOverridModal(content: NgbModal, unitNumber:string){
     this.selectedUnitNumber = unitNumber;
