@@ -291,14 +291,62 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
     return typeof dictionary[unitNumber] === 'undefined' ? unitNumber : dictionary[unitNumber]
   }
 
+  // GetDataForMainTable() {
+  //   this.ReservePortfolioService.getReserveSchedules().subscribe(data => {
+  //     let regionID = 0;
+  //     Object.entries(data).map(entry => entry[1]).forEach(element => {
+  //       let filtered = element.ReservePortfolios.filter(r => r.UnitNumber !== '01MAGAPIT_BAT') // filter out MagapitBat; at the time of writing magapit has no data
+  //       filtered.forEach(unit => {
+  //         let targetIndex = this.maintable.findIndex(el => el.unitNumber === unit.UnitNumber);
+  //         if(targetIndex !== -1) { // table init
+  //           this.maintable[targetIndex] = {
+  //             ...this.maintableRow,
+  //             unitNumber: unit.UnitNumber,
+  //             unitDisplayName: this.displayNames(unit.UnitNumber),
+  //             rtd_en: unit.RTD_EN,
+  //             rtd_ru: unit.RTD_RU,
+  //             rtd_rd: unit.RTD_RD,
+  //             rtd_cr: unit.RTD_CR,
+  //             actual: unit.Actual,
+  //             mop: unit.MOP,
+  //             price_en: unit.Price_EN,
+  //             remarks: unit.Remarks,
+  //             region: regionID,
+  //           }
+  //         } else { // table update; seperate init and update to prevent emptying and re-filing table
+  //           this.maintable.push({
+  //             ...this.maintableRow,
+  //             unitNumber: unit.UnitNumber,
+  //             unitDisplayName: this.displayNames(unit.UnitNumber),
+  //             rtd_en: unit.RTD_EN,
+  //             rtd_ru: unit.RTD_RU,
+  //             rtd_rd: unit.RTD_RD,
+  //             rtd_cr: unit.RTD_CR,
+  //             actual: unit.Actual,
+  //             mop: unit.MOP,
+  //             price_en: unit.Price_EN,
+  //             remarks: unit.Remarks,
+  //             region: regionID,
+  //           })
+  //         }
+  //       })
+  //       regionID++;
+  //     });
+  //   }, err => {
+  //     // do nothing
+  //   });
+  // }
+
   GetDataForMainTable() {
     this.ReservePortfolioService.getReserveSchedules().subscribe(data => {
       let regionID = 0;
       Object.entries(data).map(entry => entry[1]).forEach(element => {
-        let filtered = element.ReservePortfolios.filter(r => r.UnitNumber !== '01MAGAPIT_BAT') // filter out MagapitBat; at the time of writing magapit has no data
-        filtered.forEach(unit => {
+        let units = element.ReservePortfolios;
+  
+        units.forEach(unit => {
           let targetIndex = this.maintable.findIndex(el => el.unitNumber === unit.UnitNumber);
-          if(targetIndex !== -1) { // table init
+          if (targetIndex !== -1) {
+            // update existing row
             this.maintable[targetIndex] = {
               ...this.maintableRow,
               unitNumber: unit.UnitNumber,
@@ -313,7 +361,8 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
               remarks: unit.Remarks,
               region: regionID,
             }
-          } else { // table update; seperate init and update to prevent emptying and re-filing table
+          } else {
+            // add new row
             this.maintable.push({
               ...this.maintableRow,
               unitNumber: unit.UnitNumber,
@@ -332,11 +381,31 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
         })
         regionID++;
       });
+  
+      // ✅ Ensure Magapit is always in the table
+      let magapitIndex = this.maintable.findIndex(el => el.unitNumber === "01MAGAPIT_BAT");
+      if (magapitIndex === -1) {
+        this.maintable.push({
+          ...this.maintableRow,
+          unitNumber: "01MAGAPIT_BAT",
+          unitDisplayName: this.displayNames("01MAGAPIT_BAT"),
+          rtd_en: null,
+          rtd_ru: null,
+          rtd_rd: null,
+          rtd_cr: null,
+          actual: null,
+          mop: null,
+          price_en: null,
+          remarks: null,
+          region: 0, // or whichever region Magapit belongs to
+        });
+      }
     }, err => {
       // do nothing
     });
   }
-
+  
+  
   getNumberOfUnitsInRegion(regionIndex: number){
     return this.maintable.filter(el => el.region === regionIndex).length
   }
