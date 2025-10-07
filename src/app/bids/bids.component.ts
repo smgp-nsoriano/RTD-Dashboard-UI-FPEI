@@ -325,6 +325,7 @@ export class BidsComponent implements OnInit {
       //rule = validationRules.find(val => val.UnitID == +this.unitId)
       //this.pmax = +rule.PMAX;
       //this.rrmax = +rule.RRMAX;
+      
 
       for(let data of this.offers){
         msg = [];
@@ -340,11 +341,12 @@ export class BidsComponent implements OnInit {
           msg.push({msg:'Price 1 and Price 2 are not equal'})
           intevalErrorCount++;
         }
+
         //if(data.Q1 != 0 && data.Q1 != null){
         //  msg.push({msg:'Quantity 1 must always equals to 0'})
         //  intevalErrorCount++;
         //}
-        
+
         //check if prices are not lesser than -10,000
         if(data.P1 < -10000 && data.P1 != null){
           msg.push({msg:'Price 1 is lesser than -10,000'})
@@ -776,8 +778,79 @@ export class BidsComponent implements OnInit {
           msg.push({msg:'Quantity 11 exceeded ' + this.pmax + ' MW'})
           intevalErrorCount++;
         }
-  
-        
+
+
+      // --- Ancillary Services Validation ---
+const asMarkets = ['AS_RU', 'AS_RD', 'AS_FR', 'AS_DR'];
+
+for (const as of asMarkets) {
+  //Collect all AS prices (Q1–Q5) and quantity (P1-P5) into an array
+  const prices = [
+    Number(data[`${as}_Q1`]),
+    Number(data[`${as}_Q2`]),
+    Number(data[`${as}_Q3`]),
+    Number(data[`${as}_Q4`]),
+    Number(data[`${as}_Q5`])
+  ];
+  const quantity = [
+    Number(data[`${as}_P1`]),
+    Number(data[`${as}_P2`]),
+    Number(data[`${as}_P3`]),
+    Number(data[`${as}_P4`]),
+    Number(data[`${as}_P5`])
+  ];
+
+  // --- Price Rules ---
+  let hasError = false;
+  const problems: string[] = [];
+
+  // Rule 1: P1 and P2 must be equal
+  if (prices[0] !== prices[1]) {
+    problems.push("Price 1 and Price 2 must be equal");
+    hasError = true;
+  }
+
+  // Rule 2 & 3: Price range checks (0 ≤ P ≤ 25,000)
+  prices.forEach((p, i) => {
+    if (p < 0) {
+      problems.push(`Price ${i + 1} must not be lesser than 0`);
+      hasError = true;
+    }
+    if (p > 25000) {
+      problems.push(`Price ${i + 1} must not exceed 25,000`);
+      hasError = true;
+    }
+  });
+
+  // Rule 4: Incremental from P2 onward
+  for (let i = 1; i < prices.length - 1; i++) {
+    if (prices[i] !== 0 && prices[i + 1] !== 0 && prices[i] >= prices[i + 1]) {
+      problems.push(`Price ${i + 1} must be lesser than Price ${i + 2}`);
+      hasError = true;
+      break;
+    }
+  }
+
+  // Rule 5: Max of 2 decimal places
+  prices.forEach((p, i) => {
+    if (!Number.isInteger(p * 100)) {
+      problems.push(`Price ${i + 1} must have at most 2 decimal places`);
+      hasError = true;
+    }
+  });
+
+  // Push validation messages if any
+  if (hasError) {
+    msg.push({ msg: `${as}: ${problems.join(", ")}` });
+    intevalErrorCount++;
+  }
+}
+
+      
+      
+
+
+
         if(intevalErrorCount > 0){
           let payload = {
             interval: data.Interval,
@@ -789,6 +862,10 @@ export class BidsComponent implements OnInit {
 
         offerErrorCount+=intevalErrorCount;
       }
+
+
+
+
 
       let msgrr=[];
       
@@ -970,6 +1047,7 @@ export class BidsComponent implements OnInit {
     this.isCreateBid = true;
     this.unitService.createOffer(this.unitNumber,this.dateFormatted,null,false,false).subscribe(data=>{
       this.offers = data;
+      console.log(data)
       if(this.offers.length > 0){
         this.offer = this.offers[0];
         this.dateFormatted = this.formatDate(this.offer.Date);
