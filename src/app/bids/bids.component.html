@@ -638,7 +638,7 @@
 </ng-template>
 
 
-<ng-template #rrStandard let-modal>
+<!-- <ng-template #rrStandard let-modal>
   <div class="modal-header">
     <h6 class="modal-title">Ramprate Standards</h6>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
@@ -678,6 +678,80 @@
     </div>
     
     
+    <ngb-alert *ngIf="rrError" type="danger" (close)="rrError = null">{{ rrError }}</ngb-alert>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-success" (click)="SaveRRStandard()">Save</button>
+    <button class="btn btn-sm btn-danger" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</ng-template> -->
+
+<ng-template #rrStandard let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Ramprate Standards</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label>Ramprate Up</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrUp">
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label>Ramprate Down</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrDown">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label>PMAX</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="pmaxEntry">
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label>RRMax</label>
+          <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="rrmaxEntry">
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ New Row: AS Capability -->
+<div class="form-group">
+  <label>Ancillary Services Capability</label>
+  <div class="row">
+    <div class="col-4">
+      <div class="form-group">
+        <label>Ramp Rate</label>
+        <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="asRR">
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="form-group">
+        <label>Contigency Reserve</label>
+        <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="asCR">
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="form-group">
+        <label>Demand Response</label>
+        <input type="number" class="form-control form-control-sm text-right" [(ngModel)]="asDR">
+      </div>
+    </div>
+  </div>
+</div>
+
+
     <ngb-alert *ngIf="rrError" type="danger" (close)="rrError = null">{{ rrError }}</ngb-alert>
   </div>
 

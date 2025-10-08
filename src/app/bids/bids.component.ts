@@ -779,10 +779,11 @@ export class BidsComponent implements OnInit {
           intevalErrorCount++;
         }
 
+       
+
 
       // --- Ancillary Services Validation ---
 const asMarkets = ['AS_RU', 'AS_RD', 'AS_FR', 'AS_DR'];
-
 for (const as of asMarkets) {
   //Collect all AS prices (Q1–Q5) and quantity (P1-P5) into an array
   const prices = [
@@ -804,13 +805,14 @@ for (const as of asMarkets) {
   let hasError = false;
   const problems: string[] = [];
 
-  // Rule 1: P1 and P2 must be equal
+  // Price 1 and Price 2 should be equal
   if (prices[0] !== prices[1]) {
     problems.push("Price 1 and Price 2 must be equal");
     hasError = true;
   }
 
-  // Rule 2 & 3: Price range checks (0 ≤ P ≤ 25,000)
+  // Prices should not lesser than 0
+  // Prices should not exceed 25,000
   prices.forEach((p, i) => {
     if (p < 0) {
       problems.push(`Price ${i + 1} must not be lesser than 0`);
@@ -822,7 +824,7 @@ for (const as of asMarkets) {
     }
   });
 
-  // Rule 4: Incremental from P2 onward
+  // Prices are incremental
   for (let i = 1; i < prices.length - 1; i++) {
     if (prices[i] !== 0 && prices[i + 1] !== 0 && prices[i] >= prices[i + 1]) {
       problems.push(`Price ${i + 1} must be lesser than Price ${i + 2}`);
@@ -831,7 +833,7 @@ for (const as of asMarkets) {
     }
   }
 
-  // Rule 5: Max of 2 decimal places
+  // Prices maximum of 2 decimals only
   prices.forEach((p, i) => {
     if (!Number.isInteger(p * 100)) {
       problems.push(`Price ${i + 1} must have at most 2 decimal places`);
@@ -839,6 +841,90 @@ for (const as of asMarkets) {
     }
   });
 
+
+  // --- Quantities Rules ---
+  quantity.forEach((q, i) => {
+    if (q == null) return; // skip if null or undefined
+    if (this.CountDecimalPlaces(q) > 1) {
+      problems.push(`Quantity ${i + 1} must have at most 1 decimal place`);
+      hasError = true;
+    }
+  });
+  
+  // Quantities must not be between 0 and 1
+  quantity.forEach((q, i) => {
+    if (q == null) return; // skip if null or undefined
+    if (q > 0 && q < 1) {
+      problems.push(`Quantity ${i + 1} cannot be between 0 and 1`);
+      hasError = true;
+    }
+  });
+  
+// Quantities must be incremental (non-decreasing)
+for (let i = 0; i < quantity.length - 1; i++) {
+  const q1 = quantity[i];
+  const q2 = quantity[i + 1];
+  const n1 = Number(q1);
+  const n2 = Number(q2);
+
+  // Skip if empty, null, undefined, or invalid
+  if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
+
+  // Skip if next quantity is 0 (meaning no value entered)
+  if (n2 === 0) continue;
+
+  if (n2 < n1) {
+    problems.push(`Quantity ${i + 1} must be less than or equal to Quantity ${i + 2}`);
+    hasError = true;
+    break;
+  }
+}
+
+
+  
+// Difference of Quantities must be equal or greater than 1
+for (let i = 0; i < quantity.length - 1; i++) {
+  const q1 = quantity[i];
+  const q2 = quantity[i + 1];
+  const n1 = Number(q1);
+  const n2 = Number(q2);
+
+  // Skip invalid or empty
+  if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
+
+  // Skip trailing or placeholder zeros
+  if (n1 === 0 || n2 === 0) continue;
+
+  const diff = n2 - n1;
+  if (diff < 1) {
+    problems.push(`Difference between Quantity ${i + 1} and Quantity ${i + 2} must be at least 1`);
+    hasError = true;
+    break;
+  }
+}
+
+//AS outlier value check
+for (let i = 2; i <= 5; i++) {
+  const prev = i - 1;
+
+  const pCurr = data[`${as}_P${i}`];
+  const qCurr = data[`${as}_Q${i}`];
+  const pPrev = data[`${as}_P${prev}`];
+  const qPrev = data[`${as}_Q${prev}`];
+
+  // Skip null or empty values safely
+  const isValid = (v: any) => v != null && v !== '';
+
+  // Check if current exists but previous is missing (outlier)
+  if ((isValid(pCurr) && !isValid(pPrev)) ||
+      (isValid(qCurr) && !isValid(qPrev)) ||
+      (isValid(qCurr) && !isValid(pCurr)) ||
+      (isValid(pCurr) && !isValid(qCurr))) {
+    msg.push({ msg: `${as}: P${i}/Q${i} outlier value` });
+    intevalErrorCount++;
+    break;
+  }
+}
   // Push validation messages if any
   if (hasError) {
     msg.push({ msg: `${as}: ${problems.join(", ")}` });
@@ -846,8 +932,70 @@ for (const as of asMarkets) {
   }
 }
 
-      
-      
+// inside your validation function
+const intervalLabel = data.Interval || data.Hour || 1;
+
+const isValid = (v: any): boolean => {
+  if (v === null || v === undefined || v === '') return false;
+  const num = Number(v);
+  return !isNaN(num) && num !== 0;
+};
+
+//RU and RD must both exist together
+let hasRU = false;
+let hasRD = false;
+
+for (let i = 1; i <= 5; i++) {
+  if (isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`])) hasRU = true;
+  if (isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])) hasRD = true;
+}
+
+if (hasRU && !hasRD) {
+  msg.push({ msg: `Interval ${intervalLabel}: AS_RU entries must have equivalent AS_RD entries at the same interval` });
+  intevalErrorCount++;
+}
+if (hasRD && !hasRU) {
+  msg.push({ msg: `Interval ${intervalLabel}: AS_RD entries must have equivalent AS_RU entries at the same interval` });
+  intevalErrorCount++;
+}
+
+///Only one type of Reserve (RU/RD, FR, or DR)
+let hasRUorRD = false;
+let hasFR = false;
+let hasDR = false;
+
+for (let i = 1; i <= 5; i++) {
+  // RU/RD pair
+  if (
+    isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`]) ||
+    isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])
+  ) hasRUorRD = true;
+
+  // FR
+  if (isValid(data[`AS_FR_P${i}`]) || isValid(data[`AS_FR_Q${i}`])) hasFR = true;
+
+  // DR
+  if (isValid(data[`AS_DR_P${i}`]) || isValid(data[`AS_DR_Q${i}`])) hasDR = true;
+}
+
+// ✅ Validate conflicts
+if (hasRUorRD && hasFR) {
+  msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_RU/RD` });
+  intevalErrorCount++;
+}
+if (hasRUorRD && hasDR) {
+  msg.push({ msg: `Interval ${intervalLabel}: AS_DR cannot coexist with AS_RU/RD` });
+  intevalErrorCount++;
+}
+if (hasFR && hasDR) {
+  msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_DR` });
+  intevalErrorCount++;
+}
+
+// ✅ Debug check (optional, remove after testing)
+console.log(`Interval ${intervalLabel}`, { hasRUorRD, hasFR, hasDR });
+
+
 
 
 
@@ -1019,6 +1167,21 @@ for (const as of asMarkets) {
       //   msgrr.push({msg:'Ramp Rate Breakpoint 5 exceeded ' + this.pmax + ' MW'})
       //   rrErrorCount++;
       // }
+
+       //Ramp Rate Validation (1 decimal only)
+      if (this.offer.RampQuantity1 != null && this.CountDecimalPlaces(Number(this.offer.RampQuantity1)) > 1) {
+        msgrr.push({ msg: `Ramp Rate must have at most 1 decimal place` });
+        intevalErrorCount++;
+      }
+      if (this.offer.RampQuantity2 != null && this.CountDecimalPlaces(Number(this.offer.RampQuantity2)) > 1) {
+        msgrr.push({ msg: `Ramp Rate must have at most 1 decimal place` });
+        intevalErrorCount++;
+      }
+      if (this.offer.RampQuantity3 != null && this.CountDecimalPlaces(Number(this.offer.RampQuantity3)) > 1) {
+        msgrr.push({ msg: `Ramp Rate must have at most 1 decimal place` });
+        intevalErrorCount++;
+      }
+
 
       this.ramprateValidation = msgrr;
       this.errorCounts = rrErrorCount + offerErrorCount;
