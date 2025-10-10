@@ -10,6 +10,7 @@ import { findIndex } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { EnvService } from '../env.service';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-bids',
@@ -73,7 +74,8 @@ export class BidsComponent implements OnInit {
     private modalService: NgbModal,
     private userService:UsersService,
     private envService:EnvService,
-    private http:HttpClient
+    private http:HttpClient,
+    private cdr: ChangeDetectorRef 
   ) {
     this.route.params.subscribe(param => {
       this.unitId = param.unitId;
@@ -171,6 +173,9 @@ export class BidsComponent implements OnInit {
       this.pmax = this.ramprateStandard.PMax;
       this.rrmaxEntry = this.ramprateStandard.RRMax;
       this.pmaxEntry = this.ramprateStandard.PMax;
+
+
+      // this.cdr.detectChanges();//Force re-evaluation of ngModel bindings
       this.PQValidation();
       this.modalReference.close();
     });
@@ -783,217 +788,216 @@ export class BidsComponent implements OnInit {
 
 
       // --- Ancillary Services Validation ---
-const asMarkets = ['AS_RU', 'AS_RD', 'AS_FR', 'AS_DR'];
-for (const as of asMarkets) {
-  //Collect all AS prices (Q1–Q5) and quantity (P1-P5) into an array
-  const prices = [
-    Number(data[`${as}_Q1`]),
-    Number(data[`${as}_Q2`]),
-    Number(data[`${as}_Q3`]),
-    Number(data[`${as}_Q4`]),
-    Number(data[`${as}_Q5`])
-  ];
-  const quantity = [
-    Number(data[`${as}_P1`]),
-    Number(data[`${as}_P2`]),
-    Number(data[`${as}_P3`]),
-    Number(data[`${as}_P4`]),
-    Number(data[`${as}_P5`])
-  ];
+        const asMarkets = ['AS_RU', 'AS_RD', 'AS_FR', 'AS_DR'];
+        for (const as of asMarkets) {
+          const prices = [
+            Number(data[`${as}_Q1`]),
+            Number(data[`${as}_Q2`]),
+            Number(data[`${as}_Q3`]),
+            Number(data[`${as}_Q4`]),
+            Number(data[`${as}_Q5`])
+          ];
+          const quantity = [
+            Number(data[`${as}_P1`]),
+            Number(data[`${as}_P2`]),
+            Number(data[`${as}_P3`]),
+            Number(data[`${as}_P4`]),
+            Number(data[`${as}_P5`])
+          ];
 
-  // --- Price Rules ---
-  let hasError = false;
-  const problems: string[] = [];
+          // --- Price Rules ---
+          let hasError = false;
+          const problems: string[] = [];
 
-  // Price 1 and Price 2 should be equal
-  if (prices[0] !== prices[1]) {
-    problems.push("Price 1 and Price 2 must be equal");
-    hasError = true;
-  }
+          // Price 1 and Price 2 should be equal
+          if (prices[0] !== prices[1]) {
+            problems.push("Price 1 and Price 2 must be equal");
+            hasError = true;
+          }
 
-  // Prices should not lesser than 0
-  // Prices should not exceed 25,000
-  prices.forEach((p, i) => {
-    if (p < 0) {
-      problems.push(`Price ${i + 1} must not be lesser than 0`);
-      hasError = true;
-    }
-    if (p > 25000) {
-      problems.push(`Price ${i + 1} must not exceed 25,000`);
-      hasError = true;
-    }
-  });
+          // Prices should not lesser than 0
+          // Prices should not exceed 25,000
+          prices.forEach((p, i) => {
+            if (p < 0) {
+              problems.push(`Price ${i + 1} must not be lesser than 0`);
+              hasError = true;
+            }
+            if (p > 25000) {
+              problems.push(`Price ${i + 1} must not exceed 25,000`);
+              hasError = true;
+            }
+          });
 
-  // Prices are incremental
-  for (let i = 1; i < prices.length - 1; i++) {
-    if (prices[i] !== 0 && prices[i + 1] !== 0 && prices[i] >= prices[i + 1]) {
-      problems.push(`Price ${i + 1} must be lesser than Price ${i + 2}`);
-      hasError = true;
-      break;
-    }
-  }
+          // Prices are incremental
+          for (let i = 1; i < prices.length - 1; i++) {
+            if (prices[i] !== 0 && prices[i + 1] !== 0 && prices[i] >= prices[i + 1]) {
+              problems.push(`Price ${i + 1} must be lesser than Price ${i + 2}`);
+              hasError = true;
+              break;
+            }
+          }
 
-  // Prices maximum of 2 decimals only
-  prices.forEach((p, i) => {
-    if (!Number.isInteger(p * 100)) {
-      problems.push(`Price ${i + 1} must have at most 2 decimal places`);
-      hasError = true;
-    }
-  });
-
-
-  // --- Quantities Rules ---
-  quantity.forEach((q, i) => {
-    if (q == null) return; // skip if null or undefined
-    if (this.CountDecimalPlaces(q) > 1) {
-      problems.push(`Quantity ${i + 1} must have at most 1 decimal place`);
-      hasError = true;
-    }
-  });
-  
-  // Quantities must not be between 0 and 1
-  quantity.forEach((q, i) => {
-    if (q == null) return; // skip if null or undefined
-    if (q > 0 && q < 1) {
-      problems.push(`Quantity ${i + 1} cannot be between 0 and 1`);
-      hasError = true;
-    }
-  });
-  
-// Quantities must be incremental (non-decreasing)
-for (let i = 0; i < quantity.length - 1; i++) {
-  const q1 = quantity[i];
-  const q2 = quantity[i + 1];
-  const n1 = Number(q1);
-  const n2 = Number(q2);
-
-  // Skip if empty, null, undefined, or invalid
-  if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
-
-  // Skip if next quantity is 0 (meaning no value entered)
-  if (n2 === 0) continue;
-
-  if (n2 < n1) {
-    problems.push(`Quantity ${i + 1} must be less than or equal to Quantity ${i + 2}`);
-    hasError = true;
-    break;
-  }
-}
+          // Prices maximum of 2 decimals only
+          prices.forEach((p, i) => {
+            if (!Number.isInteger(p * 100)) {
+              problems.push(`Price ${i + 1} must have at most 2 decimal places`);
+              hasError = true;
+            }
+          });
 
 
-  
-// Difference of Quantities must be equal or greater than 1
-for (let i = 0; i < quantity.length - 1; i++) {
-  const q1 = quantity[i];
-  const q2 = quantity[i + 1];
-  const n1 = Number(q1);
-  const n2 = Number(q2);
+          // --- Quantities Rules ---
+          quantity.forEach((q, i) => {
+            if (q == null) return; // skip if null or undefined
+            if (this.CountDecimalPlaces(q) > 1) {
+              problems.push(`Quantity ${i + 1} must have at most 1 decimal place`);
+              hasError = true;
+            }
+          });
+          
+          // Quantities must not be between 0 and 1
+          quantity.forEach((q, i) => {
+            if (q == null) return; // skip if null or undefined
+            if (q > 0 && q < 1) {
+              problems.push(`Quantity ${i + 1} cannot be between 0 and 1`);
+              hasError = true;
+            }
+          });
+          
+        // Quantities must be incremental (non-decreasing)
+        for (let i = 0; i < quantity.length - 1; i++) {
+          const q1 = quantity[i];
+          const q2 = quantity[i + 1];
+          const n1 = Number(q1);
+          const n2 = Number(q2);
 
-  // Skip invalid or empty
-  if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
+          // Skip if empty, null, undefined, or invalid
+          if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
 
-  // Skip trailing or placeholder zeros
-  if (n1 === 0 || n2 === 0) continue;
+          // Skip if next quantity is 0 (meaning no value entered)
+          if (n2 === 0) continue;
 
-  const diff = n2 - n1;
-  if (diff < 1) {
-    problems.push(`Difference between Quantity ${i + 1} and Quantity ${i + 2} must be at least 1`);
-    hasError = true;
-    break;
-  }
-}
+          if (n2 < n1) {
+            problems.push(`Quantity ${i + 1} must be less than or equal to Quantity ${i + 2}`);
+            hasError = true;
+            break;
+          }
+        }
 
-//AS outlier value check
-for (let i = 2; i <= 5; i++) {
-  const prev = i - 1;
 
-  const pCurr = data[`${as}_P${i}`];
-  const qCurr = data[`${as}_Q${i}`];
-  const pPrev = data[`${as}_P${prev}`];
-  const qPrev = data[`${as}_Q${prev}`];
+          
+        // Difference of Quantities must be equal or greater than 1
+        for (let i = 0; i < quantity.length - 1; i++) {
+          const q1 = quantity[i];
+          const q2 = quantity[i + 1];
+          const n1 = Number(q1);
+          const n2 = Number(q2);
 
-  // Skip null or empty values safely
-  const isValid = (v: any) => v != null && v !== '';
+          // Skip invalid or empty
+          if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
 
-  // Check if current exists but previous is missing (outlier)
-  if ((isValid(pCurr) && !isValid(pPrev)) ||
-      (isValid(qCurr) && !isValid(qPrev)) ||
-      (isValid(qCurr) && !isValid(pCurr)) ||
-      (isValid(pCurr) && !isValid(qCurr))) {
-    msg.push({ msg: `${as}: P${i}/Q${i} outlier value` });
-    intevalErrorCount++;
-    break;
-  }
-}
-  // Push validation messages if any
-  if (hasError) {
-    msg.push({ msg: `${as}: ${problems.join(", ")}` });
-    intevalErrorCount++;
-  }
-}
+          // Skip trailing or placeholder zeros
+          if (n1 === 0 || n2 === 0) continue;
 
-// inside your validation function
-const intervalLabel = data.Interval || data.Hour || 1;
+          const diff = n2 - n1;
+          if (diff < 1) {
+            problems.push(`Difference between Quantity ${i + 1} and Quantity ${i + 2} must be at least 1`);
+            hasError = true;
+            break;
+          }
+        }
 
-const isValid = (v: any): boolean => {
-  if (v === null || v === undefined || v === '') return false;
-  const num = Number(v);
-  return !isNaN(num) && num !== 0;
-};
+        //AS outlier value check
+        for (let i = 2; i <= 5; i++) {
+          const prev = i - 1;
 
-//RU and RD must both exist together
-let hasRU = false;
-let hasRD = false;
+          const pCurr = data[`${as}_P${i}`];
+          const qCurr = data[`${as}_Q${i}`];
+          const pPrev = data[`${as}_P${prev}`];
+          const qPrev = data[`${as}_Q${prev}`];
 
-for (let i = 1; i <= 5; i++) {
-  if (isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`])) hasRU = true;
-  if (isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])) hasRD = true;
-}
+          // Skip null or empty values safely
+          const isValid = (v: any) => v != null && v !== '';
 
-if (hasRU && !hasRD) {
-  msg.push({ msg: `Interval ${intervalLabel}: AS_RU entries must have equivalent AS_RD entries at the same interval` });
-  intevalErrorCount++;
-}
-if (hasRD && !hasRU) {
-  msg.push({ msg: `Interval ${intervalLabel}: AS_RD entries must have equivalent AS_RU entries at the same interval` });
-  intevalErrorCount++;
-}
+          // Check if current exists but previous is missing (outlier)
+          if ((isValid(pCurr) && !isValid(pPrev)) ||
+              (isValid(qCurr) && !isValid(qPrev)) ||
+              (isValid(qCurr) && !isValid(pCurr)) ||
+              (isValid(pCurr) && !isValid(qCurr))) {
+            msg.push({ msg: `${as}: P${i}/Q${i} outlier value` });
+            intevalErrorCount++;
+            break;
+          }
+        }
+          // Push validation messages if any
+          if (hasError) {
+            msg.push({ msg: `${as}: ${problems.join(", ")}` });
+            intevalErrorCount++;
+          }
+        }
 
-///Only one type of Reserve (RU/RD, FR, or DR)
-let hasRUorRD = false;
-let hasFR = false;
-let hasDR = false;
+        // inside your validation function
+        const intervalLabel = data.Interval || data.Hour || 1;
 
-for (let i = 1; i <= 5; i++) {
-  // RU/RD pair
-  if (
-    isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`]) ||
-    isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])
-  ) hasRUorRD = true;
+        const isValid = (v: any): boolean => {
+          if (v === null || v === undefined || v === '') return false;
+          const num = Number(v);
+          return !isNaN(num) && num !== 0;
+        };
 
-  // FR
-  if (isValid(data[`AS_FR_P${i}`]) || isValid(data[`AS_FR_Q${i}`])) hasFR = true;
+        //RU and RD must both exist together
+        let hasRU = false;
+        let hasRD = false;
 
-  // DR
-  if (isValid(data[`AS_DR_P${i}`]) || isValid(data[`AS_DR_Q${i}`])) hasDR = true;
-}
+        for (let i = 1; i <= 5; i++) {
+          if (isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`])) hasRU = true;
+          if (isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])) hasRD = true;
+        }
 
-// ✅ Validate conflicts
-if (hasRUorRD && hasFR) {
-  msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_RU/RD` });
-  intevalErrorCount++;
-}
-if (hasRUorRD && hasDR) {
-  msg.push({ msg: `Interval ${intervalLabel}: AS_DR cannot coexist with AS_RU/RD` });
-  intevalErrorCount++;
-}
-if (hasFR && hasDR) {
-  msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_DR` });
-  intevalErrorCount++;
-}
+        if (hasRU && !hasRD) {
+          msg.push({ msg: `Interval ${intervalLabel}: AS_RU entries must have equivalent AS_RD entries at the same interval` });
+          intevalErrorCount++;
+        }
+        if (hasRD && !hasRU) {
+          msg.push({ msg: `Interval ${intervalLabel}: AS_RD entries must have equivalent AS_RU entries at the same interval` });
+          intevalErrorCount++;
+        }
 
-// ✅ Debug check (optional, remove after testing)
-console.log(`Interval ${intervalLabel}`, { hasRUorRD, hasFR, hasDR });
+        ///Only one type of Reserve (RU/RD, FR, or DR)
+        let hasRUorRD = false;
+        let hasFR = false;
+        let hasDR = false;
+
+        for (let i = 1; i <= 5; i++) {
+          // RU/RD pair
+          if (
+            isValid(data[`AS_RU_P${i}`]) || isValid(data[`AS_RU_Q${i}`]) ||
+            isValid(data[`AS_RD_P${i}`]) || isValid(data[`AS_RD_Q${i}`])
+          ) hasRUorRD = true;
+
+          // FR
+          if (isValid(data[`AS_FR_P${i}`]) || isValid(data[`AS_FR_Q${i}`])) hasFR = true;
+
+          // DR
+          if (isValid(data[`AS_DR_P${i}`]) || isValid(data[`AS_DR_Q${i}`])) hasDR = true;
+        }
+
+        // Validate conflicts
+        if (hasRUorRD && hasFR) {
+          msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_RU/RD` });
+          intevalErrorCount++;
+        }
+        if (hasRUorRD && hasDR) {
+          msg.push({ msg: `Interval ${intervalLabel}: AS_DR cannot coexist with AS_RU/RD` });
+          intevalErrorCount++;
+        }
+        if (hasFR && hasDR) {
+          msg.push({ msg: `Interval ${intervalLabel}: AS_FR cannot coexist with AS_DR` });
+          intevalErrorCount++;
+        }
+
+        //Debug check (optional, remove after testing)
+        // console.log(`Interval ${intervalLabel}`, { hasRUorRD, hasFR, hasDR });
 
 
 
@@ -1274,6 +1278,13 @@ console.log(`Interval ${intervalLabel}`, { hasRUorRD, hasFR, hasDR });
   }
 
   SaveOfferChages(){
+  //Make sure bindings are updated before saving
+  // this.cdr.detectChanges();
+
+  // Run PQ, RR, Energy, AS validations instantly
+  // this.PQValidation();
+
+
     this.unitService.updateOffer(this.unitId,this.unitNumber,this.offers).subscribe(data=>{
       this.modalReference.close();
     });
@@ -1874,6 +1885,7 @@ if(checkAS){
   }
 
   ShowBidUpload(modal:NgbModal){
+    // this.cdr.detectChanges();   //ensure latest bindings
     this.PQValidation();
 
     if (this.errorCounts === 0){
