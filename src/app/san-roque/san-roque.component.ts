@@ -197,57 +197,69 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
             this.alertMessage = "Connection to server problem";
           }
 
-          if(this.unit1CurrentRTD['RTDValue'] != null && this.unit1PastRTD[0]['RTDValue'] != null){
-            if(this.unit1CurrentRTD['RTDValue'] != this.unit1PastRTD[0]['RTDValue']){
+    
+          let unit1Changed = false;
+          let unit2Changed = false;
+          let unit3Changed = false;
+          
+          // Check for changes in unit 1
+          if ((this.unit1CurrentRTD['RTDValue'] != null && this.unit1PastRTD[0]['RTDValue'] != null)) {
+            if (   this.unit1CurrentRTD['RTDValue'] != this.unit1PastRTD[0]['RTDValue']) {
+              unit1Changed = true;
               this.blinkerTimer1 = setInterval(() => {
-                if(+moment(this.now).second() % 2 == 1){
+                if (+moment(this.now).second() % 2 === 1) {
                   this.isRTDBlinking1 = true;
-                }else{
+                } else {
                   this.isRTDBlinking1 = false;
                 }
-              },1000);
-            }else{
+              }, 1000);
+            } else {
               clearInterval(this.blinkerTimer1);
               this.isRTDBlinking1 = false;
             }
           }
           
-          if(this.unit2CurrentRTD['RTDValue'] != null && this.unit2PastRTD[0]['RTDValue'] != null){
-            if(this.unit2CurrentRTD['RTDValue'] != this.unit2PastRTD[0]['RTDValue']){
+          // Check for changes in unit 2
+          if (
+            (this.unit2CurrentRTD['RTDValue'] != null && this.unit2PastRTD[0]['RTDValue'] != null)) {
+            if (this.unit2CurrentRTD['RTDValue'] !== this.unit2PastRTD[0]['RTDValue']) {
+              unit2Changed = true;
               this.blinkerTimer2 = setInterval(() => {
-                if(+moment(this.now).second() % 2 == 1){
+                if (+moment(this.now).second() % 2 === 1) {
                   this.isRTDBlinking2 = true;
-                }else{
+                } else {
                   this.isRTDBlinking2 = false;
                 }
-              },1000);
-            }else{
+              }, 1000);
+            } else {
               clearInterval(this.blinkerTimer2);
               this.isRTDBlinking2 = false;
             }
           }
           
-          if(this.unit3CurrentRTD['RTDValue'] != null && this.unit3PastRTD[0]['RTDValue'] != null){
-            if(this.unit3CurrentRTD['RTDValue'] != this.unit3PastRTD[0]['RTDValue']){
+          // Check for changes in unit 3
+          
+          if ((this.unit3CurrentRTD['RTDValue'] != null && this.unit3PastRTD[0]['RTDValue'] != null)) {
+            if (this.unit3CurrentRTD['RTDValue'] !== this.unit3PastRTD[0]['RTDValue']) {
+              unit3Changed = true;
               this.blinkerTimer3 = setInterval(() => {
-                if(+moment(this.now).second() % 2 == 1){
+                if (+moment(this.now).second() % 2 === 1) {
                   this.isRTDBlinking3 = true;
-                }else{
+                } else {
                   this.isRTDBlinking3 = false;
                 }
-              },1000);
-            }else{
+              }, 1000);
+            } else {
               clearInterval(this.blinkerTimer3);
               this.isRTDBlinking3 = false;
-            }  
+            }
           }
           
-
-          if(this.unit1CurrentRTD['RTDValue'] != this.unit1PastRTD[0]['RTDValue'] || 
-          this.unit2CurrentRTD['RTDValue'] != this.unit2PastRTD[0]['RTDValue'] || 
-          this.unit3CurrentRTD['RTDValue'] != this.unit3PastRTD[0]['RTDValue']){
-            this.alertMessage = "RTD has change!";
+          // Trigger audio and reset after any change
+          if (unit1Changed || unit2Changed || unit3Changed) {
+            this.alertMessage = "RTD has changed!";
             this.RTDChangedAudio();
+            // Reset blinking and other timers
             this.timerAlarmRTD = setInterval(() => {
               this.isRTDBlinking1 = false;
               this.isRTDBlinking2 = false;
@@ -257,8 +269,12 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
               clearInterval(this.blinkerTimer2);
               clearInterval(this.blinkerTimer3);
               clearInterval(this.timerAlarmRTD);
-            },60000);
+            }, 60000);
           }
+          
+
+
+          
         }
       }
 
@@ -412,36 +428,39 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
       //console.log(error.message);
     });
 
-// Get PAST RTD and EAP Data
-  this.srService.getPastTime(this.unit1).subscribe(data => {
-    this.unit1PastRTD = data;
-    if(this.unit1PastRTD != null && this.unit1PastRTD == false){
-      this.alarmOutsideLimit=true;
-    }
-  }, error => {
-    //console.log(error.message);
-    this.alarmNoconnection = true;
-  });
+    // Get PAST RTD and EAP Data
+      this.srService.getPastTime(this.unit1).subscribe(data => {
+        this.unit1PastRTD = data;
+        
+        if(this.unit1PastRTD[0].ActualValue != null && !this.unit1PastRTD[0].IsLimit){
+          this.alarmOutsideLimit=true;
+        }
+      }, error => {
+        //console.log(error.message);
+        this.alarmNoconnection = true;
+      });
 
-  this.srService.getPastTime(this.unit2).subscribe(data => {
-    this.unit2PastRTD = data;
-    if(this.unit2PastRTD != null && this.unit2PastRTD == false){
-      this.alarmOutsideLimit=true;
-    }
-  }, error => {
-    //console.log(error.message);
-    this.alarmNoconnection = true;
-  });
+      this.srService.getPastTime(this.unit2).subscribe(data => {
+        this.unit2PastRTD = data;
+      
+        if(this.unit2PastRTD[0].ActualValue !== null && this.unit2PastRTD[0].IsLimit === false){
+          this.alarmOutsideLimit=true;
+        }
+      }, error => {
+        //console.log(error.message);
+        this.alarmNoconnection = true;
+      });
 
-  this.srService.getPastTime(this.unit3).subscribe(data => {
-    this.unit3PastRTD = data;
-    if(this.unit3PastRTD != null && this.unit3PastRTD == false){
-      this.alarmOutsideLimit=true;
-    }
-  }, error => {
-    //console.log(error.message);
-    this.alarmNoconnection = true;
-  });
+      this.srService.getPastTime(this.unit3).subscribe(data => {
+        this.unit3PastRTD = data;  
+      
+        if(this.unit3PastRTD[0].ActualValue !== null && this.unit3PastRTD[0].IsLimit === false){
+          this.alarmOutsideLimit=true;
+        }
+      }, error => {
+        //console.log(error.message);
+        this.alarmNoconnection = true;
+      });
 
   }
 
@@ -455,6 +474,7 @@ export class SanRoqueComponent implements OnInit, OnDestroy {
     });
   }
 
+  
   formatDate(date: string) {
     if (typeof date === 'undefined' || date === null) {
       return;
