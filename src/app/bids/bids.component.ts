@@ -52,6 +52,9 @@ export class BidsComponent implements OnInit {
   rrmax:number;
   rrUp:number;
   rrDown:number;
+  asRR:number;
+  asCR:number;
+  asDR:number;
   errorCounts:number = 0;
 
   controlModeValue:string;
@@ -163,8 +166,13 @@ export class BidsComponent implements OnInit {
       RRUp:this.rrUp,
       RRDown:this.rrDown,
       RRMax:this.rrmaxEntry,
-      PMax:this.pmaxEntry
+      PMax:this.pmaxEntry,
+      AS_cpblt_RR:this.asRR,
+      AS_cpblt_CR:this.asCR,
+      AS_cpblt_DR:this.asDR
     }
+    console.log(payload);
+    
     this.unitService.setRRStandard(payload).subscribe(data=>{
       this.ramprateStandard = data;
       this.rrUp = this.ramprateStandard.RRUp;
@@ -173,6 +181,9 @@ export class BidsComponent implements OnInit {
       this.pmax = this.ramprateStandard.PMax;
       this.rrmaxEntry = this.ramprateStandard.RRMax;
       this.pmaxEntry = this.ramprateStandard.PMax;
+      this.asRR = this.ramprateStandard.AS_cpblt_RR;
+      this.asCR = this.ramprateStandard.AS_cpblt_CR;
+      this.asDR = this.ramprateStandard.AS_cpblt_DR;
 
 
       // this.cdr.detectChanges();//Force re-evaluation of ngModel bindings
@@ -190,6 +201,9 @@ export class BidsComponent implements OnInit {
       this.pmax = this.ramprateStandard.PMax;
       this.rrmaxEntry = this.ramprateStandard.RRMax;
       this.pmaxEntry = this.ramprateStandard.PMax;
+      this.asRR = this.ramprateStandard.AS_cpblt_RR;
+      this.asCR = this.ramprateStandard.AS_cpblt_CR;
+      this.asDR = this.ramprateStandard.AS_cpblt_DR;
     });
   }
 
@@ -864,71 +878,110 @@ export class BidsComponent implements OnInit {
             }
           });
           
-        // Quantities must be incremental (non-decreasing)
-        for (let i = 0; i < quantity.length - 1; i++) {
-          const q1 = quantity[i];
-          const q2 = quantity[i + 1];
-          const n1 = Number(q1);
-          const n2 = Number(q2);
+          // Quantities must be incremental (non-decreasing)
+          for (let i = 0; i < quantity.length - 1; i++) {
+            const q1 = quantity[i];
+            const q2 = quantity[i + 1];
+            const n1 = Number(q1);
+            const n2 = Number(q2);
 
-          // Skip if empty, null, undefined, or invalid
-          if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
+            // Skip if empty, null, undefined, or invalid
+            if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
 
-          // Skip if next quantity is 0 (meaning no value entered)
-          if (n2 === 0) continue;
+            // Skip if next quantity is 0 (meaning no value entered)
+            if (n2 === 0) continue;
 
-          if (n2 < n1) {
-            problems.push(`Quantity ${i + 1} must be less than or equal to Quantity ${i + 2}`);
-            hasError = true;
-            break;
+            if (n2 < n1) {
+              problems.push(`Quantity ${i + 1} must be less than or equal to Quantity ${i + 2}`);
+              hasError = true;
+              break;
+            }
           }
-        }
 
 
           
-        // Difference of Quantities must be equal or greater than 1
-        for (let i = 0; i < quantity.length - 1; i++) {
-          const q1 = quantity[i];
-          const q2 = quantity[i + 1];
-          const n1 = Number(q1);
-          const n2 = Number(q2);
+          // Difference of Quantities must be equal or greater than 1
+          for (let i = 0; i < quantity.length - 1; i++) {
+            const q1 = quantity[i];
+            const q2 = quantity[i + 1];
+            const n1 = Number(q1);
+            const n2 = Number(q2);
 
-          // Skip invalid or empty
-          if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
+            // Skip invalid or empty
+            if (q1 == null || q2 == null || isNaN(n1) || isNaN(n2)) continue;
 
-          // Skip trailing or placeholder zeros
-          if (n1 === 0 || n2 === 0) continue;
+            // Skip trailing or placeholder zeros
+            if (n1 === 0 || n2 === 0) continue;
 
-          const diff = n2 - n1;
-          if (diff < 1) {
-            problems.push(`Difference between Quantity ${i + 1} and Quantity ${i + 2} must be at least 1`);
-            hasError = true;
-            break;
+            const diff = n2 - n1;
+            if (diff < 1) {
+              problems.push(`Difference between Quantity ${i + 1} and Quantity ${i + 2} must be at least 1`);
+              hasError = true;
+              break;
+            }
           }
-        }
 
-        //AS outlier value check
-        for (let i = 2; i <= 5; i++) {
-          const prev = i - 1;
+          //AS outlier value check
+          for (let i = 2; i <= 5; i++) {
+            const prev = i - 1;
 
-          const pCurr = data[`${as}_P${i}`];
-          const qCurr = data[`${as}_Q${i}`];
-          const pPrev = data[`${as}_P${prev}`];
-          const qPrev = data[`${as}_Q${prev}`];
+            const pCurr = data[`${as}_P${i}`];
+            const qCurr = data[`${as}_Q${i}`];
+            const pPrev = data[`${as}_P${prev}`];
+            const qPrev = data[`${as}_Q${prev}`];
 
-          // Skip null or empty values safely
-          const isValid = (v: any) => v != null && v !== '';
+            // Skip null or empty values safely
+            const isValid = (v: any) => v != null && v !== '';
 
-          // Check if current exists but previous is missing (outlier)
-          if ((isValid(pCurr) && !isValid(pPrev)) ||
-              (isValid(qCurr) && !isValid(qPrev)) ||
-              (isValid(qCurr) && !isValid(pCurr)) ||
-              (isValid(pCurr) && !isValid(qCurr))) {
-            msg.push({ msg: `${as}: P${i}/Q${i} outlier value` });
-            intevalErrorCount++;
-            break;
+            // Check if current exists but previous is missing (outlier)
+            if ((isValid(pCurr) && !isValid(pPrev)) ||
+                (isValid(qCurr) && !isValid(qPrev)) ||
+                (isValid(qCurr) && !isValid(pCurr)) ||
+                (isValid(pCurr) && !isValid(qCurr))) {
+              msg.push({ msg: `${as}: P${i}/Q${i} outlier value` });
+              intevalErrorCount++;
+              break;
+            }
           }
-        }
+
+          
+          // Quantities must not exceed the certified AS capability
+          switch (as) {
+            case "AS_RU":
+              quantity.forEach((q, i) => {
+                if (q > this.asRR && this.asRR !== null) {
+                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
+                  hasError = true;
+                }
+              })
+              break;
+            case "AS_RD":
+              quantity.forEach((q, i) => {
+                if (q > this.asRR && this.asRR !== null) {
+                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
+                  hasError = true;
+                }
+              })
+              break;
+            case "AS_FR":
+              quantity.forEach((q, i) => {
+                if (q > this.asCR && this.asCR !== null) {
+                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asCR}`);
+                  hasError = true;
+                }
+              })
+              break;
+            case "AS_DR":
+              quantity.forEach((q, i) => {
+                if (q > this.asDR && this.asDR !== null) {
+                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asDR}`);
+                  hasError = true;
+                }
+              })
+              break;
+          }
+          
+
           // Push validation messages if any
           if (hasError) {
             msg.push({ msg: `${as}: ${problems.join(", ")}` });
