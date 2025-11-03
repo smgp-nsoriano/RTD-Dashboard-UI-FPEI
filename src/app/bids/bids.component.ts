@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { EnvService } from '../env.service';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
+import { log } from 'console';
 
 @Component({
   selector: 'app-bids',
@@ -948,39 +949,103 @@ export class BidsComponent implements OnInit {
           // Quantities must not exceed the certified AS capability
           switch (as) {
             case "AS_RU":
-              quantity.forEach((q, i) => {
-                if (q > this.asRR && this.asRR !== null) {
-                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
-                  hasError = true;
-                }
-              })
+              console.log(quantity);
+              if (this.asRR !== null) {
+                quantity.forEach((q, i) => {
+                  if (q > this.asRR) {
+                    problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
+                    hasError = true;
+                  }
+                })
+              } else {
+                quantity.forEach((q, i) => {
+                  if (q > 0) {
+                    problems.push(`AS capability RR is not certified but Q${i+1} ${q} is encoded`);
+                    hasError = true;
+                  }
+                })
+              }
               break;
             case "AS_RD":
-              quantity.forEach((q, i) => {
-                if (q > this.asRR && this.asRR !== null) {
-                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
-                  hasError = true;
-                }
-              })
+              if (this.asRR !== null) {
+                quantity.forEach((q, i) => {
+                  if (q > this.asRR) {
+                    problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asRR}`);
+                    hasError = true;
+                  }
+                })
+              } else {
+                quantity.forEach((q, i) => {
+                  if (q > 0) {
+                    problems.push(`AS capability RR is not certified but Q${i+1} ${q} is encoded`);
+                    hasError = true;
+                  }
+                })
+              }
               break;
             case "AS_FR":
-              quantity.forEach((q, i) => {
-                if (q > this.asCR && this.asCR !== null) {
-                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asCR}`);
-                  hasError = true;
-                }
-              })
+              if (this.asCR !== null) {
+                quantity.forEach((q, i) => {
+                  if (q > this.asCR) {
+                    problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asCR}`);
+                    hasError = true;
+                  }
+                })
+              } else {
+                quantity.forEach((q, i) => {
+                  if (q > 0) {
+                    problems.push(`AS capability CR is not certified but Q${i+1} ${q} is encoded`);
+                    hasError = true;
+                  }
+                })
+              }
               break;
             case "AS_DR":
-              quantity.forEach((q, i) => {
-                if (q > this.asDR && this.asDR !== null) {
-                  problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asDR}`);
-                  hasError = true;
-                }
-              })
+              if (this.asDR !== null) {
+                quantity.forEach((q, i) => {
+                  if (q > this.asDR) {
+                    problems.push(`Quantities must not exceed the certified AS capability: Q${i+1} ${q} > ${this.asDR}`);
+                    hasError = true;
+                  }
+                })
+              } else {
+                quantity.forEach((q, i) => {
+                  if (q > 0) {
+                    problems.push(`AS capability DR is not certified but Q${i+1} ${q} is encoded`);
+                    hasError = true;
+                  }
+                })
+              }
               break;
           }
           
+          console.log(prices[0], prices[1], quantity[0], quantity[1], data['ControlMode']);
+          switch (as) {
+            case "AS_RU":
+              if ((prices[1] > 0 && quantity[1] > 0) && !(data['ControlMode'] == 'R' || data['ControlMode'] == 'M')) {
+                problems.push(`Control Mode shoulde either be 'R' or 'M'`);
+                // hasError = true;
+              }
+              break;
+            case "AS_RD":
+              if ((prices[1] > 0 && quantity[1] > 0) && !(data['ControlMode'] == 'R' || data['ControlMode'] == 'M')) {
+                problems.push(`Control Mode shoulde either be 'R' or 'M'`);
+                // hasError = true;
+              }
+              break;
+            case "AS_FR":
+              if ((prices[1] > 0 && quantity[1] > 0) && !(data['ControlMode'] == 'C' || data['ControlMode'] == 'M')) {
+                problems.push(`Control Mode shoulde either be 'C' or 'M'`);
+                // hasError = true;
+              }
+              break;
+            case "AS_DR":
+              if ((prices[1] > 0 && quantity[1] > 0) && !(data['ControlMode'] == 'D' || data['ControlMode'] == 'M')) {
+                problems.push(`Control Mode shoulde either be 'D' or 'M'`);
+                // hasError = true;
+              }
+              break;
+          }
 
           // Push validation messages if any
           if (hasError) {

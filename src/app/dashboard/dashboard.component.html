@@ -107,8 +107,8 @@
                   </div>
                 </div>
                 
-                 <!-- First Block if isBat is True -->
-                 <div *ngIf="isBat" class="col-8 mx-auto mb-2">
+                <!-- First Block if isBat is True -->
+                <div *ngIf="isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
                   <div
                     class="border border-white text-center font-weight-bold bg-danger border-4"
@@ -238,27 +238,26 @@
                     </div>
                   </div>
 
-            <!-- CURRENT NET LOAD -->
-              <div *ngIf="isNetloadUnit() && IsNetLoad" 
-                class="border border-white border-4 d-flex" 
-                style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
+                  <!-- CURRENT NET LOAD -->
+                  <div *ngIf="isNetloadUnit() && IsNetLoad" 
+                    class="border border-white border-4 d-flex" 
+                    style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
 
-                <div style="flex: 2; background: white; color: #e40000; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
-                  Current Net Load:
-                </div>
-                <div
-                  [ngStyle]="current?.NetLoadValue == null ? {
-                    'font-weight': 'bold',
-                    'font-size': '30px',
-                    'font-family': 'Courier New'
-                  } : {}"
-                  style="flex: 2; background: #e40000; font-size: 60px; color: #ffd40e; display: flex; align-items: center; justify-content: center;">
-                  {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
-                </div>
+                    <div style="flex: 2; background: white; color: #e40000; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
+                      Current Net Load:
+                    </div>
+                    <div
+                      [ngStyle]="current?.NetLoadValue == null ? {
+                        'font-weight': 'bold',
+                        'font-size': '30px',
+                        'font-family': 'Courier New'
+                      } : {}"
+                      style="flex: 2; background: #e40000; font-size: 60px; color: #ffd40e; display: flex; align-items: center; justify-content: center;">
+                      {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
+                    </div>
+                  </div>
+                </div>  
               </div>
-
-              </div>  
-            </div>
             </div>
             
             <div class="col-12 col-md-4"> <!-- Ensure full width on mobile -->
@@ -294,7 +293,70 @@
           </div>
           <div class="row align-items-center h-100 mt-3">
             <div class="table-responsive">
-              <table class="table table-sm table-bordered">
+              <!-- lower hap-actual table for BESS units -->
+              <table *ngIf="isBat" class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <td class="text-center">Schedule</td>
+                    <td *ngFor="let past of pasts" class="text-center">
+                      {{ formatDate(past.TimeStamp) }}
+                    </td>
+                    <td class="text-center">INTERVAL</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center">
+                      {{ formatDate(forecast.TimeStamp) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">RU</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.RRU | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center" rowspan="4">HAP →</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                      {{ forecast.RRU | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">RD</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.RRD | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center">HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                      {{ forecast.RRD | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">CR</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.Contingency | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center">HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                      {{ forecast.Contingency | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">EN</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
+                      {{ past.RTDValue | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center" >HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                      {{ forecast.RTDValue | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">ACTUAL</td>
+                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
+                      {{ past.ActualValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center actual">← ACTUAL</td>
+                  </tr>
+                </thead>
+              </table>
+              <!-- lower hap-actual table for generator units -->
+              <table *ngIf="!isBat" class="table table-sm table-bordered">
                 <thead>
                   <tr>
                     <td *ngFor="let past of pasts" class="text-center">
@@ -306,16 +368,17 @@
                     </td>
                   </tr>
                   <tr>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
                       {{ past.RTDValue | number: '1.0-0' }}
                     </td>
-                    <td class="text-center" >HAP ></td>
+                    <td class="text-center">HAP ></td>
                     <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
                       {{ forecast.RTDValue | number: '1.0-0' }}
                     </td>
                   </tr>
                   <tr>
-                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
+                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
+                      style="font-size: 2.8em !important;">
                       {{ past.ActualValue | number: '1.0-0' }}
                     </td>
                     <td class="text-center actual">&lt; ACTUAL</td>
