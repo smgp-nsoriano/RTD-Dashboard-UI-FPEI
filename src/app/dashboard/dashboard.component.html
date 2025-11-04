@@ -131,24 +131,24 @@
                       whiteSpace: 'nowrap'
                     }">
                     <div class="data-label">ENERGY</div>
-                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
-                
+                    <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? (current?.RTDValue | number: '1.0-0') : '' }}</span>
                     <!-- Badge: Data Status -->
                     <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2" *ngIf="currentUnit.name != ''">
                       {{ current?.DataStatus }}
                     </div>
                 
                     <!-- Badge: Decimal -->
-                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
-                      .{{ getDecimal(current?.RTDValue) }}
+                    <div class="badge bg-light text-danger data-decimal" 
+                    *ngIf="currentUnit.name != '' && isWithDecimal && current?.RTDValue != null">
+                          .{{ getDecimal(current?.RTDValue) }}
                     </div>
                   </div>
                 
                   <!-- Reserve Blocks -->
                   <div class="d-flex">
                 
-                    <!-- RR-UP Box -->
+                    <!-- RR-UP Box
                     <div
                       class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
                       [ngClass]="{
@@ -161,10 +161,25 @@
                       <span *ngIf="!isWithDecimal">{{ current?.RRU | number: '1.0-0' }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RUDataStatus }}</div>
                       <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.RRU) }}</div>
+                    </div> -->
+
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"[ngClass]="{'blink-green': isRRUBlinking,'bg-danger': !isRRUBlinking}"
+                        style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                        <div class="data-label">RR-UP</div>
+                        <span *ngIf="isWithDecimal">{{ current?.RRU != null ? getWholeNumber(current?.RRU) : '' }}</span>
+                        <span *ngIf="!isWithDecimal">{{ current?.RRU != null ? (current?.RRU | number: '1.0-0') : '' }}</span>
+                        <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
+                          {{ current?.RUDataStatus }}
+                        </div>
+                        <div class="badge bg-light text-danger reserve-data-decimal"
+                          *ngIf="currentUnit.name != '' && isWithDecimal && current?.RRU != null">
+                          .{{ getDecimal(current?.RRU) }}
+                        </div>
                     </div>
+
                 
                     <!-- RR-DOWN Box -->
-                    <div
+                    <!-- <div
                       class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
                       [ngClass]="{
                         'blink-green': isRRDBlinking,
@@ -176,10 +191,10 @@
                       <span *ngIf="!isWithDecimal">{{ current?.RRD | number: '1.0-0' }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RDDataStatus }}</div>
                       <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.RRD) }}</div>
-                    </div>
+                    </div> -->
                 
                     <!-- CONTINGENCY Box -->
-                    <div
+                    <!-- <div
                       class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
                       [ngClass]="{
                         'blink-green': isContingencyBlinking,
@@ -191,8 +206,45 @@
                       <span *ngIf="!isWithDecimal">{{ current?.Contingency | number: '1.0-0' }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.ConDataStatus }}</div>
                       <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.Contingency) }}</div>
-                    </div>
+                    </div> -->
                 
+                    <!-- RR-DOWN -->
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"[ngClass]="{'blink-green': isRRDBlinking, 'bg-danger': !isRRDBlinking}"
+                    style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                    <div class="data-label">RR-DOWN</div>
+                    <span *ngIf="isWithDecimal">{{ current?.RRD != null ? getWholeNumber(current?.RRD) : '' }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RRD != null ? (current?.RRD | number:'1.0-0') : '' }}</span>
+                    <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
+                      {{ current?.RDDataStatus }}
+                    </div>
+                    <div class="badge bg-light text-danger reserve-data-decimal"
+                      *ngIf="currentUnit.name != '' && isWithDecimal && current?.RRD != null">
+                      .{{ getDecimal(current?.RRD) }}
+                    </div>
+                    </div>
+
+                    <!-- CONTINGENCY -->
+                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
+                    [ngClass]="{'blink-green': isContBlinking, 'bg-danger': !isContBlinking}"
+                    style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                    <div class="data-label">CONTINGENCY</div>
+                    <span *ngIf="isWithDecimal">
+                      {{ current?.Contingency != null ? getWholeNumber(current?.Contingency) : '' }}
+                    </span>
+                    <span *ngIf="!isWithDecimal">
+                      {{ current?.Contingency != null ? (current?.Contingency | number:'1.0-0') : '' }}
+                    </span>
+                    <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
+                      {{ current?.ContDataStatus }}
+                    </div>
+                    <div class="badge bg-light text-danger reserve-data-decimal"
+                      *ngIf="currentUnit.name != '' && isWithDecimal && current?.Contingency != null">
+                      .{{ getDecimal(current?.Contingency) }}
+                    </div>
+                    </div>
+
+
+
                   </div>
                 </div>
                 
@@ -238,26 +290,26 @@
                     </div>
                   </div>
 
-            <!-- CURRENT NET LOAD -->
-              <div *ngIf="isNetloadUnit() && IsNetLoad" 
-                class="border border-white border-4 d-flex" 
-                style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
+                  <!-- CURRENT NET LOAD -->
+                    <div *ngIf="isNetloadUnit() && IsNetLoad" 
+                      class="border border-white border-4 d-flex" 
+                      style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
 
-                <div style="flex: 2; background: white; color: #e40000; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
-                  Current Net Load:
-                </div>
-                <div
-                  [ngStyle]="current?.NetLoadValue == null ? {
-                    'font-weight': 'bold',
-                    'font-size': '30px',
-                    'font-family': 'Courier New'
-                  } : {}"
-                  style="flex: 2; background: #e40000; font-size: 60px; color: #ffd40e; display: flex; align-items: center; justify-content: center;">
-                  {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
-                </div>
-              </div>
+                      <div style="flex: 2; background: white; color: #e40000; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
+                        Current Net Load:
+                      </div>
+                      <div
+                        [ngStyle]="current?.NetLoadValue == null ? {
+                          'font-weight': 'bold',
+                          'font-size': '30px',
+                          'font-family': 'Courier New'
+                        } : {}"
+                        style="flex: 2; background: #e40000; font-size: 60px; color: #ffd40e; display: flex; align-items: center; justify-content: center;">
+                        {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
+                      </div>
+                    </div>
 
-              </div>  
+                </div>  
             </div>
             </div>
             
