@@ -602,9 +602,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
     });
 
     this.dashboardService.getCurrentRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
-      if (!data) {
+      
+      if (!data || Object.keys(data).length === 0) {
+        this.current = null;
         return;
       }
+      
+      
+      
       // Store previous values before updating
       const prevRRU = this.previousRRU;
       const prevRRD = this.previousRRD;
@@ -676,7 +681,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
       console.log(error.message);
       this.alarmRTDMessage = "Connection to server problem.";
       this.IsNetLoad = false;
-      this.current = {} as any; // Use empty fallback
+      this.current = { RRU: null, RRD: null, Contingency: null }; // Use empty fallback
     });
     
     
