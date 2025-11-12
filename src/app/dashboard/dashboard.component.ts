@@ -367,6 +367,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isRRDBlinking = false;
   isContingencyBlinking = false;
   testMode: boolean = false; // set to false in production
+  isPlayingAudio: boolean = false;
   // Previous values
   previousRRU: number | null = null;
   previousRRD: number | null = null;
@@ -416,9 +417,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
     //     this.isRRUBlinking = false;
     //   }, 10000);
     // }, 15000); // rerun blinking cycle every 15s
-    //interval(1000).subscribe(() => {
+    // interval(1000).subscribe(() => {
     //  this.setData();
-    //});
+    // });
 
     interval(9000).subscribe(() => {
       this.SetTimeFromServer();
@@ -455,6 +456,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
 
   timerGetData() {
+  // Track whether any of the three changed
+  let hasAnyChange = false;
   this.timerData = setInterval(() => {
     if (+moment(this.now).second() === 4) {
       this.getData();
@@ -466,15 +469,12 @@ export class DashboardComponent implements OnInit, OnDestroy{
       if (this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null) {
         if (this.current['RTDValue'] !== this.pasts[0]['RTDValue']) {
           this.alarmRTDMessage = "RTD has changed!";
+          hasAnyChange = true;
           clearInterval(this.blinkerTimer); // clear if already running
-
           this.blinkerTimer = setInterval(() => {
             this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
             console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
           }, 1000);
-
-          this.RTDChangedAudio();
-
           this.timerAlarm = setTimeout(() => {
             clearInterval(this.blinkerTimer);
             this.isRTDBlinking = false;
@@ -487,10 +487,12 @@ export class DashboardComponent implements OnInit, OnDestroy{
         }
       }
 
+      
+
       // === RR-UP (RRU) ===
       if (this.current['RRU'] !== this.pasts[0]['RRU']) {
+        hasAnyChange = true;
         clearInterval(this.blinkerRRUTimer);
-
         this.blinkerRRUTimer = setInterval(() => {
           this.isRRUBlinking = !this.isRRUBlinking;
           this.cdRef.detectChanges();
@@ -503,10 +505,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
         }, 30000);
       }
 
-      
+      // === RR-DOWN (RRD) ===
       if (this.current['RRD'] !== this.pasts[0]['RRD']) {
+        hasAnyChange = true;
         clearInterval(this.blinkerRRDTimer);
-
         this.blinkerRRDTimer = setInterval(() => {
           this.isRRDBlinking = !this.isRRDBlinking;
           this.cdRef.detectChanges();
@@ -521,8 +523,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
       // === Contingency ===
       if (this.current['Contingency'] !== this.pasts[0]['Contingency']) {
+        hasAnyChange = true;
         clearInterval(this.blinkerContingencyTimer);
-
         this.blinkerContingencyTimer = setInterval(() => {
           this.isContingencyBlinking = !this.isContingencyBlinking;
           this.cdRef.detectChanges();
@@ -535,6 +537,15 @@ export class DashboardComponent implements OnInit, OnDestroy{
         }, 30000);
       }
 
+      // Play alarm once if ANY changed
+      if (hasAnyChange) {
+        this.alarmRTDMessage = "RTD has changed!";
+        if (!this.isPlayingAudio) {
+          this.isPlayingAudio = true;
+          this.RTDChangedAudio();
+          setTimeout(() => this.isPlayingAudio = false, 3000);
+        }
+      }
     }
   }, 1000); // Every second
 }
@@ -619,6 +630,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     
       // If in test mode, override with mock values
       if (this.testMode) {
+        this.current.RTDValue = Math.floor(Math.random() * 200); // simulate MW value
         this.current.RRU = Math.floor(Math.random() * 100);
         this.current.RRD = Math.floor(Math.random() * 100);
         this.current.Contingency = Math.floor(Math.random() * 100);
@@ -660,6 +672,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.stopAlarm();
           this.alarmRTDMessage = "HAP is in use.";
           this.HAPAudio();
+          this.OpenAlarmModal();
           this.timerAlarm = setInterval(() => {
             this.stopAlarm();
           }, 5000);
@@ -667,6 +680,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.stopAlarm();
           this.alarmRTDMessage = "Override value is in use.";
           this.OverrideAudio();
+          this.OpenAlarmModal();
           this.timerAlarm = setInterval(() => {
             this.stopAlarm();
           }, 5000);
@@ -703,6 +717,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           if (this.isWithAlarm) {
             this.alarmRTDMessage = "Actual MW, outside the limits";
             this.OutsideLimitAudio();
+            this.OpenAlarmModal();
             this.timerAlarm = setInterval(() => {
               this.stopAlarm();
             }, 5000);
