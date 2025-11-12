@@ -462,12 +462,15 @@ export class DashboardComponent implements OnInit, OnDestroy{
     if (+moment(this.now).second() === 4) {
       this.getData();
     }
-
+    // console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
+    // console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
+    // console.log(this.current['Contigency'],"->",this.pasts[5]['Contigency'])
     if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
 
       // === RTD (Energy) ===
-      if (this.current['RTDValue'] != null && this.pasts[0]['RTDValue'] != null) {
-        if (this.current['RTDValue'] !== this.pasts[0]['RTDValue']) {
+      if (this.current['RTDValue'] != null && this.pasts[5]['RTDValue'] != null) {
+        if (this.current['RTDValue'] !== this.pasts[5]['RTDValue']) {
+          console.log(this.current['RTDValue'] ,"->", this.pasts[5]['RTDValue'])
           this.alarmRTDMessage = "RTD has changed!";
           hasAnyChange = true;
           clearInterval(this.blinkerTimer); // clear if already running
@@ -486,11 +489,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.stopAlarm();
         }
       }
-
-      
-
       // === RR-UP (RRU) ===
-      if (this.current['RRU'] !== this.pasts[0]['RRU']) {
+      if (this.current['RRU'] !== this.pasts[5]['RRU']) {
+        console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
         hasAnyChange = true;
         clearInterval(this.blinkerRRUTimer);
         this.blinkerRRUTimer = setInterval(() => {
@@ -506,7 +507,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
       }
 
       // === RR-DOWN (RRD) ===
-      if (this.current['RRD'] !== this.pasts[0]['RRD']) {
+      if (this.current['RRD'] !== this.pasts[5]['RRD']) {
+        console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
         hasAnyChange = true;
         clearInterval(this.blinkerRRDTimer);
         this.blinkerRRDTimer = setInterval(() => {
@@ -522,7 +524,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
       }
 
       // === Contingency ===
-      if (this.current['Contingency'] !== this.pasts[0]['Contingency']) {
+      if (this.current['Contingency'] !== this.pasts[5]['Contingency']) {
+        console.log(this.current['Contingency'],"->",this.pasts[5]['Contingency'])
         hasAnyChange = true;
         clearInterval(this.blinkerContingencyTimer);
         this.blinkerContingencyTimer = setInterval(() => {
