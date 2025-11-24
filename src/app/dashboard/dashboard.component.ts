@@ -471,7 +471,6 @@ export class DashboardComponent implements OnInit, OnDestroy{
       if (this.current['RTDValue'] != null && this.pasts[5]['RTDValue'] != null) {
         if (this.current['RTDValue'] !== this.pasts[5]['RTDValue']) {
           console.log(this.current['RTDValue'] ,"->", this.pasts[5]['RTDValue'])
-          this.alarmRTDMessage = "RTD has changed!";
           hasAnyChange = true;
           clearInterval(this.blinkerTimer); // clear if already running
           this.blinkerTimer = setInterval(() => {
@@ -577,14 +576,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
     }
   }
 
-  OpenDRTAlarmModal(){
-    if(!this.modalService.hasOpenModals()){
-        this.modalRef = this.modalService.open(this.alarmModal);
-        this.timerAlarm = setInterval(() => {
-          this.playAudio();
-        },3000);
-      }
-  }
+  // OpenDRTAlarmModal(){
+  //   if(!this.modalService.hasOpenModals()){
+  //       this.modalRef = this.modalService.open(this.alarmModal);
+  //       this.timerAlarm = setInterval(() => {
+  //         this.playAudio();
+  //       },3000);
+  //     }
+  // }
 
 
   // // current unit available for current net load
@@ -637,6 +636,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
         this.current.RRU = Math.floor(Math.random() * 100);
         this.current.RRD = Math.floor(Math.random() * 100);
         this.current.Contingency = Math.floor(Math.random() * 100);
+        this.current.ActualValue = Math.floor(Math.random() * 200);
         console.log('Test Mode ON - Mock Values:', this.current);
       }
     
@@ -675,7 +675,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.stopAlarm();
           this.alarmRTDMessage = "HAP is in use.";
           this.HAPAudio();
-          this.OpenAlarmModal();
+          // this.OpenAlarmModal();
           this.timerAlarm = setInterval(() => {
             this.stopAlarm();
           }, 5000);
@@ -683,7 +683,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           this.stopAlarm();
           this.alarmRTDMessage = "Override value is in use.";
           this.OverrideAudio();
-          this.OpenAlarmModal();
+          // this.OpenAlarmModal();
           this.timerAlarm = setInterval(() => {
             this.stopAlarm();
           }, 5000);
@@ -720,7 +720,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
           if (this.isWithAlarm) {
             this.alarmRTDMessage = "Actual MW, outside the limits";
             this.OutsideLimitAudio();
-            this.OpenAlarmModal();
+            // this.OpenAlarmModal();
             this.timerAlarm = setInterval(() => {
               this.stopAlarm();
             }, 5000);
