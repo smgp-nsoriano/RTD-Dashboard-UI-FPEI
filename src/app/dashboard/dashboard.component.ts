@@ -477,8 +477,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
     // Track whether any of the three changed
     let hasAnyChange = false;
     this.timerData = setInterval(() => {
-      if (+moment(this.now).second() === 4) {
-        this.getData();
+      if (this.cdRef && !this.cdRef['destroyed']) {
+        if (+moment().second() === 4) {
+          this.getData();
+        }
       }
       // console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
       // console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
