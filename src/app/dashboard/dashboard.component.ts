@@ -366,7 +366,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isRRUBlinking = false;
   isRRDBlinking = false;
   isContingencyBlinking = false;
-  testMode: boolean = true; // set to false in production
+  testMode: boolean = false; // set to false in production
   isPlayingAudio: boolean = false;
   // Previous values
   previousRRU: number | null = null;
