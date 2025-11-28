@@ -920,7 +920,6 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy() {
-    //clearInterval(this.timerData);
     this.bodyTag.classList.remove('bg-dark');
     this.unsubscribe.next();
     this.unsubscribe.complete();
