@@ -454,7 +454,25 @@ export class DashboardComponent implements OnInit, OnDestroy{
       this.setData();
     }, 1000);
   }
+  stopAlarm(){
+    this.alarmRTDMessage = null;
+    clearInterval(this.blinkerTimer);
+    clearInterval(this.timerData);
+    clearInterval(this.blinkerRRUTimer);
+    clearInterval(this.blinkerRRDTimer);
+    clearInterval(this.blinkerContingencyTimer);
+    this.isRTDBlinking = false;
+    this.isContingencyBlinking = false;
+    this.isRRUBlinking=false;
+    this.isRRDBlinking = false;
+    clearInterval(this.timerAlarm);
+  }
+  ManualRefresh(){
+    this.SetTimeFromServer();
+    this.getData();
+  }
 
+  
   timerGetData() {
     // Track whether any of the three changed
     let hasAnyChange = false;
@@ -552,28 +570,6 @@ export class DashboardComponent implements OnInit, OnDestroy{
         }
       }
     }, 1000); // Every second
-  }
-  
-
-  
-
-  ManualRefresh(){
-    this.SetTimeFromServer();
-    this.getData();
-  }
-
-  stopAlarm(){
-    this.alarmRTDMessage = null;
-    clearInterval(this.blinkerTimer);
-    clearInterval(this.timerData);
-    clearInterval(this.blinkerRRUTimer);
-    clearInterval(this.blinkerRRDTimer);
-    clearInterval(this.blinkerContingencyTimer);
-    this.isRTDBlinking = false;
-    this.isContingencyBlinking = false;
-    this.isRRUBlinking=false;
-    this.isRRDBlinking = false;
-    clearInterval(this.timerAlarm);
   }
 
   OpenAlarmModal(){
@@ -919,16 +915,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.setData();
   }
 
-  ngOnDestroy() {
-    this.bodyTag.classList.remove('bg-dark');
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-    clearInterval(this.timerData);
-    clearInterval(this.blinkerTimer);
-    clearInterval(this.blinkerRRUTimer);
-    clearInterval(this.blinkerRRDTimer);
-    clearInterval(this.blinkerContingencyTimer);
-  }
+ 
 
   playAudio(){
     let audio = new Audio();
@@ -992,4 +979,17 @@ export class DashboardComponent implements OnInit, OnDestroy{
     const wholeNumber: number = Math.trunc(number);
     return wholeNumber;
   }
+
+
+  ngOnDestroy() {
+    this.bodyTag.classList.remove('bg-dark');
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+    clearInterval(this.timerData);
+    clearInterval(this.blinkerTimer);
+    clearInterval(this.blinkerRRUTimer);
+    clearInterval(this.blinkerRRDTimer);
+    clearInterval(this.blinkerContingencyTimer);
+  }
 }
+
