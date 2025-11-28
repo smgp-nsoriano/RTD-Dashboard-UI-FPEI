@@ -109,63 +109,79 @@
                 
                 <!-- First Block if isBat is True -->
                 <div *ngIf="isBat" class="col-8 mx-auto mb-2">
-                  <!-- Timestamp Box -->
-                  <div
-                    class="border border-white text-center font-weight-bold bg-danger border-4"
-                    style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                    {{ formatDate(current?.TimeStamp) }}
-                  </div>
-                
-                  <!-- ENERGY Box -->
-                  <div
-                    class="border-4 border border-white text-center font-weight-bold parent-container"
-                    [class.bg-danger]="!isRTDBlinking"
-                    [class.bg-warning]="isRTDBlinking"
-                    [ngStyle]="{
-                      height: '280px',
-                      verticalAlign: 'middle',
-                      fontSize: '220px',
-                      fontFamily: '\'Open Sans\', sans-serif',
-                      lineHeight: '1.2',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap'
-                    }">
-                    <div class="data-label">ENERGY</div>
-                    <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? (current?.RTDValue | number: '1.0-0') : '' }}</span>
-                    <!-- Badge: Data Status -->
-                    <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2" *ngIf="currentUnit.name != ''">
-                      {{ current?.DataStatus }}
+                    <!-- Timestamp Box -->
+                    <div
+                      class="border border-white text-center font-weight-bold bg-danger border-4"
+                      style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                      {{ formatDate(current?.TimeStamp) }}
                     </div>
                 
-                    <!-- Badge: Decimal -->
-                    <div class="badge bg-light text-danger data-decimal" 
-                    *ngIf="currentUnit.name != '' && isWithDecimal && current?.RTDValue != null">
-                          .{{ getDecimal(current?.RTDValue) }}
+                    <!-- ENERGY Box -->
+                    <div
+                      class="border-4 border border-white text-center font-weight-bold parent-container"
+                      [class.bg-danger]="!isRTDBlinking"
+                      [class.bg-warning]="isRTDBlinking"
+                      [ngStyle]="{
+                        height: '280px',
+                        verticalAlign: 'middle',
+                        fontSize: '220px',
+                        fontFamily: '\'Open Sans\', sans-serif',
+                        lineHeight: '1.2',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                      }">
+                      <div class="data-label">ENERGY</div>
+                      <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? (current?.RTDValue | number: '1.0-0') : '' }}</span>
+                      <!-- Badge: Data Status -->
+                      <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2" *ngIf="currentUnit.name != ''">
+                        {{ current?.DataStatus }}
+                      </div>
+                  
+                      <!-- Badge: Decimal -->
+                      <div class="badge bg-light text-danger data-decimal" 
+                      *ngIf="currentUnit.name != '' && isWithDecimal && current?.RTDValue != null">
+                            .{{ getDecimal(current?.RTDValue) }}
+                      </div>
                     </div>
-                  </div>
                 
-                  <!-- Reserve Blocks -->
-                  <div class="d-flex">
+                    <!-- Reserve Blocks -->
+                    <div class="d-flex">
                 
                     <!-- RR-UP -->
                     <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
                     [ngClass]="{'blink-green': isRRUBlinking, 'bg-danger': !isRRUBlinking}"
                     style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                    <div class="data-label">RR-UP</div>
-                    <span *ngIf="isWithDecimal">
-                      {{ current?.RRU != null ? getWholeNumber(current?.RRU) : '' }}
-                    </span>
-                    <span *ngIf="!isWithDecimal">
-                      {{ current?.RRU != null ? (current?.RRU | number:'1.0-0') : '' }}
-                    </span>
-                    <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
-                      {{ current?.RUDataStatus }}
+                      <div class="data-label">RR-UP</div>
+                        <span *ngIf="isWithDecimal">
+                          {{ current?.RRU != null ? getWholeNumber(current?.RRU) : '' }}
+                        </span>
+                        <span *ngIf="!isWithDecimal">
+                          {{ current?.RRU != null ? (current?.RRU | number:'1.0-0') : '' }}
+                        </span>
+                      <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
+                        {{ current?.RUDataStatus }}
+                      </div>
+                      <div class="badge bg-light text-danger reserve-data-decimal"
+                        *ngIf="currentUnit.name != '' && isWithDecimal && current?.RRU != null">
+                        .{{ getDecimal(current?.RRU) }}
+                      </div>
                     </div>
-                    <div class="badge bg-light text-danger reserve-data-decimal"
-                      *ngIf="currentUnit.name != '' && isWithDecimal && current?.RRU != null">
-                      .{{ getDecimal(current?.RRU) }}
-                    </div>
+                      
+                    <!-- CONTINGENCY Box -->
+                     <!-- testing for merging -->
+                    <div
+                      class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
+                      [ngClass]="{
+                        'blink-green': isContingencyBlinking,
+                        'bg-danger': !isContingencyBlinking
+                      }"
+                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
+                      <div class="data-label">CONTINGENCY</div>
+                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.Contingency) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.Contingency | number: '1.0-0' }}</span>
+                      <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.ConDataStatus }}</div>
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.Contingency) }}</div>
                     </div>
 
                     <!-- RR-DOWN -->
@@ -187,27 +203,6 @@
                       .{{ getDecimal(current?.RRD) }}
                     </div>
                     </div>
-
-                    <!-- CONTINGENCY -->
-                    <div class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
-                    [ngClass]="{'blink-green': isContBlinking, 'bg-danger': !isContBlinking}"
-                    style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                    <div class="data-label">CONTINGENCY</div>
-                    <span *ngIf="isWithDecimal">
-                      {{ current?.Contingency != null ? getWholeNumber(current?.Contingency) : '' }}
-                    </span>
-                    <span *ngIf="!isWithDecimal">
-                      {{ current?.Contingency != null ? (current?.Contingency | number:'1.0-0') : '' }}
-                    </span>
-                    <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">
-                      {{ current?.ContDataStatus }}
-                    </div>
-                    <div class="badge bg-light text-danger reserve-data-decimal"
-                      *ngIf="currentUnit.name != '' && isWithDecimal && current?.Contingency != null">
-                      .{{ getDecimal(current?.Contingency) }}
-                    </div>
-                    </div>
-
                   </div>
                 </div>
                 
@@ -309,105 +304,105 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row align-items-center h-100 mt-3">
-            <div class="table-responsive">
-              <!-- lower hap-actual table for BESS units -->
-              <table *ngIf="isBat" class="table table-sm table-bordered">
-                <thead>
-                  <tr>
-                    <td class="text-center">Schedule</td>
-                    <td *ngFor="let past of pasts" class="text-center">
-                      {{ formatDate(past.TimeStamp) }}
-                    </td>
-                    <td class="text-center">INTERVAL</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center">
-                      {{ formatDate(forecast.TimeStamp) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">RU</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RRU | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center" rowspan="4">HAP →</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                      {{ forecast.RRU | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">RD</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RRD | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center">HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                      {{ forecast.RRD | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">CR</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.Contingency | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center">HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                      {{ forecast.Contingency | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">EN</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
-                      {{ past.RTDValue | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center" >HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                      {{ forecast.RTDValue | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">ACTUAL</td>
-                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
-                      {{ past.ActualValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center actual">← ACTUAL</td>
-                  </tr>
-                </thead>
-              </table>
-              <!-- lower hap-actual table for generator units -->
-              <table *ngIf="!isBat" class="table table-sm table-bordered">
-                <thead>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center">
-                      {{ formatDate(past.TimeStamp) }}
-                    </td>
-                    <td class="text-center">INTERVAL</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center">
-                      {{ formatDate(forecast.TimeStamp) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RTDValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center">HAP ></td>
-                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                      {{ forecast.RTDValue | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
-                      style="font-size: 2.8em !important;">
-                      {{ past.ActualValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center actual">&lt; ACTUAL</td>
-                  </tr>
-                </thead>
-              </table>
+            </div>
+            <div class="row align-items-center h-100 mt-3">
+              <div class="table-responsive">
+                <!-- lower hap-actual table for BESS units -->
+                <table *ngIf="isBat" class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <td class="text-center">Schedule</td>
+                      <td *ngFor="let past of pasts" class="text-center">
+                        {{ formatDate(past.TimeStamp) }}
+                      </td>
+                      <td class="text-center">INTERVAL</td>
+                      <td *ngFor="let forecast of forecasts" class="text-center">
+                        {{ formatDate(forecast.TimeStamp) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">RU</td>
+                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                        {{ past.RRU | number: '1.0-0' }}
+                      </td>
+                      <td class="text-center" rowspan="4">HAP →</td>
+                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                        {{ forecast.RRU | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">RD</td>
+                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                        {{ past.RRD | number: '1.0-0' }}
+                      </td>
+                      <!-- <td class="text-center">HAP →</td> -->
+                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                        {{ forecast.RRD | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">CR</td>
+                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                        {{ past.Contingency | number: '1.0-0' }}
+                      </td>
+                      <!-- <td class="text-center">HAP →</td> -->
+                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
+                        {{ forecast.Contingency | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">EN</td>
+                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
+                        {{ past.RTDValue | number: '1.0-0' }}
+                      </td>
+                      <!-- <td class="text-center" >HAP →</td> -->
+                      <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                        {{ forecast.RTDValue | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">ACTUAL</td>
+                      <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
+                        {{ past.ActualValue | number: '1.0-0' }}
+                      </td>
+                      <td class="text-center actual">← ACTUAL</td>
+                    </tr>
+                  </thead>
+                </table>
+                <!-- lower hap-actual table for generator units -->
+                <table *ngIf="!isBat" class="table table-sm table-bordered">
+                  <thead>
+                    <tr>
+                      <td *ngFor="let past of pasts" class="text-center">
+                        {{ formatDate(past.TimeStamp) }}
+                      </td>
+                      <td class="text-center">INTERVAL</td>
+                      <td *ngFor="let forecast of forecasts" class="text-center">
+                        {{ formatDate(forecast.TimeStamp) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                        {{ past.RTDValue | number: '1.0-0' }}
+                      </td>
+                      <td class="text-center">HAP ></td>
+                      <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                        {{ forecast.RTDValue | number: '1.0-0' }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
+                        style="font-size: 2.8em !important;">
+                        {{ past.ActualValue | number: '1.0-0' }}
+                      </td>
+                      <td class="text-center actual">&lt; ACTUAL</td>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 </main>
