@@ -545,7 +545,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
         if (!this.isPlayingAudio) {
           this.isPlayingAudio = true;
           this.RTDChangedAudio();
-          setTimeout(() => this.isPlayingAudio = false, 3000);
+          setTimeout(() => this.isPlayingAudio = false, 60000);
         }
       }
     }
@@ -633,10 +633,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
       // If in test mode, override with mock values
       if (this.testMode) {
         this.current.RTDValue = Math.floor(Math.random() * 200); // simulate MW value
-        this.current.RRU = Math.floor(Math.random() * 100);
-        this.current.RRD = Math.floor(Math.random() * 100);
+        // this.current.RRU = Math.floor(Math.random() * 100);
+        // this.current.RRD = Math.floor(Math.random() * 100);
         this.current.Contingency = Math.floor(Math.random() * 100);
-        this.current.ActualValue = Math.floor(Math.random() * 200);
+        // this.current.ActualValue = Math.floor(Math.random() * 200);
         console.log('Test Mode ON - Mock Values:', this.current);
       }
     
