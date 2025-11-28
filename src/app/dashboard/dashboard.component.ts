@@ -366,7 +366,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isRRUBlinking = false;
   isRRDBlinking = false;
   isContingencyBlinking = false;
-  testMode: boolean = false; // set to false in production
+  testMode: boolean = true; // set to false in production
   isPlayingAudio: boolean = false;
   // Previous values
   previousRRU: number | null = null;
@@ -456,101 +456,104 @@ export class DashboardComponent implements OnInit, OnDestroy{
   }
 
   timerGetData() {
-  // Track whether any of the three changed
-  let hasAnyChange = false;
-  this.timerData = setInterval(() => {
-    if (+moment(this.now).second() === 4) {
-      this.getData();
-    }
-    // console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
-    // console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
-    // console.log(this.current['Contigency'],"->",this.pasts[5]['Contigency'])
-    if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
-
-      // === RTD (Energy) ===
-      if (this.current['RTDValue'] != null && this.pasts[5]['RTDValue'] != null) {
-        if (this.current['RTDValue'] !== this.pasts[5]['RTDValue']) {
-          console.log(this.current['RTDValue'] ,"->", this.pasts[5]['RTDValue'])
-          hasAnyChange = true;
-          clearInterval(this.blinkerTimer); // clear if already running
-          this.blinkerTimer = setInterval(() => {
-            this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
-            console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
-          }, 1000);
-          this.timerAlarm = setTimeout(() => {
+    // Track whether any of the three changed
+    let hasAnyChange = false;
+    this.timerData = setInterval(() => {
+      if (this.cdRef && !this.cdRef['destroyed']) {
+        if (+moment().second() === 4) {
+          this.getData();
+        }
+      }
+      // console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
+      // console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
+      // console.log(this.current['Contigency'],"->",this.pasts[5]['Contigency'])
+      if (+moment(this.now).minute() % 5 === 0 && +moment(this.now).second() === 7) {
+  
+        // === RTD (Energy) ===
+        if (this.current['RTDValue'] != null && this.pasts[5]['RTDValue'] != null) {
+          if (this.current['RTDValue'] !== this.pasts[5]['RTDValue']) {
+            console.log(this.current['RTDValue'] ,"->", this.pasts[5]['RTDValue'])
+            hasAnyChange = true;
+            clearInterval(this.blinkerTimer); // clear if already running
+            this.blinkerTimer = setInterval(() => {
+              this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
+              console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
+            }, 1000);
+            this.timerAlarm = setTimeout(() => {
+              clearInterval(this.blinkerTimer);
+              this.isRTDBlinking = false;
+              this.stopAlarm();
+            }, 60000); // 1 minute
+          } else {
             clearInterval(this.blinkerTimer);
             this.isRTDBlinking = false;
             this.stopAlarm();
-          }, 60000); // 1 minute
-        } else {
-          clearInterval(this.blinkerTimer);
-          this.isRTDBlinking = false;
-          this.stopAlarm();
+          }
         }
-      }
-      // === RR-UP (RRU) ===
-      if (this.current['RRU'] !== this.pasts[5]['RRU']) {
-        console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
-        hasAnyChange = true;
-        clearInterval(this.blinkerRRUTimer);
-        this.blinkerRRUTimer = setInterval(() => {
-          this.isRRUBlinking = !this.isRRUBlinking;
-          this.cdRef.detectChanges();
-        }, 1000);
-
-        setTimeout(() => {
+        // === RR-UP (RRU) ===
+        if (this.current['RRU'] !== this.pasts[5]['RRU']) {
+          console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
+          hasAnyChange = true;
           clearInterval(this.blinkerRRUTimer);
-          this.isRRUBlinking = false;
-          this.cdRef.detectChanges();
-        }, 30000);
-      }
-
-      // === RR-DOWN (RRD) ===
-      if (this.current['RRD'] !== this.pasts[5]['RRD']) {
-        console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
-        hasAnyChange = true;
-        clearInterval(this.blinkerRRDTimer);
-        this.blinkerRRDTimer = setInterval(() => {
-          this.isRRDBlinking = !this.isRRDBlinking;
-          this.cdRef.detectChanges();
-        }, 1000);
-
-        setTimeout(() => {
+          this.blinkerRRUTimer = setInterval(() => {
+            this.isRRUBlinking = !this.isRRUBlinking;
+            this.cdRef.detectChanges();
+          }, 1000);
+  
+          setTimeout(() => {
+            clearInterval(this.blinkerRRUTimer);
+            this.isRRUBlinking = false;
+            this.cdRef.detectChanges();
+          }, 30000);
+        }
+  
+        // === RR-DOWN (RRD) ===
+        if (this.current['RRD'] !== this.pasts[5]['RRD']) {
+          console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
+          hasAnyChange = true;
           clearInterval(this.blinkerRRDTimer);
-          this.isRRDBlinking = false;
-          this.cdRef.detectChanges();
-        }, 30000);
-      }
-
-      // === Contingency ===
-      if (this.current['Contingency'] !== this.pasts[5]['Contingency']) {
-        console.log(this.current['Contingency'],"->",this.pasts[5]['Contingency'])
-        hasAnyChange = true;
-        clearInterval(this.blinkerContingencyTimer);
-        this.blinkerContingencyTimer = setInterval(() => {
-          this.isContingencyBlinking = !this.isContingencyBlinking;
-          this.cdRef.detectChanges();
-        }, 1000);
-
-        setTimeout(() => {
+          this.blinkerRRDTimer = setInterval(() => {
+            this.isRRDBlinking = !this.isRRDBlinking;
+            this.cdRef.detectChanges();
+          }, 1000);
+  
+          setTimeout(() => {
+            clearInterval(this.blinkerRRDTimer);
+            this.isRRDBlinking = false;
+            this.cdRef.detectChanges();
+          }, 30000);
+        }
+  
+        // === Contingency ===
+        if (this.current['Contingency'] !== this.pasts[5]['Contingency']) {
+          console.log(this.current['Contingency'],"->",this.pasts[5]['Contingency'])
+          hasAnyChange = true;
           clearInterval(this.blinkerContingencyTimer);
-          this.isContingencyBlinking = false;
-          this.cdRef.detectChanges();
-        }, 30000);
-      }
-
-      // Play alarm once if ANY changed
-      if (hasAnyChange) {
-        this.alarmRTDMessage = "RTD has changed!";
-        if (!this.isPlayingAudio) {
-          this.isPlayingAudio = true;
-          this.RTDChangedAudio();
-          setTimeout(() => this.isPlayingAudio = false, 3000);
+          this.blinkerContingencyTimer = setInterval(() => {
+            this.isContingencyBlinking = !this.isContingencyBlinking;
+            this.cdRef.detectChanges();
+          }, 1000);
+  
+          setTimeout(() => {
+            clearInterval(this.blinkerContingencyTimer);
+            this.isContingencyBlinking = false;
+            this.cdRef.detectChanges();
+          }, 30000);
+        }
+  
+        // Play alarm once if ANY changed
+        if (hasAnyChange) {
+          this.alarmRTDMessage = "RTD has changed!";
+          if (!this.isPlayingAudio) {
+            this.isPlayingAudio = true;
+            this.RTDChangedAudio();
+            setTimeout(() => this.isPlayingAudio = false, 60000);
+          }
         }
       }
-    }
-  }, 1000); // Every second
-}
+    }, 1000); // Every second
+  }
+  
 
   
 
@@ -562,6 +565,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
   stopAlarm(){
     this.alarmRTDMessage = null;
     clearInterval(this.blinkerTimer);
+    clearInterval(this.timerData);
+    clearInterval(this.blinkerRRUTimer);
+    clearInterval(this.blinkerRRDTimer);
+    clearInterval(this.blinkerContingencyTimer);
     this.isRTDBlinking = false;
     this.isContingencyBlinking = false;
     this.isRRUBlinking=false;
@@ -633,10 +640,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
       // If in test mode, override with mock values
       if (this.testMode) {
         this.current.RTDValue = Math.floor(Math.random() * 200); // simulate MW value
-        this.current.RRU = Math.floor(Math.random() * 100);
-        this.current.RRD = Math.floor(Math.random() * 100);
+        // this.current.RRU = Math.floor(Math.random() * 100);
+        // this.current.RRD = Math.floor(Math.random() * 100);
         this.current.Contingency = Math.floor(Math.random() * 100);
-        this.current.ActualValue = Math.floor(Math.random() * 200);
+        // this.current.ActualValue = Math.floor(Math.random() * 200);
         console.log('Test Mode ON - Mock Values:', this.current);
       }
     
@@ -917,6 +924,11 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.bodyTag.classList.remove('bg-dark');
     this.unsubscribe.next();
     this.unsubscribe.complete();
+    clearInterval(this.timerData);
+    clearInterval(this.blinkerTimer);
+    clearInterval(this.blinkerRRUTimer);
+    clearInterval(this.blinkerRRDTimer);
+    clearInterval(this.blinkerContingencyTimer);
   }
 
   playAudio(){
