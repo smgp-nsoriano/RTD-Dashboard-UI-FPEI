@@ -58,6 +58,8 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
   newCR : any;
   oldCR : any;
 
+
+  isManualRefresh = false;
   testmode= false;
   blinkEN = false;
   blinkRU = false;
@@ -213,11 +215,12 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
         this.RMcurrentUnit3.id = sessStore['U3'].UnitID;
         this.RMcurrentUnit3.name = sessStore['U3'].UnitNumber;
       }
-      this.RefreshData()
+      this.RefreshData();
     } else {
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
-  
+    
+    this.RefreshData();
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
@@ -381,8 +384,13 @@ ngAfterViewInit(){
   }
 
   ManualRefresh() {
+    this.isManualRefresh = true;
     this.RefreshData();
     this.PopulateUnits();
+    setTimeout(() => this.isManualRefresh = false, 2000); // reset quickly
+    this.blinkEN1 = false; this.blinkRU1 = false; this.blinkRD1 = false; this.blinkCR1 = false;
+    this.blinkEN2 = false; this.blinkRU2 = false; this.blinkRD2 = false; this.blinkCR2 = false;
+    this.blinkEN3 = false; this.blinkRU3 = false; this.blinkRD3 = false; this.blinkCR3 = false;
   }
 
   SetReserveMarketPricesValue(unitNumber:string, unitType:string){
@@ -462,7 +470,7 @@ checkAndClearPreviewOnReload() {
     // No previous clear, so do it now
     this.clearPreviewValues();
     localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on first-time load.");
+    // console.log("Preview cleared on first-time load.");
     return;
   }
 
@@ -474,9 +482,9 @@ checkAndClearPreviewOnReload() {
     // Either it's been > 5 mins, or we're at a new 5-min boundary
     this.clearPreviewValues();
     localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on reload based on timestamp check.");
+    // console.log("Preview cleared on reload based on timestamp check.");
   } else {
-    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
+    // console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
   }
 }
 clearPreviewValues() {
@@ -586,59 +594,59 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
 
       // if (minutes % 5 === 0 && seconds >= 5 && seconds <= 30) {
           // EN
-          if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U1") { 
+        if (!this.isManualRefresh && currentEN != null && this.oldEN !== null && currentEN !== this.oldEN && unitType === "U1") { 
             this.blinkEN1 = true; 
-            setTimeout(() => this.blinkEN1 = false, 30000); 
+            setTimeout(() => {this.blinkEN1 = false; this.alertMessage = null;}, 30000); 
         }
-        if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U2") { 
+        if (!this.isManualRefresh && currentEN != null && this.oldEN !== null && currentEN !== this.oldEN && unitType === "U2") { 
             this.blinkEN2 = true; 
-            setTimeout(() => this.blinkEN2 = false, 30000); 
+            setTimeout(() => {this.blinkEN2 = false; this.alertMessage = null;}, 30000); 
         }
-        if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U3") { 
+        if (!this.isManualRefresh && currentEN != null && this.oldEN !== null && currentEN !== this.oldEN && unitType === "U3") { 
             this.blinkEN3 = true; 
-            setTimeout(() => this.blinkEN3 = false, 30000); 
+            setTimeout(() => {this.blinkEN3 = false; this.alertMessage = null;}, 30000); 
         }
 
         // RU
-        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U1") { 
+        if (!this.isManualRefresh && currentRU != null && this.oldRU !== null && currentRU !== this.oldRU && unitType === "U1") { 
             this.blinkRU1 = true; 
-            setTimeout(() => this.blinkRU1 = false, 30000); 
+            setTimeout(() => {this.blinkRU1 = false;this.alertMessage = null;}, 30000); 
         }
-        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U2") { 
+        if (!this.isManualRefresh && currentRU != null && this.oldRU !== null && currentRU !== this.oldRU && unitType === "U2") { 
             this.blinkRU2 = true; 
-            setTimeout(() => this.blinkRU2 = false, 30000); 
+            setTimeout(() => {this.blinkRU2 = false;this.alertMessage = null;}, 30000); 
         }
-        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U3") { 
+        if (!this.isManualRefresh && currentRU != null && this.oldRU !== null && currentRU !== this.oldRU && unitType === "U3") { 
             this.blinkRU3 = true; 
-            setTimeout(() => this.blinkRU3 = false, 30000); 
+            setTimeout(() => {this.blinkRU3 = false;this.alertMessage = null;}, 30000); 
         }
 
         // RD
-        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U1") { 
+        if (!this.isManualRefresh && currentRD != null && this.oldRD !== null && currentRD !== this.oldRD && unitType === "U1") { 
             this.blinkRD1 = true; 
-            setTimeout(() => this.blinkRD1 = false, 30000); 
+            setTimeout(() => {this.blinkRD1 = false;this.alertMessage = null;}, 30000); 
         }
-        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U2") { 
+        if (!this.isManualRefresh && currentRD != null && this.oldRD !== null && currentRD !== this.oldRD && unitType === "U2") { 
             this.blinkRD2 = true; 
-            setTimeout(() => this.blinkRD2 = false, 30000); 
+            setTimeout(() => {this.blinkRD2 = false; this.alertMessage = null;}, 30000); 
         }
-        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U3") { 
+        if (!this.isManualRefresh && currentRD != null && this.oldRD !== null && currentRD !== this.oldRD && unitType === "U3") { 
             this.blinkRD3 = true; 
-            setTimeout(() => this.blinkRD3 = false, 30000); 
+            setTimeout(() => {this.blinkRD3 = false;this.alertMessage = null;}, 30000); 
         }
 
         // CR
-        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U1") { 
+        if (!this.isManualRefresh && currentCR != null && this.oldCR !== null && currentCR !== this.oldCR && unitType === "U1") { 
             this.blinkCR1 = true; 
-            setTimeout(() => this.blinkCR1 = false, 30000); 
+            setTimeout(() => {this.blinkCR1 = false;this.alertMessage = null;}, 30000); 
         }
-        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U2") { 
+        if (!this.isManualRefresh && currentCR != null && this.oldCR !== null && currentCR !== this.oldCR && unitType === "U2") { 
             this.blinkCR2 = true; 
-            setTimeout(() => this.blinkCR2 = false, 30000); 
+            setTimeout(() => {this.blinkCR2 = false;this.alertMessage = null;}, 30000); 
         }
-        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U3") { 
+        if (!this.isManualRefresh && currentCR != null && this.oldCR !== null && currentCR !== this.oldCR && unitType === "U3") { 
             this.blinkCR3 = true; 
-            setTimeout(() => this.blinkCR3 = false, 30000); 
+            setTimeout(() => {this.blinkCR3 = false;this.alertMessage = null;}, 30000); 
         }
       // }
 
