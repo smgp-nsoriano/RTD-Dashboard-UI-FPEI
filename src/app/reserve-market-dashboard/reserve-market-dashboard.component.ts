@@ -253,8 +253,8 @@ ngAfterViewInit(){
     this.alarmTriggered=false;
     this.PopulateUnits();
     this.SetIntervals();
-    // this.checkAndClearPreviewOnReload(); 
-    // this.clearAllPreviewValuesAtIntervals();
+    this.checkAndClearPreviewOnReload(); 
+    this.clearAllPreviewValuesAtIntervals();
     this.TimerGetData();
     this.tempValue = this.eventService.getItem('tempValue');
     if(this.tempValue==null||this.tempValue==false){
@@ -439,76 +439,76 @@ ngAfterViewInit(){
   //   }
   // }
   
-//   clearAllPreviewValuesAtIntervals() {
-//   setInterval(() => {
-//     const now = new Date();
-//     const minutes = now.getMinutes();
-//     const seconds = now.getSeconds();
+  clearAllPreviewValuesAtIntervals() {
+  setInterval(() => {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
 
-//     // if (minutes % 5 === 0 && seconds === 5 && this.lastClearedMinute !== minutes) {
-//     //   this.lastClearedMinute = minutes;
-//     //   this.clearPreviewValues();
-//     //   this.previewCleared = true;
-//     //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-//     // }
-//   }, 1000);
-// }
-// checkAndClearPreviewOnReload() {
-//   const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
-//   const now = new Date();
-//   const nowMinutes = now.getMinutes();
+    if (minutes % 5 === 0 && seconds === 5 && this.lastClearedMinute !== minutes) {
+      this.lastClearedMinute = minutes;
+      this.clearPreviewValues();
+      this.previewCleared = true;
+      localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    }
+  }, 1000);
+}
+checkAndClearPreviewOnReload() {
+  const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
+  const now = new Date();
+  const nowMinutes = now.getMinutes();
 
-//   // if (!lastClearedISO) {
-//   //   // No previous clear, so do it now
-//   //   this.clearPreviewValues();
-//   //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-//   //   console.log("Preview cleared on first-time load.");
-//   //   return;
-//   // }
+  if (!lastClearedISO) {
+    // No previous clear, so do it now
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on first-time load.");
+    return;
+  }
 
-//   // const lastCleared = new Date(lastClearedISO);
-//   // const diffMs = now.getTime() - lastCleared.getTime();
-//   // const diffMinutes = Math.floor(diffMs / 60000);
+  const lastCleared = new Date(lastClearedISO);
+  const diffMs = now.getTime() - lastCleared.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
 
-//   // if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
-//   //   // Either it's been > 5 mins, or we're at a new 5-min boundary
-//   //   this.clearPreviewValues();
-//   //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-//   //   console.log("Preview cleared on reload based on timestamp check.");
-//   // } else {
-//   //   console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
-//   // }
-// }
-// clearPreviewValues() {
-//   const unitNumber = this.selectedUnitNumber;
-//   const previewKeys = [
-//     `preview_${unitNumber}_U1ENPrice`,
-//     `preview_${unitNumber}_U1RUPrice`,
-//     `preview_${unitNumber}_U1RDPrice`,
-//     `preview_${unitNumber}_U1FRPrice`,
-//     `preview_${unitNumber}_U1CRPrice`,
-//     `preview_${unitNumber}_EN_Sched`,
-//     `preview_${unitNumber}_RU_Sched`,
-//     `preview_${unitNumber}_RD_Sched`,
-//     `preview_${unitNumber}_FR_Sched`,
-//     `preview_${unitNumber}_CR_Sched`,
-//     `preview_${unitNumber}_DR_Sched`,
-//   ];
+  if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
+    // Either it's been > 5 mins, or we're at a new 5-min boundary
+    this.clearPreviewValues();
+    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+    console.log("Preview cleared on reload based on timestamp check.");
+  } else {
+    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
+  }
+}
+clearPreviewValues() {
+  const unitNumber = this.selectedUnitNumber;
+  const previewKeys = [
+    `preview_${unitNumber}_U1ENPrice`,
+    `preview_${unitNumber}_U1RUPrice`,
+    `preview_${unitNumber}_U1RDPrice`,
+    `preview_${unitNumber}_U1FRPrice`,
+    `preview_${unitNumber}_U1CRPrice`,
+    `preview_${unitNumber}_EN_Sched`,
+    `preview_${unitNumber}_RU_Sched`,
+    `preview_${unitNumber}_RD_Sched`,
+    `preview_${unitNumber}_FR_Sched`,
+    `preview_${unitNumber}_CR_Sched`,
+    `preview_${unitNumber}_DR_Sched`,
+  ];
 
-//   for (const key of previewKeys) {
-//     localStorage.removeItem(key);
-//   }
+  for (const key of previewKeys) {
+    localStorage.removeItem(key);
+  }
 
-//   if (this.dbValues[3]) {
-//     const previewFields = [
-//       "U1ENPrice", "U1RUPrice", "U1RDPrice", "U1FRPrice", "U1CRPrice",
-//       "EN_Sched", "RU_Sched", "RD_Sched", "FR_Sched", "DR_Sched"
-//     ];
-//     previewFields.forEach(field => this.dbValues[3][field] = null);
-//   }
+  if (this.dbValues[3]) {
+    const previewFields = [
+      "U1ENPrice", "U1RUPrice", "U1RDPrice", "U1FRPrice", "U1CRPrice",
+      "EN_Sched", "RU_Sched", "RD_Sched", "FR_Sched", "DR_Sched"
+    ];
+    previewFields.forEach(field => this.dbValues[3][field] = null);
+  }
 
-//   console.log("Preview values cleared.");
-// }
+  console.log("Preview values cleared.");
+}
 
 SetReserveMarketValue(unitNumber: string, unitType: string) {
   let unitChangedFlag = false;
