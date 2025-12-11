@@ -142,7 +142,7 @@
                 
                     <!-- Badge: Decimal -->
                     <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
-                      . {{ current?.RTDValue != null ? '.' + getDecimal(current?.RTDValue) : '' }}
+                      {{ current?.RTDValue != null ? '.' + getDecimal(current?.RTDValue) : '' }}
                     </div>
                   </div>
                 
@@ -191,10 +191,11 @@
                       }"
                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">CONTINGENCY</div>
-                      <span *ngIf="isWithDecimal">{{ current?.Contingency == null ? '' : getWholeNumber(current?.Contingency) }}</span>
+                      <span *ngIf="isWithDecimal">{{ current?.Contingency === null || current?.Contingency === undefined ? '' : getWholeNumber(current?.Contingency) }}</span>
                       <span *ngIf="!isWithDecimal">{{ current?.Contingency == null ? '' : (current?.Contingency | number:'1.0-0') }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.ConDataStatus }}</div>
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.Contingency == null ? '' : getDecimal(current?.Contingency) }}</div>
+                      <div class="badge bg-light text-danger reserve-data-decimal"*ngIf="currentUnit.name != '' && isWithDecimal && current?.Contingency !== null && current?.Contingency !== undefined"> .{{ getDecimal(current?.Contingency) }}
+                 </div>
                     </div>
                   </div>
                 </div>
@@ -238,7 +239,7 @@
                     <!-- BADGE DECIMAL PLACES -->
                     <div class="badge bg-light text-danger data-decimal"
                     *ngIf="currentUnit.name != '' && isWithDecimal && current?.RTDValue != null">
-                      .{{ getDecimal(current?.RTDValue) }}
+                      {{ getDecimal(current?.RTDValue) }}
                     </div>
                   </div>
 

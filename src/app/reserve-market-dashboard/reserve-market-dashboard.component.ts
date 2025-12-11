@@ -973,7 +973,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
             const currentSecond = +moment(this.now).second();
             if(currentMinute % 5 == 0){
               //console.log("Minute is in the alarm list");
-              if (currentSecond >= 4 && currentSecond <= 30) {
+              if (currentSecond >= 10 && currentSecond <= 30) {
                     //console.log("Second is from 5s to 15s");
                     if (this.alarmRTDChanged && !this.alarmTriggered) {
                       //console.log("alarmRTDChanged is true");

@@ -633,7 +633,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
       const prevContingency = this.previousContingency;
     
       this.current = data;
-    
+  
+
       // If in test mode, override with mock values
       if (this.testMode) {
         this.current.RTDValue = Math.floor(Math.random() * 200); // simulate MW value
