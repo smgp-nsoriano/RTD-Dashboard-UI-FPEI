@@ -198,9 +198,7 @@
                     </div>
                   </div>
                 </div>
-                
-                
-                
+    
                 <!-- Second Block if isBat is false -->
                 <div *ngIf="!isBat" class="col-8 mx-auto mb-2">
                   <!-- Timestamp Box -->
@@ -297,106 +295,106 @@
                 </div>
               </div>
             </div>
-            </div>
-            <div class="row align-items-center h-100 mt-3">
-              <div class="table-responsive">
-                <!-- lower hap-actual table for BESS units -->
-                <table *ngIf="isBat" class="table table-sm table-bordered">
-                  <thead>
-                    <tr>
-                      <td class="text-center">Schedule</td>
-                      <td *ngFor="let past of pasts" class="text-center">
-                        {{ formatDate(past.TimeStamp) }}
-                      </td>
-                      <td class="text-center">INTERVAL</td>
-                      <td *ngFor="let forecast of forecasts" class="text-center">
-                        {{ formatDate(forecast.TimeStamp) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">RU</td>
-                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                        {{ past.RRU | number: '1.0-0' }}
-                      </td>
-                      <td class="text-center" rowspan="4">HAP →</td>
-                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                        {{ forecast.RRU | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">RD</td>
-                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                        {{ past.RRD | number: '1.0-0' }}
-                      </td>
-                      <!-- <td class="text-center">HAP →</td> -->
-                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                        {{ forecast.RRD | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">CR</td>
-                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                        {{ past.Contingency | number: '1.0-0' }}
-                      </td>
-                      <!-- <td class="text-center">HAP →</td> -->
-                      <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 5em !important;">
-                        {{ forecast.Contingency | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">EN</td>
-                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
-                        {{ past.RTDValue | number: '1.0-0' }}
-                      </td>
-                      <!-- <td class="text-center" >HAP →</td> -->
-                      <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                        {{ forecast.RTDValue | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">ACTUAL</td>
-                      <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
-                        {{ past.ActualValue | number: '1.0-0' }}
-                      </td>
-                      <td class="text-center actual">← ACTUAL</td>
-                    </tr>
-                  </thead>
-                </table>
-                <!-- lower hap-actual table for generator units -->
-                <table *ngIf="!isBat" class="table table-sm table-bordered">
-                  <thead>
-                    <tr>
-                      <td *ngFor="let past of pasts" class="text-center">
-                        {{ formatDate(past.TimeStamp) }}
-                      </td>
-                      <td class="text-center">INTERVAL</td>
-                      <td *ngFor="let forecast of forecasts" class="text-center">
-                        {{ formatDate(forecast.TimeStamp) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                        {{ past.RTDValue | number: '1.0-0' }}
-                      </td>
-                      <td class="text-center">HAP ></td>
-                      <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                        {{ forecast.RTDValue | number: '1.0-0' }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
-                        style="font-size: 2.8em !important;">
-                        {{ past.ActualValue | number: '1.0-0' }}
-                      </td>
-                      <td class="text-center actual">&lt; ACTUAL</td>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
+          </div>
+          <div class="row align-items-center h-100 mt-3">
+            <div class="table-responsive">
+              <!-- lower hap-actual table for BESS units -->
+              <table *ngIf="isBat" class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <td class="text-center">Schedule</td>
+                    <td *ngFor="let past of pasts" class="text-center">
+                      {{ formatDate(past.TimeStamp) }}
+                    </td>
+                    <td class="text-center">INTERVAL</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center">
+                      {{ formatDate(forecast.TimeStamp) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">RU</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.RRU | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center" rowspan="4">HAP →</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ forecast.RRU | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">RD</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.RRD | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center">HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ forecast.RRD | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">CR</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.Contingency | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center">HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ forecast.Contingency | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">EN</td>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
+                      {{ past.RTDValue | number: '1.0-0' }}
+                    </td>
+                    <!-- <td class="text-center" >HAP →</td> -->
+                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                      {{ forecast.RTDValue | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">ACTUAL</td>
+                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
+                      {{ past.ActualValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center actual">← ACTUAL</td>
+                  </tr>
+                </thead>
+              </table>
+              <!-- lower hap-actual table for generator units -->
+              <table *ngIf="!isBat" class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center">
+                      {{ formatDate(past.TimeStamp) }}
+                    </td>
+                    <td class="text-center">INTERVAL</td>
+                    <td *ngFor="let forecast of forecasts" class="text-center">
+                      {{ formatDate(forecast.TimeStamp) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
+                      {{ past.RTDValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center">HAP ></td>
+                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
+                      {{ forecast.RTDValue | number: '1.0-0' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
+                      style="font-size: 2.8em !important;">
+                      {{ past.ActualValue | number: '1.0-0' }}
+                    </td>
+                    <td class="text-center actual">&lt; ACTUAL</td>
+                  </tr>
+                </thead>
+              </table>
             </div>
           </div>
         </div>
     </div>
+  </div>
   </div>
 </main>
 
