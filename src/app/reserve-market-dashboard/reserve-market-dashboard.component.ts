@@ -44,6 +44,36 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
   FRtempStorage1: number;
   FRtempStorage2: number;
 
+
+  // === UNIFIED RTD CHANGE DETECTION ===
+  newEN : any;
+  oldEN : any;
+
+  newRU : any;
+  oldRU : any;
+
+  newRD : any;
+  oldRD : any;
+
+  newCR : any;
+  oldCR : any;
+
+  testmode= false;
+  blinkEN = false;
+  blinkRU = false;
+  blinkRD = false;
+  blinkCR = false;
+
+  // In your component class
+lastKnownEN: { [unitType: string]: number } = {};
+lastKnownRU: { [unitType: string]: number } = {};
+lastKnownRD: { [unitType: string]: number } = {};
+lastKnownCR: { [unitType: string]: number } = {};
+  // NEW - PER UNIT BLINK STATE
+blinkEN1 = false; blinkRU1 = false; blinkRD1 = false; blinkCR1 = false;
+blinkEN2 = false; blinkRU2 = false; blinkRD2 = false; blinkCR2 = false;
+blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
+
   dashboardType:string;
   isShowBid
   alertMessage:string;
@@ -155,6 +185,7 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
     fColor:''
   }
 
+
   ngOnInit() {
     let sessStore = JSON.parse(sessionStorage.getItem("reserveMarket"))
     if (sessStore !== null) {
@@ -222,8 +253,8 @@ ngAfterViewInit(){
     this.alarmTriggered=false;
     this.PopulateUnits();
     this.SetIntervals();
-    this.checkAndClearPreviewOnReload(); 
-    this.clearAllPreviewValuesAtIntervals();
+    // this.checkAndClearPreviewOnReload(); 
+    // this.clearAllPreviewValuesAtIntervals();
     this.TimerGetData();
     this.tempValue = this.eventService.getItem('tempValue');
     if(this.tempValue==null||this.tempValue==false){
@@ -244,7 +275,8 @@ ngAfterViewInit(){
     .pipe(takeUntil(this.destroy$))
     .subscribe(() => {
       this.DisableAlarm();
-    });  
+    }); 
+        
   }
 
  DisableAlarm(){
@@ -369,114 +401,114 @@ ngAfterViewInit(){
     })
   }
 
-  initializePreviewFromLocalStorage(unitNumber: string, unitType: string) {
-    const now = new Date();
+  // initializePreviewFromLocalStorage(unitNumber: string, unitType: string) {
+  //   const now = new Date();
   
-    const previewFields = [
-      { key: `preview_${unitNumber}_U1ENPrice`, column: "U1ENPrice" },
-      { key: `preview_${unitNumber}_${unitType}_EN_Sched`, column: `RM${unitType}_EN_Sched` },
-      { key: `preview_${unitNumber}_${unitType}_RU_Sched`, column: `RM${unitType}_RU_Sched` },
-      { key: `preview_${unitNumber}_${unitType}_RD_Sched`, column: `RM${unitType}_RD_Sched` },
-      { key: `preview_${unitNumber}_${unitType}_FR_Sched`, column: `RM${unitType}_FR_Sched` },
-      { key: `preview_${unitNumber}_${unitType}_DR_Sched`, column: `RM${unitType}_DR_Sched` },
-    ];
+  //   const previewFields = [
+  //     { key: `preview_${unitNumber}_U1ENPrice`, column: "U1ENPrice" },
+  //     { key: `preview_${unitNumber}_${unitType}_EN_Sched`, column: `RM${unitType}_EN_Sched` },
+  //     { key: `preview_${unitNumber}_${unitType}_RU_Sched`, column: `RM${unitType}_RU_Sched` },
+  //     { key: `preview_${unitNumber}_${unitType}_RD_Sched`, column: `RM${unitType}_RD_Sched` },
+  //     { key: `preview_${unitNumber}_${unitType}_FR_Sched`, column: `RM${unitType}_FR_Sched` },
+  //     { key: `preview_${unitNumber}_${unitType}_DR_Sched`, column: `RM${unitType}_DR_Sched` },
+  //   ];
   
-    for (const { key, column } of previewFields) {
-      const stored = localStorage.getItem(key);
-      if (stored) {
-        try {
-          let value: number | null = null;
+  //   for (const { key, column } of previewFields) {
+  //     const stored = localStorage.getItem(key);
+  //     if (stored) {
+  //       try {
+  //         let value: number | null = null;
   
-          if (key.includes("U1ENPrice")) {
-            const parsed = JSON.parse(stored);
-            const timestamp = new Date(parsed.timestamp);
-            const diffMinutes = (now.getTime() - timestamp.getTime()) / 60000;
-            if (diffMinutes <= 5) {
-              value = parsed.value;
-            }
-          } else {
-            value = +stored;
-          }
-          if (value != null) {
-            this.dbValues[3][column] = value; // Index 3 is the 4th column
-          }
-        } catch {
-          localStorage.removeItem(key);
-        }
-      }
-    }
-  }
+  //         if (key.includes("U1ENPrice")) {
+  //           const parsed = JSON.parse(stored);
+  //           const timestamp = new Date(parsed.timestamp);
+  //           const diffMinutes = (now.getTime() - timestamp.getTime()) / 60000;
+  //           if (diffMinutes <= 5) {
+  //             value = parsed.value;
+  //           }
+  //         } else {
+  //           value = +stored;
+  //         }
+  //         if (value != null) {
+  //           this.dbValues[3][column] = value; // Index 3 is the 4th column
+  //         }
+  //       } catch {
+  //         localStorage.removeItem(key);
+  //       }
+  //     }
+  //   }
+  // }
   
-  clearAllPreviewValuesAtIntervals() {
-  setInterval(() => {
-    const now = new Date();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+//   clearAllPreviewValuesAtIntervals() {
+//   setInterval(() => {
+//     const now = new Date();
+//     const minutes = now.getMinutes();
+//     const seconds = now.getSeconds();
 
-    if (minutes % 5 === 0 && seconds === 5 && this.lastClearedMinute !== minutes) {
-      this.lastClearedMinute = minutes;
-      this.clearPreviewValues();
-      this.previewCleared = true;
-      localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    }
-  }, 1000);
-}
-checkAndClearPreviewOnReload() {
-  const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
-  const now = new Date();
-  const nowMinutes = now.getMinutes();
+//     // if (minutes % 5 === 0 && seconds === 5 && this.lastClearedMinute !== minutes) {
+//     //   this.lastClearedMinute = minutes;
+//     //   this.clearPreviewValues();
+//     //   this.previewCleared = true;
+//     //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+//     // }
+//   }, 1000);
+// }
+// checkAndClearPreviewOnReload() {
+//   const lastClearedISO = localStorage.getItem('lastPreviewClearedAt');
+//   const now = new Date();
+//   const nowMinutes = now.getMinutes();
 
-  if (!lastClearedISO) {
-    // No previous clear, so do it now
-    this.clearPreviewValues();
-    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on first-time load.");
-    return;
-  }
+//   // if (!lastClearedISO) {
+//   //   // No previous clear, so do it now
+//   //   this.clearPreviewValues();
+//   //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+//   //   console.log("Preview cleared on first-time load.");
+//   //   return;
+//   // }
 
-  const lastCleared = new Date(lastClearedISO);
-  const diffMs = now.getTime() - lastCleared.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
+//   // const lastCleared = new Date(lastClearedISO);
+//   // const diffMs = now.getTime() - lastCleared.getTime();
+//   // const diffMinutes = Math.floor(diffMs / 60000);
 
-  if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
-    // Either it's been > 5 mins, or we're at a new 5-min boundary
-    this.clearPreviewValues();
-    localStorage.setItem('lastPreviewClearedAt', now.toISOString());
-    console.log("Preview cleared on reload based on timestamp check.");
-  } else {
-    console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
-  }
-}
-clearPreviewValues() {
-  const unitNumber = this.selectedUnitNumber;
-  const previewKeys = [
-    `preview_${unitNumber}_U1ENPrice`,
-    `preview_${unitNumber}_U1RUPrice`,
-    `preview_${unitNumber}_U1RDPrice`,
-    `preview_${unitNumber}_U1FRPrice`,
-    `preview_${unitNumber}_U1CRPrice`,
-    `preview_${unitNumber}_EN_Sched`,
-    `preview_${unitNumber}_RU_Sched`,
-    `preview_${unitNumber}_RD_Sched`,
-    `preview_${unitNumber}_FR_Sched`,
-    `preview_${unitNumber}_CR_Sched`,
-    `preview_${unitNumber}_DR_Sched`,
-  ];
+//   // if (diffMinutes >= 5 || (nowMinutes % 5 === 0 && now.getSeconds() < 10)) {
+//   //   // Either it's been > 5 mins, or we're at a new 5-min boundary
+//   //   this.clearPreviewValues();
+//   //   localStorage.setItem('lastPreviewClearedAt', now.toISOString());
+//   //   console.log("Preview cleared on reload based on timestamp check.");
+//   // } else {
+//   //   console.log("Preview NOT cleared on reload - recent clear at", lastCleared.toLocaleTimeString());
+//   // }
+// }
+// clearPreviewValues() {
+//   const unitNumber = this.selectedUnitNumber;
+//   const previewKeys = [
+//     `preview_${unitNumber}_U1ENPrice`,
+//     `preview_${unitNumber}_U1RUPrice`,
+//     `preview_${unitNumber}_U1RDPrice`,
+//     `preview_${unitNumber}_U1FRPrice`,
+//     `preview_${unitNumber}_U1CRPrice`,
+//     `preview_${unitNumber}_EN_Sched`,
+//     `preview_${unitNumber}_RU_Sched`,
+//     `preview_${unitNumber}_RD_Sched`,
+//     `preview_${unitNumber}_FR_Sched`,
+//     `preview_${unitNumber}_CR_Sched`,
+//     `preview_${unitNumber}_DR_Sched`,
+//   ];
 
-  for (const key of previewKeys) {
-    localStorage.removeItem(key);
-  }
+//   for (const key of previewKeys) {
+//     localStorage.removeItem(key);
+//   }
 
-  if (this.dbValues[3]) {
-    const previewFields = [
-      "U1ENPrice", "U1RUPrice", "U1RDPrice", "U1FRPrice", "U1CRPrice",
-      "EN_Sched", "RU_Sched", "RD_Sched", "FR_Sched", "DR_Sched"
-    ];
-    previewFields.forEach(field => this.dbValues[3][field] = null);
-  }
+//   if (this.dbValues[3]) {
+//     const previewFields = [
+//       "U1ENPrice", "U1RUPrice", "U1RDPrice", "U1FRPrice", "U1CRPrice",
+//       "EN_Sched", "RU_Sched", "RD_Sched", "FR_Sched", "DR_Sched"
+//     ];
+//     previewFields.forEach(field => this.dbValues[3][field] = null);
+//   }
 
-  console.log("Preview values cleared.");
-}
+//   console.log("Preview values cleared.");
+// }
 
 SetReserveMarketValue(unitNumber: string, unitType: string) {
   let unitChangedFlag = false;
@@ -498,18 +530,127 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     this.unitChangedFlag = false; // reset so we don't clear again
   }
 
-  this.initializePreviewFromLocalStorage(unitNumber, unitType);
+  // this.initializePreviewFromLocalStorage(unitNumber, unitType);
 
   this.RMDashboardService.getReserveSchedules(unitNumber).subscribe(data => {
     let res = data as any[];
 
+          // === UNIFIED RTD CHANGE DETECTION WITH lastKnown FALLBACK ===
+          const key = unitType; // U1, U2, U3
+
+          var currentEN = this.dbValues[4]["RM" + unitType + "_EN_Sched"] != null 
+                          ? this.dbValues[4]["RM" + unitType + "_EN_Sched"] 
+                          : this.lastKnownEN[key];
+
+          var currentRU = this.dbValues[4]["RM" + unitType + "_RU_Sched"] != null 
+                          ? this.dbValues[4]["RM" + unitType + "_RU_Sched"] 
+                          : this.lastKnownRU[key];
+
+          var currentRD = this.dbValues[4]["RM" + unitType + "_RD_Sched"] != null 
+                          ? this.dbValues[4]["RM" + unitType + "_RD_Sched"] 
+                          : this.lastKnownRD[key];
+
+          var currentCR = this.dbValues[4]["RM" + unitType + "_FR_Sched"] != null 
+                          ? this.dbValues[4]["RM" + unitType + "_FR_Sched"] 
+                          : this.lastKnownCR[key];
+
+          // Update lastKnown values for next refresh
+          this.lastKnownEN[key] = currentEN;
+          this.lastKnownRU[key] = currentRU;
+          this.lastKnownRD[key] = currentRD;
+          this.lastKnownCR[key] = currentCR;
+
+          // Use these variables for your blinking checks
+          this.newEN = currentEN;
+          this.oldEN = this.dbValues[5][`RM${unitType}_EN_Sched`];
+
+          this.newRU = currentRU;
+          this.oldRU = this.dbValues[5][`RM${unitType}_RU_Sched`];
+
+          this.newRD = currentRD;
+          this.oldRD = this.dbValues[5][`RM${unitType}_RD_Sched`];
+
+          this.newCR = currentCR;
+          this.oldCR = this.dbValues[5][`RM${unitType}_FR_Sched`];
+
+          console.log(this.newEN, this.oldEN);
+          console.log(this.newRU, this.oldRU);
+          console.log(this.newRD, this.oldRD);
+          console.log(this.newCR, this.oldCR);
+
+
+      // Time check for blinking (5-minute mark + 5-15 sec)
+      // const now = new Date();
+      // const minutes = now.getMinutes();
+      // const seconds = now.getSeconds();
+
+      // if (minutes % 5 === 0 && seconds >= 5 && seconds <= 30) {
+          // EN
+          if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U1") { 
+            this.blinkEN1 = true; 
+            setTimeout(() => this.blinkEN1 = false, 30000); 
+        }
+        if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U2") { 
+            this.blinkEN2 = true; 
+            setTimeout(() => this.blinkEN2 = false, 30000); 
+        }
+        if (this.oldEN !== null && currentEN !== this.oldEN && unitType === "U3") { 
+            this.blinkEN3 = true; 
+            setTimeout(() => this.blinkEN3 = false, 30000); 
+        }
+
+        // RU
+        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U1") { 
+            this.blinkRU1 = true; 
+            setTimeout(() => this.blinkRU1 = false, 30000); 
+        }
+        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U2") { 
+            this.blinkRU2 = true; 
+            setTimeout(() => this.blinkRU2 = false, 30000); 
+        }
+        if (this.oldRU !== null && currentRU !== this.oldRU && unitType === "U3") { 
+            this.blinkRU3 = true; 
+            setTimeout(() => this.blinkRU3 = false, 30000); 
+        }
+
+        // RD
+        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U1") { 
+            this.blinkRD1 = true; 
+            setTimeout(() => this.blinkRD1 = false, 30000); 
+        }
+        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U2") { 
+            this.blinkRD2 = true; 
+            setTimeout(() => this.blinkRD2 = false, 30000); 
+        }
+        if (this.oldRD !== null && currentRD !== this.oldRD && unitType === "U3") { 
+            this.blinkRD3 = true; 
+            setTimeout(() => this.blinkRD3 = false, 30000); 
+        }
+
+        // CR
+        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U1") { 
+            this.blinkCR1 = true; 
+            setTimeout(() => this.blinkCR1 = false, 30000); 
+        }
+        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U2") { 
+            this.blinkCR2 = true; 
+            setTimeout(() => this.blinkCR2 = false, 30000); 
+        }
+        if (this.oldCR !== null && currentCR !== this.oldCR && unitType === "U3") { 
+            this.blinkCR3 = true; 
+            setTimeout(() => this.blinkCR3 = false, 30000); 
+        }
+      // }
+
+
+
+
     for (let x = 0; x <= 14; x++) {
       const isPreviewSlot = x === 3;
-
       // === Handle EN Price Preview ===
       if (unitType === "enPrice") {
-        const previewKey = `preview_${unitNumber}_U1ENPrice`;
-        const clearKey = `${previewKey}_cleared`;
+        // const previewKey = `preview_${unitNumber}_U1ENPrice`;
+        // const clearKey = `${previewKey}_cleared`;
         let enPrice = null;
 
         if (res.length > 5 && res[5].ReserveSchedules && res[5].ReserveSchedules[x]) {
@@ -517,7 +658,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
         }
 
         if (isPreviewSlot) {
-          const stored = localStorage.getItem(previewKey);
+          // const stored = localStorage.getItem(previewKey);
           const now = new Date();
           const seconds = now.getSeconds();
           const minutes = now.getMinutes();
@@ -528,20 +669,21 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
           if (enPrice !== null) {
               // Always use backend value if available
               this.dbValues[x]["U1ENPrice"] = enPrice;
-              localStorage.setItem(previewKey, JSON.stringify({
-                  value: enPrice,
-                  timestamp: now.toISOString()
-              }));
-              localStorage.removeItem(clearKey);
-          } else if (stored && allowRestore && !unitChangedFlag) {
-              // Restore last stored value if backend not ready
-              try {
-                  const parsed = JSON.parse(stored);
-                  this.dbValues[x]["U1ENPrice"] = parsed.value;
-              } catch {
-                  localStorage.removeItem(previewKey);
-              }
+              // localStorage.setItem(previewKey, JSON.stringify({
+              //     value: enPrice,
+              //     timestamp: now.toISOString()
+              // }));
+              // localStorage.removeItem(clearKey);
           }
+          // } else if (stored && allowRestore && !unitChangedFlag) {
+          //     // Restore last stored value if backend not ready
+          //     try {
+          //         const parsed = JSON.parse(stored);
+          //         this.dbValues[x]["U1ENPrice"] = parsed.value;
+          //     } catch {
+          //         localStorage.removeItem(previewKey);
+          //     }
+          // }
       } else {
           this.dbValues[x]["U1ENPrice"] = enPrice;
       }
@@ -559,7 +701,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
 
       for (const { field, index } of schedFields) {
         const key = `RM${unitType}_${field}`;
-        const previewStorageKey = `preview_${unitNumber}_${unitType}_${field}`;
+        // // const previewStorageKey = `preview_${unitNumber}_${unitType}_${field}`;
         let newValue = null;
 
         if (res.length > index && res[index].ReserveSchedules && res[index].ReserveSchedules[x]) {
@@ -567,7 +709,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
         }
 
         if (isPreviewSlot) {
-          const storedVal = localStorage.getItem(previewStorageKey);
+          // const storedVal = localStorage.getItem(previewStorageKey);
           const now = new Date();
           const seconds = now.getSeconds();
           const minutes = now.getMinutes();
@@ -576,20 +718,20 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
           const allowRestore = (minutes % 5 === 1 && seconds >= 7);
         
           if (shouldClear && !unitChangedFlag) {
-            localStorage.removeItem(previewStorageKey);
+            // localStorage.removeItem(previewStorageKey);
             this.dbValues[x][key] = null;
           } else if (newValue !== null && newValue !== undefined && newValue !== '') {
             // Fresh backend value is available
             this.dbValues[x][key] = newValue;
-            localStorage.setItem(previewStorageKey, newValue.toString());
-          } else if (storedVal) {
-            // Use cached value if backend hasn't supplied new value yet
-            try {
-              this.dbValues[x][key] = parseFloat(storedVal);
-            } catch {
-              localStorage.removeItem(previewStorageKey);
-              this.dbValues[x][key] = null;
-            }
+            // localStorage.setItem(previewStorageKey, newValue.toString());
+          // } else if (storedVal) {
+          //   // Use cached value if backend hasn't supplied new value yet
+          //   try {
+          //     this.dbValues[x][key] = parseFloat(storedVal);
+          //   } catch {
+          //     localStorage.removeItem(previewStorageKey);
+          //     this.dbValues[x][key] = null;
+          //   }
           } else {
             // No new or cached value: leave current value as-is
             // this prevents flashing null
@@ -619,6 +761,55 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
         res[4].ReserveSchedules[x].Schedule !== null && res[4].ReserveSchedules[x].Schedule !== undefined) {
         this["show" + unitType + "DRcolumn"] = true;
       }
+
+      
+      // === TEST MODE: Increment selected schedule types for chosen unit only ===
+      if (this.testmode && x === 4) { // only row 4
+        const testUnit = "U3";
+        const testTypes = { EN: false, RU: true, RD: true, FR: false };
+        const increment = 5;
+      
+        if (unitType === testUnit) {
+          if (testTypes.EN && this.dbValues[x][`RM${unitType}_EN_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_EN_Sched`] += increment;
+            if (this.dbValues[x]["U1ENPrice"] != null)
+              this.dbValues[x]["U1ENPrice"] += increment;
+          }
+          if (testTypes.RU && this.dbValues[x][`RM${unitType}_RU_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_RU_Sched`] += increment;
+          }
+          if (testTypes.RD && this.dbValues[x][`RM${unitType}_RD_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_RD_Sched`] += increment;
+          }
+          if (testTypes.FR && this.dbValues[x][`RM${unitType}_FR_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_FR_Sched`] += increment;
+          }
+        }
+
+
+        const testUnit2 = "U1";
+        const testTypes2 = { EN: false, RU: true, RD: true, FR: false };
+        const increment2 = 5;
+      
+        if (unitType === testUnit2) {
+          if (testTypes2.EN && this.dbValues[x][`RM${unitType}_EN_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_EN_Sched`] += increment;
+            if (this.dbValues[x]["U1ENPrice"] != null)
+              this.dbValues[x]["U1ENPrice"] += increment2;
+          }
+          if (testTypes2.RU && this.dbValues[x][`RM${unitType}_RU_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_RU_Sched`] += increment2;
+          }
+          if (testTypes2.RD && this.dbValues[x][`RM${unitType}_RD_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_RD_Sched`] += increment2;
+          }
+          if (testTypes2.FR && this.dbValues[x][`RM${unitType}_FR_Sched`] != null) {
+            this.dbValues[x][`RM${unitType}_FR_Sched`] += increment2;
+          }
+        }
+      }
+      
+
     }
 
     // === Alarm for negative actual value ===
@@ -627,7 +818,6 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
       this.alarmOutsideLimit = true;
     }
 
-    // === Blinking Logic ===
     const getRounded = (val: any) => val != null ? Math.round(val) : null;
     this.RUtempStorage1 = getRounded(this.dbValues[4][`RM${unitType}_RU_Sched`]);
     this.RUtempStorage2 = getRounded(this.dbValues[5][`RM${unitType}_RU_Sched`]);
@@ -644,6 +834,10 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
       this.alarmRTDChanged = true;
     }
   });
+
+
+
+
 }
 
 
@@ -745,46 +939,39 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
   }
   TimerGetData(){        
     this.timerData = setInterval(() => {  
-        if (+moment(this.now).second() === 3) {
+        if (+moment(this.now).second() === 3 || +moment(this.now).second() === 5 || +moment(this.now).second() === 10) {
           this.RefreshData();
         }
         this.isAlarmDisable=this.tempValue;
         //console.log(this.isAlarmDisable);
         if(!this.isAlarmDisable && this.dashboardType == 'reserveMarket'){
-          if(+moment(this.now).second() == 10){
-            if(this.alarmOutsideLimit){
-              //console.log(this.alarmOutsideLimit)
-              this.alertMessage = "Actual MW, Outside limits!";
-              this.OutsideLimitAudio();
-              this.timerAlarmOutsideLimit = setInterval(() => {
-              this.OutsideLimitAudio();
-            }, 4000);
-              this.timeoutId = setTimeout(() => {
-              clearInterval(this.timerAlarmOutsideLimit);
-              this.alertMessage=null;
-              this.alarmOutsideLimit=false;
-              }, 30000);
-            }
-          }
-
+          // if(+moment(this.now).second() == 10){
+          //   if(this.alarmOutsideLimit){
+          //     //console.log(this.alarmOutsideLimit)
+          //     // this.alertMessage = "Actual MW, Outside limits!";
+          //     // this.OutsideLimitAudio();
+          //     this.timerAlarmOutsideLimit = setInterval(() => {
+          //     // this.OutsideLimitAudio();
+          //   }, 4000);
+          //     this.timeoutId = setTimeout(() => {
+          //     clearInterval(this.timerAlarmOutsideLimit);
+          //     this.alertMessage=null;
+          //     this.alarmOutsideLimit=false;
+          //     }, 30000);
+          //   }
+          // }
             const currentHours = +moment(this.now).hour();
             const currentMinute = +moment(this.now).minute();
             const currentSecond = +moment(this.now).second();
-            //const alarmMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-            // console.log("Current hours:", currentHours);
-            // console.log("Current minute:", currentMinute);
-            // console.log("Current second:", currentSecond);
-            // console.log(this.alarmRTDChanged);
-            // if(alarmMinutes.includes(currentMinute)) {
             if(currentMinute % 5 == 0){
               //console.log("Minute is in the alarm list");
-              if (currentSecond >= 4 && currentSecond <= 15) {
+              if (currentSecond >= 4 && currentSecond <= 30) {
                     //console.log("Second is from 5s to 15s");
                     if (this.alarmRTDChanged && !this.alarmTriggered) {
                       //console.log("alarmRTDChanged is true");
                       this.alertMessage = "RTD has changed!";
                       this.RTDChangedAudio();
-                      this.alarmRTDChanged=false;
+                      this.alarmRTDChanged=true;
                       this.alarmTriggered = true;
                     }
                 }
@@ -800,16 +987,16 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     }, 1000);
   }
 
-  HAPAudio(){
-    let audio = new Audio();
-    audio.src = "assets/audio/hap.mp3";
-    audio.load();
-    audio.play();
-  }
+  // HAPAudio(){
+  //   let audio = new Audio();
+  //   audio.src = "assets/audio/hap.mp3";
+  //   audio.load();
+  //   audio.play();
+  // }
 
-  OverrideAudio(){
-    this.eventService.playAudio("assets/audio/override.mp3");
-  }
+  // OverrideAudio(){
+  //   this.eventService.playAudio("assets/audio/override.mp3");
+  // }
 
  
   NoInternetAudio(){
@@ -863,23 +1050,21 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     });
   }
 
-  
-
   RTDChangedAudio(){
     let audio = new Audio();
     audio.src = "assets/audio/rtd_changed.mp3";
     audio.load();
     audio.play();
   }
-  OutsideLimitAudio(){
+  // OutsideLimitAudio(){
 
-    this.eventService.playAudio("assets/audio/outside_limit.mp3")
+  //   this.eventService.playAudio("assets/audio/outside_limit.mp3")
     
-    //let audio = new Audio();
-    //audio.src = "assets/audio/outside_limit.mp3";
-    //audio.load();
-    //audio.play();
-  }
+  //   //let audio = new Audio();
+  //   //audio.src = "assets/audio/outside_limit.mp3";
+  //   //audio.load();
+  //   //audio.play();
+  // }
 
   ngOnDestroy(){
     clearInterval(this.timerData);
@@ -900,5 +1085,4 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
 }

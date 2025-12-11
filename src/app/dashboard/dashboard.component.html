@@ -132,8 +132,8 @@
                       whiteSpace: 'nowrap'
                     }">
                     <div class="data-label">ENERGY</div>
-                    <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RTDValue) }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span>
+                    <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
+                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
                 
                     <!-- Badge: Data Status -->
                     <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2" *ngIf="currentUnit.name != ''">
@@ -142,7 +142,7 @@
                 
                     <!-- Badge: Decimal -->
                     <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
-                      .{{ getDecimal(current?.RTDValue) }}
+                      . {{ current?.RTDValue != null ? '.' + getDecimal(current?.RTDValue) : '' }}
                     </div>
                   </div>
                 
@@ -159,10 +159,10 @@
                      }"
                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                      <div class="data-label">RR-UP</div>
-                     <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRU) }}</span>
-                     <span *ngIf="!isWithDecimal">{{ current?.RRU | number: '1.0-0' }}</span>
+                     <span *ngIf="isWithDecimal">{{ current?.RRU == null ? '' : getWholeNumber(current?.RRU) }}</span>
+                     <span *ngIf="!isWithDecimal">{{ current?.RRU == null ? '' : (current?.RRU | number:'1.0-0') }}</span>
                      <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RUDataStatus }}</div>
-                     <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.RRU) }}</div>
+                     <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.RRU == null ? '' : getDecimal(current?.RRU) }}</div>
                    </div>
                 
                     <!-- RR-DOWN Box -->
@@ -175,10 +175,10 @@
                       }"
                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">RR-DOWN</div>
-                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.RRD) }}</span>
-                      <span *ngIf="!isWithDecimal">{{ current?.RRD | number: '1.0-0' }}</span>
+                      <span *ngIf="isWithDecimal">{{ current?.RRD == null ? '' :getWholeNumber(current?.RRD) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.RRD == null ? '' : (current?.RRD | number:'1.0-0') }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RDDataStatus }}</div>
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.RRD) }}</div>
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.RRD == null ? '' : getDecimal(current?.RRD) }}</div>
                     </div>
                 
                     <!-- CONTINGENCY Box -->
@@ -191,10 +191,10 @@
                       }"
                       style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
                       <div class="data-label">CONTINGENCY</div>
-                      <span *ngIf="isWithDecimal">{{ getWholeNumber(current?.Contingency) }}</span>
-                      <span *ngIf="!isWithDecimal">{{ current?.Contingency | number: '1.0-0' }}</span>
+                      <span *ngIf="isWithDecimal">{{ current?.Contingency == null ? '' : getWholeNumber(current?.Contingency) }}</span>
+                      <span *ngIf="!isWithDecimal">{{ current?.Contingency == null ? '' : (current?.Contingency | number:'1.0-0') }}</span>
                       <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.ConDataStatus }}</div>
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ getDecimal(current?.Contingency) }}</div>
+                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.Contingency == null ? '' : getDecimal(current?.Contingency) }}</div>
                     </div>
                   </div>
                 </div>

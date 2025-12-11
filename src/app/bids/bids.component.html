@@ -113,64 +113,64 @@
                     <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.1" [(ngModel)]="offer.Q1">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P2,offer.P3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P2,offer.P3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q2 &lt; pmax && offer.Q2 != null && offer.Q3 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q2,offer.Q3)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q2 &lt; pmax && offer.Q2 != null && offer.Q3 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q2,offer.Q3)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P3,offer.P4)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P3,offer.P4)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q3 &lt; pmax && offer.Q3 != null && offer.Q4 == null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q3,offer.Q4)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q3 &lt; pmax && offer.Q3 != null && offer.Q4 == null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q3,offer.Q4)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P4,offer.P5)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P4,offer.P5)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P4" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q4 &lt; pmax && offer.Q4 != null && offer.Q5 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q4,offer.Q5)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q4 &lt; pmax && offer.Q4 != null && offer.Q5 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q4,offer.Q5)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q4" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
                     <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P5,offer.P6)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P5">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q5 &lt; pmax && offer.Q5 != null && offer.Q6 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q5,offer.Q6)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q5 &lt; pmax && offer.Q5 != null && offer.Q6 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q5,offer.Q6)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q5" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P6,offer.P7)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P6">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P6,offer.P7)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P6" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy"  >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q6 &lt; pmax && offer.Q6 != null && offer.Q7 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q6,offer.Q7)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q6">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q6 &lt; pmax && offer.Q6 != null && offer.Q7 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q6,offer.Q7)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q6" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P7,offer.P8)" (keydown)="PQValidation()" step="0.01"  [(ngModel)]="offer.P7">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P7,offer.P8)" (keydown)="PQValidation()" step="0.01"  [(ngModel)]="offer.P7" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q7 &lt; pmax && offer.Q7 != null && offer.Q8 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q7,offer.Q8)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q7">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q7 &lt; pmax && offer.Q7 != null && offer.Q8 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q7,offer.Q8)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q7" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P8,offer.P9)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P8">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P8,offer.P9)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P8" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q8 &lt; pmax && offer.Q8 != null && offer.Q9 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q8,offer.Q9)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q8">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q8 &lt; pmax && offer.Q8 != null && offer.Q9 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q8,offer.Q9)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q8" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P9,offer.P10)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P9">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLinePriceValidation(offer.P9,offer.P10)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P9" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q9 &lt; pmax && offer.Q9 != null && offer.Q10 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q9,offer.Q10)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q9">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q9 &lt; pmax && offer.Q9 != null && offer.Q10 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q9,offer.Q10)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q9" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P10,offer.P11)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P10">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P10,offer.P11)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P10" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q10 &lt; pmax && offer.Q10 != null && offer.Q11 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q10,offer.Q11)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q10">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q10 &lt; pmax && offer.Q10 != null && offer.Q11 == null" [class.invalid-value]="PerLineQuantityValidation(offer.Q10,offer.Q11)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q10" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy" >
-                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P11,null)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P11">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless"  [class.invalid-value]="PerLinePriceValidation(offer.P11,null)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.P11" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q11 &lt; pmax && offer.Q11 != null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q11,null)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q11">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.bg-warning]="offer.Q11 &lt; pmax && offer.Q11 != null"  [class.invalid-value]="PerLineQuantityValidation(offer.Q11,null)" (keydown)="PQValidation()" step="0.1" [(ngModel)]="offer.Q11" (ngModelChange)="onChange()">
                   </td>
                   <td style="width: 80px !important;" class="text-center" [class.copied-offer]="offer.IsCopied == true && isCopy">
                     <input class="form-control form-control-sm text-center text-borderless" [(ngModel)]="offer.ControlMode">
@@ -284,143 +284,143 @@
                   <td class="text-center">{{ offer.Interval }}</td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q1" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P1">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q2">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P1" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P3">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q4">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P2" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P5">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q1">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P3" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q4" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P2">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q3">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P4" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_Q5" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P4">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q5">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RU_P5" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q1" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P1">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q2">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P1" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P3">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q4">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P2" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P5">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q1">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P3" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q4" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P2">
-                  </td>
-                  
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q3">
-                  </td>
-                  <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P4" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_Q5" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P4">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_RD_P5" (ngModelChange)="onChange()">
                   </td>
                   
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q1" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P5">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P1" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q2" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P2" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q3" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P3" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q4" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P4" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_Q5" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_FR_P5" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q1" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P1" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q2" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P2" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q3" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P3" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q4" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P4" (ngModelChange)="onChange()">
+                  </td>
+                  
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_Q5" (ngModelChange)="onChange()">
+                  </td>
+                  <td class="text-center">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.AS_DR_P5" (ngModelChange)="onChange()">
                   </td>
                 </tr>
               </tbody>
@@ -442,37 +442,37 @@
                 <tr>
                   <td class="text-center">Breakpoint 1</td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity1" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU1)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU1)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU1" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD1)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD1">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD1)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD1)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD1" (ngModelChange)="onChange()">
                   </td>
                 </tr>
                 <tr>
                   <td class="text-center">Breakpoint 2</td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU2)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU2)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU2" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD2)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD2">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD2)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD2)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD2" (ngModelChange)="onChange()">
                   </td>
                 </tr>
                 <tr>
                   <td class="text-center">Breakpoint 3</td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" step="0.01" [(ngModel)]="offer.RampQuantity3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU3)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRU3)" [class.bg-warning]="PerLineRRUpStandardValidation(offer.RRU3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRU3" (ngModelChange)="onChange()">
                   </td>
                   <td class="text-center">
-                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD3)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD3">
+                    <input type="number" class="form-control form-control-sm text-center text-borderless" [class.invalid-value]="PerLineRRValidation(offer.RRD3)" [class.bg-warning]="PerLineRRDownStandardValidation(offer.RRD3)" (keydown)="PQValidation()" step="0.01" [(ngModel)]="offer.RRD3" (ngModelChange)="onChange()">
                   </td>
                 </tr>
                 <!--<tr>

@@ -140,3 +140,12 @@
   height: 23px !important;
   z-index: 999;
 }
+
+.blink-green {
+  animation: blinkGreen 1s infinite;
+}
+
+@keyframes blinkGreen {
+  0% { background: red; }
+  100% { background: green; }
+}

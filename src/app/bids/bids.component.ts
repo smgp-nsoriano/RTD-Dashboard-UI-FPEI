@@ -57,7 +57,7 @@ export class BidsComponent implements OnInit {
   asCR:number;
   asDR:number;
   errorCounts:number = 0;
-
+  changeTimer: any;
   controlModeValue:string;
   dateFormatted:string;
   dateCopyTo:string;
@@ -187,7 +187,7 @@ export class BidsComponent implements OnInit {
       this.asDR = this.ramprateStandard.AS_cpblt_DR;
 
 
-      // this.cdr.detectChanges();//Force re-evaluation of ngModel bindings
+      this.cdr.detectChanges();//Force re-evaluation of ngModel bindings
       this.PQValidation();
       this.modalReference.close();
     });
@@ -1396,11 +1396,10 @@ export class BidsComponent implements OnInit {
   }
 
   SaveOfferChages(){
-  //Make sure bindings are updated before saving
-  // this.cdr.detectChanges();
-
+  // Make sure bindings are updated before saving
+  this.cdr.detectChanges();
   // Run PQ, RR, Energy, AS validations instantly
-  // this.PQValidation();
+  this.PQValidation();
 
 
     this.unitService.updateOffer(this.unitId,this.unitNumber,this.offers).subscribe(data=>{
@@ -2002,7 +2001,7 @@ if(checkAS){
   }
 
   ShowBidUpload(modal:NgbModal){
-    // this.cdr.detectChanges();   //ensure latest bindings
+    this.cdr.detectChanges();   //ensure latest bindings
     this.PQValidation();
 
     if (this.errorCounts === 0){
@@ -2013,5 +2012,13 @@ if(checkAS){
 
   ShowPrintPDFAfterUpload(modal:NgbModal){
     this.modalReference =this.modalService.open(modal,{centered:true});
+  }
+
+
+  onChange() {
+    clearTimeout(this.changeTimer);
+    this.changeTimer = setTimeout(() => {
+      this.PQValidation();
+    }, 300); // adjust delay if needed
   }
 }
