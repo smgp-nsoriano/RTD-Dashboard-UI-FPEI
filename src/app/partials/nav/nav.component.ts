@@ -116,6 +116,11 @@ export class NavComponent implements OnInit {
     localStorage.removeItem('userToken');
   }
 
+  goToChangePassword(){
+    localStorage.setItem('allowChangePassword', 'true');
+    this.router.navigate(['/change-password']);
+  }
+
   changePassword() {
     const payload = {
       currentPassword: this.form.get('currentPassword').value,

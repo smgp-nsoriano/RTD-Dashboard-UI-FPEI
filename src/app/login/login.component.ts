@@ -62,33 +62,75 @@ isLoading: boolean;
       //this.isLoading = false;
     //}else{
       this.loginservice.validateuser(payload.username, payload.password).subscribe((data: any) => {
+        this.isLoading = false;
         localStorage.setItem('userToken', data.access_token);
         localStorage.setItem('IsCam', 'false');
-        this.isLoading = false;
         this.getCurrentUserInfo();
+        }, 
+        (error) => {
+          this.isLoading = false;
+          this.alert.type = 'danger';
         
-        }, error => {
-        this.alert.type = 'danger';
-        this.alert.message = 'Incorrect username or password';
-        this.isLoading = false;
-      });
+          if (error.error && typeof error.error === 'string') {
+        
+            // Extract first JSON object only
+            const firstJson = error.error.substring(
+              0,
+              error.error.indexOf('}') + 1
+            );
+        
+            try {
+              const parsed = JSON.parse(firstJson);
+              this.alert.message =
+                parsed.error_description ||
+                parsed.error ||
+                'Invalid login attempt';
+            } catch {
+              this.alert.message = 'Invalid login attempt';
+            }
+        
+          } else {
+            this.alert.message = 'Login failed. Please try again.';
+          }
+        
+          console.log('Parsed error:', this.alert.message);
+        }
+        );
     //}
   }
 
   getCurrentUserInfo() {
     this.loginservice.getCurrentUserInfo().subscribe(info => {
       this.currentUserInfo = info;
+     
       this.isCam = this.currentUserInfo.IsCamSetup;
-      localStorage.setItem('PermissionID', this.currentUserInfo.PermissionID);
-      localStorage.setItem('IsAlarmDisable', this.currentUserInfo.IsAlarmDisable);
-      localStorage.setItem('IsOverride', this.currentUserInfo.IsOverride);
-      localStorage.setItem('IsPortfolioOnly', this.currentUserInfo.IsPortfolioOnly); //change function to enabling portfolio
-      localStorage.setItem('IsPbReason', this.currentUserInfo.IsPbReason);
-      localStorage.setItem('IsShowBid', this.currentUserInfo.IsShowBid);
-      localStorage.setItem('IsShowPrice', this.currentUserInfo.IsShowPrice);
-      localStorage.setItem('UserID', this.currentUserInfo.UserID);
-      //if(appType=='RTD Dashboard'){
+        localStorage.setItem('PermissionID', this.currentUserInfo.PermissionID);
+        localStorage.setItem('IsAlarmDisable', this.currentUserInfo.IsAlarmDisable);
+        localStorage.setItem('IsOverride', this.currentUserInfo.IsOverride);
+        localStorage.setItem('IsPortfolioOnly', this.currentUserInfo.IsPortfolioOnly); //change function to enabling portfolio
+        localStorage.setItem('IsPbReason', this.currentUserInfo.IsPbReason);
+        localStorage.setItem('IsShowBid', this.currentUserInfo.IsShowBid);
+        localStorage.setItem('IsShowPrice', this.currentUserInfo.IsShowPrice);
+        localStorage.setItem('UserID', this.currentUserInfo.UserID);
+        //if(appType=='RTD Dashboard'){
         localStorage.setItem('IsCam', 'false');
+        localStorage.setItem('IN',this.currentUserInfo.IsNew);
+        localStorage.setItem('IPE',this.currentUserInfo.IsPasswordExpired);
+
+        if(this.currentUserInfo.IsNew){
+          localStorage.setItem('allowChangePassword', 'true');
+          this.router.navigate(['/change-password']);
+          return;
+        }
+
+        if(this.currentUserInfo.IsPasswordExpired){
+          localStorage.setItem('allowChangePassword', 'true');
+          alert("Your password has expired. Please change your password.");
+          this.router.navigate(['/change-password']);
+          return;
+        }
+
+
         if(this.currentUserInfo.IsSPDC){
           this.router.navigate(['/spdc-monitoring']);
         }else{
@@ -98,7 +140,6 @@ isLoading: boolean;
             this.router.navigate(['/trading']);
           }
         }
-
 
       // Logs UserLogin
         this.userService.loginLogs({UserID: this.currentUserInfo.UserID, Action: 'In'}).subscribe();

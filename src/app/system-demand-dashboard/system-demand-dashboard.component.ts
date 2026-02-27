@@ -62,7 +62,7 @@ export class SystemDemandDashboardComponent implements OnInit,AfterViewInit,OnDe
     fColor:''
   };
 
-
+  successMessage:string;
   
   ngOnInit() {
     const unitType = this.unitType || "defaultType";

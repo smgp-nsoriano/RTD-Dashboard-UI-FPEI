@@ -27,6 +27,10 @@ export class UsersService {
     return this.http.put(`${this.env.apiUrl}/UserManagement/ChangePassword/${data.userID}`, data, this.fetch_userToken());
   }
 
+  changePasswordNew(data) {
+    return this.http.put(`${this.env.apiUrl}/ChangePassword`, data, this.fetch_userToken());
+  }
+
   getUsers() {
     return this.http.get(`${this.env.apiUrl}/UserManagement/GetUserInfo`, this.fetch_userToken());
   }

@@ -9,7 +9,9 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const token = localStorage.getItem('userToken');
-        if (token) {
+        const isNewUser = localStorage.getItem('IN');
+        const isPasswordExpired = localStorage.getItem('IPE');
+        if (token  && isNewUser !== 'true' && isPasswordExpired !== 'true') {
             return true;
         } else {
             this.router.navigate(['']);

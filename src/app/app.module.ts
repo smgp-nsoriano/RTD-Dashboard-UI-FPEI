@@ -44,6 +44,7 @@ import { ReserveRequirementComponent } from './reserve-requirement/reserve-requi
 import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio.component';
 import { SystemDemandDashboardComponent } from './system-demand-dashboard/system-demand-dashboard.component';
 import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
+import { ChangePasswordComponent } from './change-password/change-password/change-password.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,7 +77,8 @@ import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-expo
     ReservePortfolioComponent,
     SystemDemandDashboardComponent,
     BidsViewerComponent,
-    BidsViewerExportComponent
+    BidsViewerExportComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,

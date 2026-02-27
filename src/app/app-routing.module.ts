@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { UsersComponent } from './users/users.component';
 import { AccountTypesComponent } from './account-types/account-types.component';
 import { AuthGuard } from './_guard/auth.guard';
+import { ChangePasswordGuard } from './_guard/change-password.guard';
 import { BidsComponent } from './bids/bids.component';
 import { UnitsComponent } from './units/units.component';
 import { WebListComponent } from './web-list/web-list.component';
@@ -24,10 +25,12 @@ import {PortfolioComponent} from './portfolio/portfolio.component';
 import {PBReasonComponent} from './pbreason/pbreason.component';
 import { BidsViewerComponent } from './bids-Viewer/bids-viewer.component';
 import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
+import { ChangePasswordComponent } from './change-password/change-password/change-password.component';
 const routes: Routes = [
   //{ path: '', component: TestComponent},
   { path: '', component: LoginComponent },
   { path: 'home', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate:[ChangePasswordGuard] },
   { path: 'trading', component: TraderDashboardComponent, canActivate: [AuthGuard] },
   { path: 'portfolio', component: PortfolioComponent, canActivate: [AuthGuard] },
   { path: 'pbreason', component: PBReasonComponent, canActivate: [AuthGuard] },
