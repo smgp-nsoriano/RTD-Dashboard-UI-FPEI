@@ -103,6 +103,12 @@ isLoading: boolean;
     this.loginservice.getCurrentUserInfo().subscribe(info => {
       this.currentUserInfo = info;
      
+      if(this.currentUserInfo.UserType.includes('AH-')){
+        alert('Access denied: Invalid Account.');
+        localStorage.clear(); // 🔥 remove token
+        return;
+      }
+
       this.isCam = this.currentUserInfo.IsCamSetup;
         localStorage.setItem('PermissionID', this.currentUserInfo.PermissionID);
         localStorage.setItem('IsAlarmDisable', this.currentUserInfo.IsAlarmDisable);

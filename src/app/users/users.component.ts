@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from './users.service';
-import { faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faCheck, faBan, faKey, faUnlockAlt, faTrash, faFileExcel, faSave } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormControl } from '@angular/forms';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-users',
@@ -12,6 +14,14 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class UsersComponent implements OnInit {
   faEdit = faEdit;
   faPlus = faPlus;
+  faCheck = faCheck;
+  faTimes = faBan;
+  faBan=faBan;
+  faKey = faKey;
+  faUnlock = faUnlockAlt;
+  faTrash = faTrash;
+  faFileExcel= faFileExcel;
+  faSave = faSave;
   src:string;
   users;
   userList: Object;
@@ -49,7 +59,8 @@ export class UsersComponent implements OnInit {
       firstName: new FormControl(),
       lastName: new FormControl(),
       emailAddress: new FormControl(),
-      accountType: new FormControl()
+      accountType: new FormControl(),
+      hasExpiration: new FormControl(),
     });
 
    // this.getCurrentUserInfo();
@@ -89,6 +100,7 @@ export class UsersComponent implements OnInit {
       LastName: this.form.get('lastName').value,
       EmailAddress: this.form.get('emailAddress').value,
       AccountTypeID: this.form.get('accountType').value,
+      HasInactivityExpiration: this.form.get('hasExpiration').value,
       CreatedBy: 'Admin'
     };
 
@@ -122,6 +134,7 @@ export class UsersComponent implements OnInit {
       LastName: this.form.get('lastName').value,
       EmailAddress: this.form.get('emailAddress').value,
       AccountTypeID: this.form.get('accountType').value,
+      HasInactivityExpiration: this.form.get('hasExpiration').value,
       ModifiedBy: 'Admin'
     };
 
@@ -165,6 +178,18 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  unlockUser(rec){
+    this.userServices.unlockAccount(rec.UserID).subscribe(data => {
+      this.getUsers();
+      this.modalRef.close();
+      this.alert.type = 'success';
+      this.alert.message = 'Account successfully unlocked!';
+    }, error => {
+      console.log(error);
+    });
+  }
+
+
   getUsers() {
     this.userServices.getUsers().subscribe(users => {
       console.log(users);
@@ -195,6 +220,7 @@ export class UsersComponent implements OnInit {
       this.form.get('lastName').patchValue(this.selectedRec.LastName);
       this.form.get('emailAddress').patchValue(this.selectedRec.EmailAddress);
       this.form.get('accountType').patchValue(this.selectedRec.UserTypeID);
+      this.form.get('hasExpiration').patchValue(this.selectedRec.HasInactivityExpiration);
     } else {
       this.modalTitle = 'Create New Account';
       this.selectedRec = null;
@@ -205,14 +231,20 @@ export class UsersComponent implements OnInit {
       this.form.get('lastName').patchValue(null);
       this.form.get('emailAddress').patchValue(null);
       this.form.get('accountType').patchValue(null);
+      this.form.get('hasExpiration').patchValue(null);
     }
-    this.modalRef = this.modalService.open(modal);
+    this.modalRef = this.modalService.open(modal, { centered: true });
   }
 
   otherModal(modal, deleting: boolean, rec: null) {
     this.selectedRec = rec;
     this.isDeleting = deleting;
-    this.modalRef = this.modalService.open(modal);
+    this.modalRef = this.modalService.open(modal, { centered: true });
+  }
+
+  unlockModal(modal, rec: null) {
+    this.selectedRec = rec;
+    this.modalRef = this.modalService.open(modal, { centered: true });
   }
 
   selectPermission(event) {
@@ -234,7 +266,7 @@ export class UsersComponent implements OnInit {
   disable_confirmation_open(modal, isDisable: boolean, rec: null) {
     this.isLoading = false;
 
-    this.modalTitle = isDisable ? 'Disable User Account' : "Enable User Account";
+    this.modalTitle = isDisable ? 'Deactivate User Account' : "Activate User Account";
     this.selectedRec = rec;
     // this.isEdit = editing;
 
@@ -244,7 +276,7 @@ export class UsersComponent implements OnInit {
     // this.form.get('emailAddress').patchValue(this.selectedRec.EmailAddress);
     // this.form.get('accountType').patchValue(this.selectedRec.UserTypeID);
 
-    this.modalRef = this.modalService.open(modal);
+    this.modalRef = this.modalService.open(modal, {centered:true});
   }
 
   disableuser(rec) {
@@ -273,5 +305,38 @@ export class UsersComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  exportToExcel(): void {
+    const data = this.users.map(x => ({
+      Username: x.UserName,
+      Type: x.UserType,
+      FullName: x.FirstName + ' ' + x.LastName,
+      Email: x.EmailAddress,
+      Status: x.Status,
+      LastLoginDate: x.LastLoginDate,
+      DeactivationDate: x.DateDisabled
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Users': worksheet },
+      SheetNames: ['Users']
+    };
+  
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+  
+    this.saveAsExcelFile(excelBuffer, 'UserList');
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    });
+  
+    FileSaver.saveAs(data, fileName + '_' + new Date().getTime() + '.xlsx');
   }
 }

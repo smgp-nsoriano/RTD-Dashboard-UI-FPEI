@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faTrash,faFileExcel, faSave, faBan } from '@fortawesome/free-solid-svg-icons';
 import { AccountTypesService } from './account-types.service';
 import { NgbModal, NgbModalConfig, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UsersService } from '../users/users.service';
 import { objectEach } from 'highcharts';
 import { FormGroup, FormControl } from '@angular/forms';
 import { element } from 'protractor';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
 
 @Component({
   selector: 'app-account-types',
@@ -13,7 +16,13 @@ import { element } from 'protractor';
   styleUrls: ['./account-types.component.scss']
 })
 export class AccountTypesComponent implements OnInit {
+  faEdit = faEdit;
   faPlus = faPlus;
+  faTrash = faTrash;
+  faFileExcel=faFileExcel;
+  faSave=faSave;
+  faBan=faBan;
+
   types;
   operatorTypes;
   accountType;
@@ -28,6 +37,8 @@ export class AccountTypesComponent implements OnInit {
   modalTitle:string;
   isOperator:boolean;
   isLoading= false;
+  srcTrader:string;
+  srcOperator:string;
 
   alert = {
     type: null,
@@ -304,7 +315,7 @@ export class AccountTypesComponent implements OnInit {
   otherModal(modal, rec: null, IsOperator:any) {
     this.isOperator = IsOperator;
     this.selectedRec = rec;
-    this.modalReference = this.modalService.open(modal);
+    this.modalReference = this.modalService.open(modal, {centered:true});
   }
 
   getAccountTypes(IsOperator) {
@@ -351,5 +362,53 @@ export class AccountTypesComponent implements OnInit {
     this.userServices.getCurrentUserInfo().subscribe(info => {
       localStorage.setItem('current_user', JSON.stringify(info));
     });
+  }
+
+  exportToExcelTrader(): void {
+    const data = this.types.map(x => ({
+      AccountType: x.AccountType,
+      Permission: x.UserPermissions,
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Users': worksheet },
+      SheetNames: ['Users']
+    };
+  
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+  
+    this.saveAsExcelFile(excelBuffer, 'Trader_AccountType');
+  }
+
+  exportToExcelOperator(): void {
+    const data = this.operatorTypes.map(x => ({
+      AccountType: x.AccountType,
+      Permission: x.UserPermissions,
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'AccountType': worksheet },
+      SheetNames: ['AccountType']
+    };
+  
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+  
+    this.saveAsExcelFile(excelBuffer, 'Operator_AccountType');
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    });
+  
+    FileSaver.saveAs(data, fileName + '_' + new Date().getTime() + '.xlsx');
   }
 }

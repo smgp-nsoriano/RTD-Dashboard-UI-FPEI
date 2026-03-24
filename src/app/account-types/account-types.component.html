@@ -13,7 +13,7 @@
                     <h4>Admin/Trader</h4>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <button class="btn btn-sm btn-outline-light" (click)="openModal(newAccount, false, 0, null, 0, false,'New Account Type (Admin/Trader)')">
+                    <button class="btn btn-sm btn-light" (click)="openModal(newAccount, false, 0, null, 0, false,'New Account Type (Admin/Trader)')">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         New Account Type
                       </button>
@@ -23,7 +23,26 @@
           <div class="card-body">
 
           <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
-            <div class="table-responsive">
+          
+          <div class="col-lg-12 d-flex justify-content-end align-items-center mb-3">
+
+            <button 
+              class="btn btn-success btn-sm mr-1" 
+              (click)="exportToExcelTrader()">
+              <fa-icon [icon]="faFileExcel"></fa-icon> Export
+            </button>
+          
+            <input 
+              type="text" 
+              class="form-control form-control-sm" 
+              [(ngModel)]="srcTrader" 
+              placeholder="Search"
+              style="max-width: 250px;"
+            >
+          
+          </div>
+          
+          <div class="table-responsive table-scroll">
               <table class="table table-bordered table table-striped">
                 <thead>
                   <tr>
@@ -33,14 +52,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let type of types; let i = index">
+                  <tr *ngFor="let type of types | filter:srcTrader;">
                     <td>{{ type.AccountType }}</td>
                     <td>{{ type.UserPermissions }}</td>
-                    <td class="text-center w-10">
-                        <input type="button" class="btn btn-sm btn-outline-secondary btn-xs font-sm" value="Update"
-                        (click) = "openModal(newAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, false,'Update Account Type (Admin/Trader)')">
-                        <input type="button" class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" value="Delete"
-                        (click)="otherModal(delete, type, false)">
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-default text-secondary btn-xs font-sm" title="Edit"
+                      (click) = "openModal(newAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, false,'Update Account Type (Admin/Trader)')">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </button>
+                      <button class="btn btn-sm btn-default btn-xs text-danger font-sm ml-1" value="Delete"
+                      (click)="otherModal(delete, type, false)" title="Delete">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                      </button>
                       </td>
                   </tr>
                 </tbody>
@@ -56,7 +79,7 @@
                     <h4>Operator</h4>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <button class="btn btn-sm btn-outline-light" (click)="openModal(newOperatorAccount, false, 0, null, 0, true, 'New Account Type (Operator)')">
+                    <button class="btn btn-sm btn-light" (click)="openModal(newOperatorAccount, false, 0, null, 0, true, 'New Account Type (Operator)')">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         New Account Type
                       </button>
@@ -66,7 +89,26 @@
           <div class="card-body">
 
           <ngb-alert *ngIf="alertOperator.type === 'success'" [type]="alertOperator.type" (close)="clearAlert()">{{ alertOperator.message }}</ngb-alert>
-            <div class="table-responsive">
+           
+          <div class="col-lg-12 d-flex justify-content-end align-items-center mb-3">
+
+            <button 
+              class="btn btn-success btn-sm mr-1" 
+              (click)="exportToExcelOperator()">
+              <fa-icon [icon]="faFileExcel"></fa-icon> Export
+            </button>
+          
+            <input 
+              type="text" 
+              class="form-control form-control-sm" 
+              [(ngModel)]="srcOperator" 
+              placeholder="Search"
+              style="max-width: 250px;"
+            >
+          
+          </div>
+
+          <div class="table-responsive table-scroll">
               <table class="table table-bordered table table-striped">
                 <thead>
                   <tr>
@@ -76,14 +118,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let type of operatorTypes; let i = index">
+                  <tr *ngFor="let type of operatorTypes | filter:srcOperator;">
                     <td>{{ type.AccountType }}</td>
                     <td>{{ type.UserPermissions }}</td>
-                    <td class="text-center w-10">
-                        <input type="button" class="btn btn-sm btn-outline-secondary btn-xs font-sm" value="Update"
-                        (click) = "openModal(newOperatorAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, true,'Update Account Type (Operator)')">
-                        <input type="button" class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" value="Delete"
-                        (click)="otherModal(delete, type ,true)">
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-default text-secondary btn-xs font-sm" title="Edit"
+                      (click) = "openModal(newOperatorAccount, true, type.PermissionID, type.AccountType, type.AccountTypeID, true,'Update Account Type (Operator)')">
+                        <fa-icon [icon]="faEdit"></fa-icon>
+                      </button>
+                      <button class="btn btn-sm btn-default btn-xs text-danger font-sm ml-1" value="Delete"
+                      (click)="otherModal(delete, type ,true)" title="Delete">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                      </button>
                       </td>
                   </tr>
                 </tbody>
@@ -149,8 +195,12 @@
     <ngb-alert *ngIf="alert.type === 'warning'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
   </div>
   <div class="modal-footer">
-    <button *ngIf="!isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="savepermission(sites)">Save</button>
-    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="updatePermission(sites)">Update</button>
+    <button *ngIf="!isEditing && !isLoading" type="button" class="btn btn-sm btn-success" (click)="savepermission(sites)">
+      <fa-icon [icon]="faSave"></fa-icon> Save
+    </button>
+    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-success" (click)="updatePermission(sites)">
+      <fa-icon [icon]="faSave"></fa-icon> Update
+    </button>
     <button *ngIf="isLoading" type="button" class="btn btn-sm btn-info" disabled>Please wait..</button>
   </div>
 </ng-template>
@@ -208,8 +258,12 @@
     <ngb-alert *ngIf="alertOperator.type === 'warning'" [type]="alertOperator.type" (close)="clearAlert()">{{ alertOperator.message }}</ngb-alert>
   </div>
   <div class="modal-footer">
-    <button *ngIf="!isEditing && !isLoading" type="button" class="btn  btn-sm btn-info" (click)="savepermission(sites)">Save</button>
-    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-info" (click)="updatePermission(sites)">Update</button>
+    <button *ngIf="!isEditing && !isLoading" type="button" class="btn  btn-sm btn-success" (click)="savepermission(sites)">
+      <fa-icon [icon]="faSave"></fa-icon> Save
+    </button>
+    <button *ngIf="isEditing && !isLoading" type="button" class="btn btn-sm btn-success" (click)="updatePermission(sites)">
+      <fa-icon [icon]="faSave"></fa-icon> Update
+    </button>
     <button *ngIf="isLoading" type="button" class="btn btn-sm btn-info" disabled>Please wait..</button>
   </div>
 </ng-template>
@@ -227,7 +281,11 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-      <button class="btn btn-sm btn-danger" (click)="deleteAccountType(selectedRec)">Delete</button>
+      <button class="btn btn-sm btn-secondary" (click)="modal.dismiss()">
+        <fa-icon [icon]="faBan"></fa-icon> Cancel
+      </button>
+      <button class="btn btn-sm btn-danger" (click)="deleteAccountType(selectedRec)">
+        <fa-icon [icon]="faTrash"></fa-icon> Delete
+      </button>
     </div>
 </ng-template>

@@ -75,6 +75,10 @@ export class UsersService {
     return this.http.put(`${this.env.apiUrl}/UserManagement/ResetPassword/${data.UserID}`, data, this.fetch_userToken());
   }
 
+  unlockAccount(id) {
+    return this.http.put(`${this.env.apiUrl}/UserManagement/UnlockAccount/${id}`, null, this.fetch_userToken());
+  }
+
   getCompanySetting() {
     return this.http.get(`${this.env.apiUrl}/UserManagement/GetCompanySetting`, this.fetch_userToken());
   }

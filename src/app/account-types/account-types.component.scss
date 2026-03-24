@@ -11,6 +11,18 @@
   background-color: #ffd40e !important;
 }
 
+.table-scroll {
+  max-height: 500px;   /* adjust height as needed */
+  overflow-y: auto;
+}
+
+.table-scroll thead th {
+  position: sticky;
+  top: 0;             /* distance from the top of container */
+  background: #fff;   /* important: set a background so content doesn’t show through */
+  z-index: 10;        /* make sure header stays on top */
+}
+
 table > thead > tr > th ,table > tbody > tr > td {
 	padding : 4px 4px;
 	vertical-align: middle;

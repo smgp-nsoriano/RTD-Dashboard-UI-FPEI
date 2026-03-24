@@ -4,15 +4,15 @@
 
 <main class="container-fluid mt-5">
   <div class="row">
-    <div class="col-sm-12 col-lg-10 offset-lg-1">
+    <div class="col-sm-12 col-lg-10 offset-lg-1 w-800">
       <div class="card">
         <div class="card-header maindivheader">
           <div class="row">
             <div class="col-sm-6">
-              <h4>User Account List</h4>
+              <h4>User Account</h4>
             </div>
             <div class="col-sm-6 text-right">
-                <button class="btn btn-sm btn-outline-light" (click)="modal(user,false,null)">
+                <button class="btn btn-sm btn-light" (click)="modal(user,false,null)">
                     <fa-icon [icon]="faPlus"></fa-icon>
                     New Account
                   </button>
@@ -23,20 +23,35 @@
         
           <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
 
-          <div class="col-lg-12 ">
-            <input type="text" class="form-control wd pull-right" [(ngModel)]="src" placeholder="Search">
-          </div>
+          <div class="col-lg-12 d-flex justify-content-end align-items-center mb-3">
 
-          <div class="table-responsive">
+            <button 
+              class="btn btn-success btn-sm mr-1" 
+              (click)="exportToExcel()">
+              <fa-icon [icon]="faFileExcel"></fa-icon> Export
+            </button>
+          
+            <input 
+              type="text" 
+              class="form-control form-control-sm" 
+              [(ngModel)]="src" 
+              placeholder="Search"
+              style="max-width: 250px;"
+            >
+          
+          </div>
+          <div class="table-responsive table-scroll">
             <table class="table table-bordered table-hover table-striped">
               <thead>
                 <tr>
                   <th>Username</th>
                   <th style="display:none">TypeID</th>
                   <th>Type</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
+                  <th>Full Name</th>
                   <th>Email Address</th>
+                  <th>Status</th>
+                  <th>Last Login Date</th>
+                  <th>Deactivation Date</th>
                   <th class="text-center">Actions</th>
                 </tr>
               </thead>
@@ -45,16 +60,39 @@
                   <td>{{ rec.UserName }}</td>
                   <td style="display:none">{{ rec.UserTypeID }}</td>
                   <td>{{ rec.UserType }}</td>
-                  <td>{{ rec.FirstName }}</td>
-                  <td>{{ rec.LastName }}</td>
+                  <td>{{ rec.FirstName }} {{ rec.LastName }}</td>
                   <td>{{ rec.EmailAddress }}</td>
-                  <td class="w-10 text-center">
+                  <td>{{ rec.Status }}</td>
+                  <td>{{ rec.LastLoginDate | date:'short' }}</td>
+                  <td>{{ rec.DateDisabled | date:'short' }}</td>
+                  <td class="text-center">
                     <!-- enable/disable user -->
-                    <button *ngIf="rec.IsActive" class="btn btn-sm btn-outline-danger btn-xs font-sm" (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)">Disable</button>
-                    <button *ngIf="!rec.IsActive" class="btn btn-sm btn-outline-success btn-xs font-sm" (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)">Enable</button>
-                    <button class="btn btn-sm btn-outline-secondary btn-xs font-sm ml-1" (click)="modal(user, true, rec)">Update</button>
-                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" (click)="otherModal(delete, true ,rec)">Delete</button>
-                    <button class="btn btn-sm btn-outline-warning btn-xs font-sm ml-1" (click)="otherModal(delete, false ,rec)">Reset Password</button>
+                    <button *ngIf="rec.IsActive" class="btn btn-sm btn-default btn-xs font-sm text-danger" 
+                    (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)"
+                      title="Deactivate">
+                      <fa-icon [icon]="faTimes"></fa-icon>
+                    </button>
+                    <button *ngIf="!rec.IsActive" class="btn btn-sm btn-default text-success btn-xs font-sm" 
+                    (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)"
+                      title="Activate">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                    </button>
+                    <button class="btn btn-sm btn-default text-secondary btn-xs font-sm ml-1" 
+                      (click)="modal(user, true, rec)" title="Edit">
+                      <fa-icon [icon]="faEdit"></fa-icon>
+                    </button>
+                    <button class="btn btn-sm btn-default text-danger btn-xs font-sm ml-1" 
+                      (click)="otherModal(delete, true ,rec)" title="Delete">
+                      <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                    <button class="btn btn-sm btn-default text-warning btn-xs font-sm ml-1" 
+                      (click)="otherModal(delete, false ,rec)" title="Reset Password">
+                      <fa-icon [icon]="faKey"></fa-icon>
+                    </button>
+                    <button *ngIf="rec.IsLocked || rec.Status == 'Expired'" class="btn btn-sm btn-default text-warning btn-xs font-sm ml-1" 
+                      (click)="unlockModal(unlock,rec)" title="Unlock/Activate Account">
+                      <fa-icon [icon]="faUnlock"></fa-icon>
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -78,34 +116,52 @@
       <ngb-alert *ngIf="alert.type === 'danger'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
       <form [formGroup]="form">
         <div class="form-group">
-          <label for="userName">Username</label>
+          <label for="userName">Username
+            <span class="text-danger">*</span>
+          </label>
           <input type="text" class="form-control" formControlName="userName" id="userName">
         </div>
         <div class="form-group">
-          <label for="accountType">Type</label>
+          <label for="accountType">Type
+            <span class="text-danger">*</span>
+          </label>
           <select class="form-control" formControlName="accountType" id="accountType">
               <option [ngValue]="null">Select Type</option>
               <option *ngFor="let rec of accountType" [ngValue]="rec.AccountTypeID">{{ rec.AccountType }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="firstName">First Name</label>
+          <label for="firstName">First Name
+            <span class="text-danger">*</span>
+          </label>
           <input type="text" class="form-control" formControlName="firstName" id="firstName">
         </div>
         <div class="form-group">
-          <label for="lastName">Last Name</label>
+          <label for="lastName">Last Name
+            <span class="text-danger">*</span>
+          </label>
           <input type="text" class="form-control" formControlName="lastName" id="lastName">
         </div>
         <div class="form-group">
-          <label for="emailAddress">Email Address</label>
+          <label for="emailAddress">Email Address
+            <span class="text-danger">*</span>
+          </label>
           <input type="text" class="form-control" formControlName="emailAddress" id="emailAddress">
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="hasExpiration" formControlName="hasExpiration">
+          <label class="form-check-label" for="hasExpiration">Inactivity Expiration</label>
         </div>
       </form>
     </div>
 
     <div class="modal-footer">
-      <button *ngIf="!isEdit && !isLoading" class="btn btn-sm btn-info" (click)="save()">Save</button>
-      <button *ngIf="isEdit && !isLoading" class="btn btn-sm btn-info" (click)="update(selectedRec)">Update</button>
+      <button *ngIf="!isEdit && !isLoading" class="btn btn-sm btn-success" (click)="save()">
+        <fa-icon [icon]="faSave"></fa-icon> Save
+      </button>
+      <button *ngIf="isEdit && !isLoading" class="btn btn-sm btn-success" (click)="update(selectedRec)">
+        <fa-icon [icon]="faSave"></fa-icon> Update
+      </button>
       <button *ngIf="isLoading" class="btn btn-sm btn-info" (click)="save()" disabled>Please wait..</button>
     </div>
 </ng-template>
@@ -125,9 +181,15 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-      <button *ngIf="isDeleting" class="btn btn-sm btn-danger" (click)="deleteuser(selectedRec)">Delete</button>
-      <button *ngIf="!isDeleting" class="btn btn-sm btn-danger" (click)="resetpassword(selectedRec)">Reset</button>
+      <button class="btn btn-sm btn-secondary" (click)="modal.dismiss()">
+        <fa-icon [icon]="faBan"></fa-icon> Cancel
+      </button>
+      <button *ngIf="isDeleting" class="btn btn-sm btn-danger" (click)="deleteuser(selectedRec)">
+        <fa-icon [icon]="faTrash"></fa-icon> Delete
+      </button>
+      <button *ngIf="!isDeleting" class="btn btn-sm btn-danger" (click)="resetpassword(selectedRec)">
+        <fa-icon [icon]="faSave"></fa-icon> Reset
+      </button>
     </div>
 </ng-template>
 
@@ -141,8 +203,8 @@
   </div>
 
   <div class="modal-body">
-    <strong *ngIf="selectedRec.IsActive">Are you sure you want to disable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
-    <strong *ngIf="!selectedRec.IsActive">Are you sure you want to enable user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
+    <strong *ngIf="selectedRec.IsActive">Are you sure you want to deactivate user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
+    <strong *ngIf="!selectedRec.IsActive">Are you sure you want to activate user <span class="text-danger">{{ selectedRec.UserName }}</span>?</strong>
 
     <div class="my-3">
       <div>FirstName: <strong>{{selectedRec.FirstName}}</strong></div>
@@ -150,12 +212,40 @@
       <div>EmailAddress: <strong>{{selectedRec.EmailAddress}}</strong></div>
     </div>
 
-    <div *ngIf="selectedRec.IsActive"><span class="text-warning">Note:</span> Disabling a user will not automatically log the user out.</div>
+    <div *ngIf="selectedRec.IsActive"><span class="text-warning">Note:</span> Deactivating a user will not automatically log the user out.</div>
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-sm btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button *ngIf="selectedRec.IsActive" class="btn btn-sm btn-danger" (click)="disableuser(selectedRec)">Disable</button>
-    <button *ngIf="!selectedRec.IsActive" class="btn btn-sm btn-success" (click)="enableuser(selectedRec)">Enable</button>
+    <button class="btn btn-sm btn-secondary" (click)="modal.dismiss()">
+      <fa-icon [icon]="faBan"></fa-icon> Cancel
+    </button>
+    <button *ngIf="selectedRec.IsActive" class="btn btn-sm btn-danger" (click)="disableuser(selectedRec)">
+      <fa-icon [icon]="faSave"></fa-icon> Deactivate
+    </button>
+    <button *ngIf="!selectedRec.IsActive" class="btn btn-sm btn-success" (click)="enableuser(selectedRec)">
+      <fa-icon [icon]="faSave"></fa-icon> Activate
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #unlock let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title">Unlock Account</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <strong>Are you sure you want to unlock the account?"<span class="text-danger">{{ selectedRec.UserName }}</span>"?</strong>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-secondary" (click)="modal.dismiss()">
+      <fa-icon [icon]="faBan"></fa-icon> Cancel
+    </button>
+    <button class="btn btn-sm btn-success" (click)="unlockUser(selectedRec)">
+      <fa-icon [icon]="faSave"></fa-icon> Unlock
+    </button>
   </div>
 </ng-template>
