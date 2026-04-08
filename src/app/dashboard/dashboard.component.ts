@@ -342,7 +342,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     bColor:'',
     fColor:''
   };
-
+  timerDT:any;
   timerData: any;
   timerClock: any;
   timerDCS:any;
@@ -404,34 +404,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.getData();
     this.SetTimeFromServer();
     
-    // setInterval(() => {
-    //   clearInterval(this.blinkerRRUTimer);
-    //   this.blinkerRRUTimer = setInterval(() => {
-    //     this.isRRUBlinking = !this.isRRUBlinking;
-    //     console.log('TEST BLINK:', this.isRRUBlinking);
-    //   }, 1000); // toggle every second
-  
-    //   // stop toggling after 10s
-    //   setTimeout(() => {
-    //     clearInterval(this.blinkerRRUTimer);
-    //     this.isRRUBlinking = false;
-    //   }, 10000);
-    // }, 15000); // rerun blinking cycle every 15s
-    // interval(1000).subscribe(() => {
-    //  this.setData();
-    // });
-
-    interval(9000).subscribe(() => {
+    if(this.timerDT){
+      clearInterval(this.timerDT);
+    }
+    this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
-    });
+    }, 60000);
     
-    //interval(30000)
-    //.pipe(takeUntil(this.unsubscribe))
-    //.subscribe(() => {
-    //  this.getData();
-    //});
     this.getCurrentUserInfo();
-
   }
 
   FormatClock(){
@@ -440,8 +420,6 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   SetTimeFromServer(){
     this.dashboardService.getDT().subscribe(data=>{
-      clearInterval(this.timerData);
-      clearInterval(this.timerClock);
       this.timerSetClock(data.toString());
       this.timerGetData();
     });
@@ -449,6 +427,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
   timerSetClock(dt:string){
     this.now = moment(dt,"MM/DD/YYYY HH:mm:ss");
+    if(this.timerClock){
+      clearInterval(this.timerClock);
+    }
     this.timerClock = setInterval(() => {
       this.now.add(1, 'second');
       this.setData();
@@ -476,6 +457,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
   timerGetData() {
     // Track whether any of the three changed
     let hasAnyChange = false;
+    if(this.timerData){
+      clearInterval(this.timerData);
+    }
     this.timerData = setInterval(() => {
       if (this.cdRef && !this.cdRef['destroyed']) {
         if (+moment().second() === 4) {
@@ -492,18 +476,24 @@ export class DashboardComponent implements OnInit, OnDestroy{
           if (this.current['RTDValue'] !== this.pasts[5]['RTDValue']) {
             console.log(this.current['RTDValue'] ,"->", this.pasts[5]['RTDValue'])
             hasAnyChange = true;
-            clearInterval(this.blinkerTimer); // clear if already running
+            if(this.blinkerTimer){
+              clearInterval(this.blinkerTimer);
+            } // clear if already running
             this.blinkerTimer = setInterval(() => {
               this.isRTDBlinking = +moment(this.now).second() % 2 === 1;
               console.log('RTD has changed', this.currentUnit.name, ':', this.isRTDBlinking);
             }, 1000);
             this.timerAlarm = setTimeout(() => {
-              clearInterval(this.blinkerTimer);
+              if(this.blinkerTimer){
+                clearInterval(this.blinkerTimer);
+              }
               this.isRTDBlinking = false;
               this.stopAlarm();
             }, 60000); // 1 minute
           } else {
-            clearInterval(this.blinkerTimer);
+            if(this.blinkerTimer){
+              clearInterval(this.blinkerTimer);
+            }
             this.isRTDBlinking = false;
             this.stopAlarm();
           }
@@ -512,14 +502,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
         if (this.current['RRU'] !== this.pasts[5]['RRU']) {
           console.log(this.current['RRU'],"->",this.pasts[5]['RRU'])
           hasAnyChange = true;
-          clearInterval(this.blinkerRRUTimer);
+          if(this.blinkerRRUTimer) clearInterval(this.blinkerRRUTimer);
           this.blinkerRRUTimer = setInterval(() => {
             this.isRRUBlinking = !this.isRRUBlinking;
             this.cdRef.detectChanges();
           }, 1000);
   
           setTimeout(() => {
-            clearInterval(this.blinkerRRUTimer);
+            if(this.blinkerRRUTimer) clearInterval(this.blinkerRRUTimer);
             this.isRRUBlinking = false;
             this.cdRef.detectChanges();
           }, 30000);
@@ -529,14 +519,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
         if (this.current['RRD'] !== this.pasts[5]['RRD']) {
           console.log(this.current['RRD'],"->",this.pasts[5]['RRD'])
           hasAnyChange = true;
-          clearInterval(this.blinkerRRDTimer);
+          if(this.blinkerRRDTimer) clearInterval(this.blinkerRRDTimer);
           this.blinkerRRDTimer = setInterval(() => {
             this.isRRDBlinking = !this.isRRDBlinking;
             this.cdRef.detectChanges();
           }, 1000);
   
           setTimeout(() => {
-            clearInterval(this.blinkerRRDTimer);
+            if(this.blinkerRRDTimer) clearInterval(this.blinkerRRDTimer);
             this.isRRDBlinking = false;
             this.cdRef.detectChanges();
           }, 30000);
@@ -546,14 +536,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
         if (this.current['Contingency'] !== this.pasts[5]['Contingency']) {
           console.log(this.current['Contingency'],"->",this.pasts[5]['Contingency'])
           hasAnyChange = true;
-          clearInterval(this.blinkerContingencyTimer);
+          if(this.blinkerContingencyTimer) clearInterval(this.blinkerContingencyTimer);
           this.blinkerContingencyTimer = setInterval(() => {
             this.isContingencyBlinking = !this.isContingencyBlinking;
             this.cdRef.detectChanges();
           }, 1000);
   
           setTimeout(() => {
-            clearInterval(this.blinkerContingencyTimer);
+            if(this.blinkerContingencyTimer) clearInterval(this.blinkerContingencyTimer);
             this.isContingencyBlinking = false;
             this.cdRef.detectChanges();
           }, 30000);
@@ -987,11 +977,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
     this.bodyTag.classList.remove('bg-dark');
     this.unsubscribe.next();
     this.unsubscribe.complete();
-    clearInterval(this.timerData);
-    clearInterval(this.blinkerTimer);
-    clearInterval(this.blinkerRRUTimer);
-    clearInterval(this.blinkerRRDTimer);
-    clearInterval(this.blinkerContingencyTimer);
+    if(this.timerDT) clearInterval(this.timerDT);
+    if(this.timerClock) clearInterval(this.timerClock);
+    if(this.timerData) clearInterval(this.timerData);
+    if(this.blinkerTimer) clearInterval(this.blinkerTimer);
+    if(this.blinkerRRUTimer) clearInterval(this.blinkerRRUTimer);
+    if(this.blinkerRRDTimer) clearInterval(this.blinkerRRDTimer);
+    if(this.blinkerContingencyTimer) clearInterval(this.blinkerContingencyTimer);
   }
 }
 

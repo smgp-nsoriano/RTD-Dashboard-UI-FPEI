@@ -6,13 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class UnitsService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
 
   constructor(
     private http: HttpClient,
@@ -20,11 +20,11 @@ export class UnitsService {
   ) { }
 
   getSites(id: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?PermissionID=${+id}`);
   }
 
   getWebSettings(unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/WebSetting/GetWebServiceSetting?UnitID=${unitId}`);
   }
 
   postWebSettings(
@@ -49,55 +49,55 @@ export class UnitsService {
       SheetName,
       IsActive
     };
-    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/WebSetting/UpdateWebSetting`, data);
   }
 
   uploadBids(data) {
-    return this.http.post(`${this.env.apiUrl}/MarketData/GetBidFile`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/GetBidFile`, data);
   }
 
   getOffer(unitId, unitNumber) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOfferNew?UnitID=${unitId}&UnitNumber=${unitNumber}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOfferNew?UnitID=${unitId}&UnitNumber=${unitNumber}`);
   }
 
   getOfferByDate(unitNumber,date) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOfferByDateNew?UnitNumber=${unitNumber}&DateSchedule=${date}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOfferByDateNew?UnitNumber=${unitNumber}&DateSchedule=${date}`);
   }
 
   createBid(unitId, unitNumber, offers,controlMode) {
     const data = {unitId, unitNumber, offers,controlMode};
-    return this.http.post(`${this.env.apiUrl}/MarketData/CreateBidNew`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/CreateBidNew`, data);
   }
 
   logBid(unitId, unitNumber, offers,controlMode) {
     const data = {unitId, unitNumber, offers,controlMode};
-    return this.http.post(`${this.env.apiUrl}/MarketData/LogBid`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/LogBid`, data);
   }
 
   downloadBid(unitId, unitNumber, offers,controlMode) {
     const data = {unitId, unitNumber, offers, controlMode};    
-    return this.http.post(`${this.env.apiUrl}/MarketData/BidXML`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/BidXML`, data);
   }
 
 
   updateOffer(unitId, unitNumber, offers) {
     const data = {unitId, unitNumber, offers};
-    return this.http.post(`${this.env.apiUrl}/MarketData/UpdateOffer`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/UpdateOffer`, data);
   }
 
   createOffer(unitNumber, date, previousDate,isWithOffer,isWithRampRate) {
     const data = {unitNumber, date, previousDate,isWithOffer,isWithRampRate};
-    return this.http.post(`${this.env.apiUrl}/MarketData/CreateOfferNew`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/CreateOfferNew`, data);
   }
 
   //Old Functions
   getOfferOriginal(unitId, unitNumber) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOffer?UnitID=${unitId}&UnitNumber=${unitNumber}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetBidOffer?UnitID=${unitId}&UnitNumber=${unitNumber}`);
   }
 
   createBidOriginal(unitId, unitNumber) {
     const data = {unitId, unitNumber};
-    return this.http.post(`${this.env.apiUrl}/MarketData/CreateBid`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/CreateBid`, data);
   }
 
   // uploadBidsOriginal(data) {
@@ -115,18 +115,18 @@ export class UnitsService {
       FColor
     };
 
-    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateUnit`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateUnit`, data);
   }
 
   deleteUnit(unitID: number) {
-    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteUnit/${unitID}`, this.fetch_userToken());
+    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteUnit/${unitID}`);
   }
 
   getRRStandard(unitNumber:string){
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetRRStandard?UnitNumber=${unitNumber}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetRRStandard?UnitNumber=${unitNumber}`);
   }
 
   setRRStandard(data){
-    return this.http.post(`${this.env.apiUrl}/MarketData/SetRRStandard`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/MarketData/SetRRStandard`, data);
   }
 }

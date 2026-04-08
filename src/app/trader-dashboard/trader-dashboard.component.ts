@@ -840,9 +840,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     
     //this.TimerSetClock();
     this.SetTimeFromServer();
+    if(this.timerDT){
+      clearInterval(this.timerDT)
+    }
+
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
-    }, 15000);
+    }, 60000);
     this.DefaultDashboardValue();
     this.DeafultPBValue();
     this.PopulateUnits();
@@ -873,11 +877,13 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   TimerSetClock(dt:string){
     //
     this.now = moment(dt,"MM/DD/YYYY HH:mm:ss");
+
+    if (this.timerClock){
+      clearInterval(this.timerClock);
+    } 
+        
     this.timerClock = setInterval(() => {
       this.now.add(1, 'second');
-      // this.HADOptions.series = this.HADseriesOptions;
-      // this.DAPAllUnitOptions.series = this.DAPAllUnitseriesOptions;
-      // this.updateFlag = true;
     }, 1000);
   }
 
@@ -887,6 +893,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
   }
 
   TimerGetData(){
+    if(this.timerData){
+      clearInterval(this.timerData);
+    }
     this.timerData = setInterval(() => {
       if(+moment(this.now).second() == 3){
         this.RefreshData();
@@ -897,6 +906,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           if(this.alarmOutsideLimit){
             this.OutsideLimitAudio();
             this.alertMessage = "Actual MW, Outside limits!";
+            if(this.timerAlarmOutsideLimit){
+              clearInterval(this.timerAlarmOutsideLimit);
+            }
             this.timerAlarmOutsideLimit = setInterval(() => {
             this.OutsideLimitAudio();
             }, 5000);
@@ -926,6 +938,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           if(+moment(this.now).second() == 10){
                 if(this.alarmHAP){
                   this.alertMessage = "HAP is in use!"
+                  if(this.timerAlarmHAP){
+                    clearInterval(this.timerAlarmHAP);
+                  }
                   this.timerAlarmHAP = setInterval(() => {
                     this.HAPAudio();
                   }, 4000);
@@ -949,8 +964,6 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
 
   SetTimeFromServer(){
       this.traderDashboardService.getDT().subscribe(data=>{
-        clearInterval(this.timerData);
-        clearInterval(this.timerClock);
         this.TimerSetClock(data.toString());
         this.TimerGetData();
       });
@@ -1883,6 +1896,9 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       error;
       this.alertMessage = "No connection to server!";
         if (!this.isAlarmDisable) {
+          if(this.timerAlarmNoConnection){
+            clearInterval(this.timerAlarmNoConnection);
+          }
           this.timerAlarmNoConnection = setInterval(() => {
             this.NoInternetAudio();
            }, 4000);
@@ -2088,11 +2104,11 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       }
     
 
-    clearInterval(this.timerData);
-    clearInterval(this.timerDT);
-    clearTimeout(this.timerAlarmOutsideLimit);
-    clearInterval(this.timerAlarmHAP);
-    clearInterval(this.timerAlarmNoConnection);
+    if(this.timerData) clearInterval(this.timerData);
+    if(this.timerDT) clearInterval(this.timerDT);
+    if(this.timerAlarmOutsideLimit) clearTimeout(this.timerAlarmOutsideLimit);
+    if(this.timerAlarmHAP) clearInterval(this.timerAlarmHAP);
+    if(this.timerAlarmNoConnection) clearInterval(this.timerAlarmNoConnection);
     this.alarmOutsideLimit=false;
     this.alarmNoconnection=false;
     this.alertMessage =null;

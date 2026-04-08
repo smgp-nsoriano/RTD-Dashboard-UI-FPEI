@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { formControlBinding } from '@angular/forms/src/directives/ng_model';
 import { NgbModalRef, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { IdleService } from 'src/app/_guard/idle.service';
 
 @Component({
   selector: 'app-nav',
@@ -42,7 +43,8 @@ export class NavComponent implements OnInit {
   constructor(private userServices: UsersService,
     private router: Router,
     private modalService: NgbModal,
-    config: NgbModalConfig) {
+    config: NgbModalConfig,
+    private idleService:IdleService) {
     config.backdrop = 'static';
     config.keyboard = false;
 
@@ -113,7 +115,8 @@ export class NavComponent implements OnInit {
   logout() {
     // Logs UserLogin
     this.userServices.loginLogs({UserID: this.currentUserInfo.UserID, Action: 'Out'}).subscribe(data =>{});
-    localStorage.removeItem('userToken');
+    localStorage.clear();
+    this.idleService.stopWatching();
   }
 
   goToChangePassword(){

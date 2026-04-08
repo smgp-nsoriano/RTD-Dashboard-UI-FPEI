@@ -13,10 +13,6 @@ export class ProcessFilesService {
   ) { }
 
   getLogs(dt) {
-    return this.http.get(`${this.env.apiUrl}/MarketMap/GetLogs/${dt}`, {
-    headers : {
-      'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-    }
-  });
+    return this.http.get(`${this.env.apiUrl}/MarketMap/GetLogs/${dt}`);
   }
 }

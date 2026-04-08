@@ -6,13 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class AccountTypesService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
 
   constructor(
     private http: HttpClient,
@@ -21,39 +21,39 @@ export class AccountTypesService {
 
 
   getsites(data) {
-    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetSites/${data.permissionId}/${data.accountTypeId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetSites/${data.permissionId}/${data.accountTypeId}`);
   }
 
   getOperatorAccess(data) {
-    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetOperatorAccess/${data.permissionId}/${data.accountTypeId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/AccountPermission/GetOperatorAccess/${data.permissionId}/${data.accountTypeId}`);
   }
 
   savePermission(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SavePermission/${data.accountType}/${data.createdby}/${data.isOperator}`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SavePermission/${data.accountType}/${data.createdby}/${data.isOperator}`, data);
   }
 
   saveSite(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSite`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSite`, data);
   }
 
   saveOperatorSite(data) {
-    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSiteOperator`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/AccountPermission/SaveSiteOperator`, data);
   }
 
   updateAccountType(data) {
-    return this.http.put(`${this.env.apiUrl}/AccountPermission/UpdateAccountType`, data, this.fetch_userToken());
+    return this.http.put(`${this.env.apiUrl}/AccountPermission/UpdateAccountType`, data);
   }
 
   deleteAccountType(data) {
-    return this.http.delete(`${this.env.apiUrl}/AccountPermission/DeleteAccountType/${data.accountTypeId}`, this.fetch_userToken());
+    return this.http.delete(`${this.env.apiUrl}/AccountPermission/DeleteAccountType/${data.accountTypeId}`);
   }
 
   getAccountTypes() {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetAccountTypeList`);
   }
 
   getOperatorAccountTypes(isOperator) {
-    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/UserManagement/GetOperatorAccountTypeList?isOperator=${isOperator}`);
   }
 
   // createAccountType(type: string, user: string) {

@@ -6,13 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class HomeService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
 
   constructor(
     private http: HttpClient,
@@ -48,40 +48,40 @@ export class HomeService {
   }
 
   getCurrentRTD(siteId: number, unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetCurrentRTD?siteID=${siteId}&UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetCurrentRTD?siteID=${siteId}&UnitID=${unitId}`);
   }
 
   getErrorMessage(siteId: number, unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/ErrorMessage?siteID=${siteId}&UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/ErrorMessage?siteID=${siteId}&UnitID=${unitId}`);
   }
 
   getAheadRTD(siteId: number, unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTD?siteID=${siteId}&UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTD?siteID=${siteId}&UnitID=${unitId}`);
   }
 
   getPastTime(siteId: number, unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTD?siteID=${siteId}&UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTD?siteID=${siteId}&UnitID=${unitId}`);
   }
 
   getSiteList(id: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?permissionID=${+id}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSiteAccess?permissionID=${+id}`);
   }
 
   getUnitList(siteId: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetUnit?SiteID=${siteId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetUnit?SiteID=${siteId}`);
   }
 
   getOperatorUnit(id: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetOperatorUnit?permissionID=${+id}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetOperatorUnit?permissionID=${+id}`);
   }
 
   getDAP(siteId: number, unitId: number, current: boolean) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetDAP?SiteID=${siteId}&UnitID=${unitId}&IsCurrent=${current}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetDAP?SiteID=${siteId}&UnitID=${unitId}&IsCurrent=${current}`);
     // return this.http.get('assets/data/day_interval.json');
   }
 
   getHAP(siteId: number, unitId: number) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetHAP?SiteID=${siteId}&UnitID=${unitId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetHAP?SiteID=${siteId}&UnitID=${unitId}`);
     // return this.http.get('assets/data/hap.json');
   }
 

@@ -1,66 +1,58 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 import { EnvService } from '../env.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  serverUrl = 'http://localhost/dev/blogger/';
-  errorData: {};
+  accessToken:string;
+  refreshTokenValue:string;
 
   constructor(private http: HttpClient,
     private env: EnvService) { }
 
   redirectUrl: string;
+  refreshToken(): Observable<any> {
+    const rToken = localStorage.getItem('rToken');
+    if (!rToken) throw new Error('No refresh token available');
 
-  login(username: string, password: string) {
-    return this.http.post<any>(`${this.env.apiUrl}/api/token`, {username: username, password: password})
-    .pipe(map(user => {
-        if (user && user.token) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        }
-      }),
-      catchError(this.handleError)
+    const data = `refresh_token=${encodeURIComponent(rToken)}&grant_type=refresh_token`;
+    const header = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+
+    return this.http.post(`${this.env.apiUrl}/mfa-token`, data, { headers: header }).pipe(
+      tap((res: any) => {
+        // ✅ Update access token
+        if (res.access_token) this.setAccessToken(res.access_token);
+
+        // ✅ Update refresh token if returned
+        if (res.refresh_token) this.setRefreshToken(res.refresh_token);
+      })
     );
   }
 
-  isLoggedIn() {
-    if (localStorage.getItem('currentUser')) {
-      return true;
-    }
-    return false;
+   setAccessToken(token: string) {
+    this.accessToken = token;
+    localStorage.setItem('userToken', token); // keep in localStorage
   }
 
-  getAuthorizationToken() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    return currentUser.token;
+  setRefreshToken(token: string) {
+    this.refreshTokenValue = token;
+    localStorage.setItem('rToken', token); // keep in localStorage
   }
 
+  getAccessToken(): string | null {
+    return this.accessToken || localStorage.getItem('userToken');
+  }
+
+  isOperator(): boolean {
+    return JSON.parse(localStorage.getItem('isOperator') || 'false');
+  }
+  
   logout() {
-    localStorage.removeItem('currentUser');
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error}`);
-    }
-
-    // return an observable with a user-facing error message
-    this.errorData = {
-      errorTitle: 'Oops! Request for document failed',
-      errorDesc: 'Something bad happened. Please try again later.'
-    };
-    return throwError(this.errorData);
+    localStorage.clear();
+    window.location.href = '';
   }
 }

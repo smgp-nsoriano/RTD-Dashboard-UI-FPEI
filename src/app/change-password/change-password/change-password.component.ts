@@ -74,6 +74,7 @@ export class ChangePasswordComponent implements OnInit {
       next: (data) => {
         this.isLoading = false;
         alert("Your password has been successfully changed. Please log in with your new password.");
+        localStorage.clear();
         this.router.navigate(['']); // redirect to login page
       },
       error: (err: HttpErrorResponse) => {

@@ -6,13 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class SRService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
   
   constructor(
     private http: HttpClient,
@@ -20,34 +20,34 @@ export class SRService {
   ) { }
 
   getCurrentRTD(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetRTDPriceCurrentByUnit?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetRTDPriceCurrentByUnit?Unit=${unit}`);
   }
 
   getAheadRTD(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTDByUnit?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTDByUnit?Unit=${unit}`);
   }
 
   getPastTime(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTDByUnit?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTDByUnit?Unit=${unit}`);
   }
 
   getCurrentRTDH(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetRTDPriceCurrentByUnitHourly?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetRTDPriceCurrentByUnitHourly?Unit=${unit}`);
   }
 
   getAheadRTDH(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTDByUnitHourly?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetAheadRTDByUnitHourly?Unit=${unit}`);
   }
 
   getPastTimeH(unit: string) {
-    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTDByUnitHourly?Unit=${unit}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetPastRTDByUnitHourly?Unit=${unit}`);
   }
 
   getUnitList() {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetUnit?SiteID=1002`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetUnit?SiteID=1002`);
   }
 
   getDT(){
-    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
   }
 }

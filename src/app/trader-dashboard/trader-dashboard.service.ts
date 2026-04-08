@@ -8,111 +8,111 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class TraderDashboardService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
 
   constructor(private http: HttpClient,
     private env: EnvService) { }
 
     getUnitList(siteId: number) {
-      return this.http.get(`${this.env.apiUrl}/Configuration/GetAllUnit`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Configuration/GetAllUnit`);
     }
 
     getInterval(){
-      return this.http.get(`${this.env.apiUrl}/Trading/Interval`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
     }
 
     getDT(){
-      return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/CurrentDateTime`);
     }
 
     getPrice(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/Price?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/Price?UnitNumber=${unit}`);
     }
     
     getRTD(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/RTD?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/RTD?UnitNumber=${unit}`);
     }
 
     getReserveSchedules(unit:string){
-      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/reservemarket/GetSchedule?UnitNumber=${unit}`);
     }
 
     getHAP(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitHAP?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitHAP?UnitNumber=${unit}`);
     }
 
     getDAP(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitDAP?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitDAP?UnitNumber=${unit}`);
     }
 
     getOverrideValue(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetOverrideValue?UnitNumber=${unit}`);
     }
 
     saveOverrideValue(data) {
-      return this.http.post(`${this.env.apiUrl}/Trading/SaveOverrideValue`, data, this.fetch_userToken());
+      return this.http.post(`${this.env.apiUrl}/Trading/SaveOverrideValue`, data);
     }
 
     getMOTValue(unit:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetMOTValue?UnitNumber=${unit}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetMOTValue?UnitNumber=${unit}`);
     }
 
     saveMOTValue(data) {
-      return this.http.post(`${this.env.apiUrl}/Trading/SaveMOTValue`, data, this.fetch_userToken());
+      return this.http.post(`${this.env.apiUrl}/Trading/SaveMOTValue`, data);
     }
  
 
     getDemand(UnitNumber:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitNumber}`);
     }
     getPortfolioDemand(UnitPortfolioNumber:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitPortfolioNumber}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetDemand?UnitNumber=${UnitPortfolioNumber}`);
     }
 
     getImportExport(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport`);
     }
 
     getImportExport2(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport2`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetImportExport2`);
     }
 
 
     getUnitRegion(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerRegion`);
     }
 
     getUnitPerAccess(permissionID:number){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetUnitPerAccess?permissionID=${permissionID}`);
     }
 
     getPBRemarks(unit:string,timestamp:string){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetRemarks?UnitNumber=${unit}&Timestamp=${timestamp}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetRemarks?UnitNumber=${unit}&Timestamp=${timestamp}`);
     }
 
     saveRemarks(data) {
-      return this.http.post(`${this.env.apiUrl}/Trading/SaveRemarks`, data, this.fetch_userToken());
+      return this.http.post(`${this.env.apiUrl}/Trading/SaveRemarks`, data);
     }
 
     saveGeneralRemarks(data) {
-      return this.http.post(`${this.env.apiUrl}/Trading/SaveGeneralRemarks`, data, this.fetch_userToken());
+      return this.http.post(`${this.env.apiUrl}/Trading/SaveGeneralRemarks`, data);
     }
 
     getAllUnitDAP(){
-      return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetAllUnitDAP`);
     }
 
     getBidLogsHistory(unitId: string, date: string) {
-      return this.http.get(`${this.env.apiUrl}/Trading/GetBidLogsHistory?UnitNumber=${unitId}&SelectedDate=${date}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetBidLogsHistory?UnitNumber=${unitId}&SelectedDate=${date}`);
     }
 
     getBidArchiveByHistoryID(bidHistoryId: number) {
-      return this.http.get(`${this.env.apiUrl}/Trading/GetBidArchiveByHistoryID?bidHistoryId=${bidHistoryId}`, this.fetch_userToken());
+      return this.http.get(`${this.env.apiUrl}/Trading/GetBidArchiveByHistoryID?bidHistoryId=${bidHistoryId}`);
     }
 }

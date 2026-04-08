@@ -6,13 +6,13 @@ import { EnvService } from '../env.service';
   providedIn: 'root'
 })
 export class SitesService {
-  fetch_userToken(){
-    return {
-      headers : {
-        'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
-      }
-    }
-  }
+  // fetch_userToken(){
+  //   return {
+  //     headers : {
+  //       'Authorization' : 'Bearer ' + localStorage.getItem('userToken')
+  //     }
+  //   }
+  // }
 
   constructor(
     private http: HttpClient,
@@ -20,11 +20,11 @@ export class SitesService {
   ) { }
 
   getSites(companyId: number) {
-    return this.http.get(`${this.env.apiUrl}/Configuration/GetSite?CompanyID=${companyId}`, this.fetch_userToken());
+    return this.http.get(`${this.env.apiUrl}/Configuration/GetSite?CompanyID=${companyId}`);
   }
 
   deleteSite(siteID: number) {
-    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteSite/${siteID}`, this.fetch_userToken());
+    return this.http.delete(`${this.env.apiUrl}/Configuration/DeleteSite/${siteID}`);
   }
 
   createOrUpdateSite(SiteID: number, SiteName: string, SiteCode: string, Address: string, Region: string, FtpPath: string) {
@@ -37,6 +37,6 @@ export class SitesService {
       FtpPath
     };
 
-    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateSite`, data, this.fetch_userToken());
+    return this.http.post(`${this.env.apiUrl}/Configuration/CreateUpdateSite`, data);
   }
 }

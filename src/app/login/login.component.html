@@ -1,4 +1,4 @@
-<div class="wrapper fadeInDown">
+<div *ngIf="!showMfa"  class="wrapper fadeInDown">
     <div id="formContent">
       <!-- Tabs Titles -->
 
@@ -29,4 +29,58 @@
           <input type="button" class="btn btn-warning" value="Please wait.." *ngIf="isLoading" disabled>
       </div>
     </div>
+</div>
+
+<div *ngIf="showMfa" class="wrapper fadeInDown mt-5">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <h5 class="mt-4">Multi-Factor Authentication</h5>
+    <!-- Description -->
+    <p class="text-muted" style="padding: 0 20px;">
+      Enter the One-Time Password (OTP) sent to your email.
+    </p>
+      <!-- OTP Input (same style as login inputs) -->
+    <input type="text"
+        class="form-control fadeIn second mt-3 "
+        placeholder="Enter 6-digit OTP"
+        maxlength="6"
+        [(ngModel)]="otp"
+        name="otp">
+
+        <small class="text-danger d-block mt-2 mb-3">
+          OTP expires in {{ formatTime(timeLeft) }}
+        </small>
+
+      <!-- Alert -->
+      <div class="container">
+      <ngb-alert class="mt-3"
+              *ngIf="alert.message"
+              [type]="alert.type"
+              (close)="clearAlert()">
+      {{ alert.message }}
+      </ngb-alert>
+      </div>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <input type="button" class="btn btn-warning"
+      value="Verify OTP" (click)="verifyOtp()" *ngIf="!isLoading">
+      <input type="button" class="btn btn-warning" 
+      value="Please wait.." *ngIf="isLoading" disabled>
+
+      <br>
+
+        <a href="javascript:void(0)"
+           (click)="resendOtp()"
+           class="underlineHover"
+           [style.pointer-events]="resendCooldown > 0 ? 'none' : 'auto'"
+           [style.opacity]="resendCooldown > 0 ? 0.5 : 1">
+          Resend OTP
+        </a>
+
+        <small *ngIf="resendCooldown > 0" class="text-muted d-block">
+          You can resend in {{resendCooldown}}s
+        </small>
+    </div>
+  </div>
 </div>

@@ -45,6 +45,9 @@ import { ReservePortfolioComponent } from './reserve-portfolio/reserve-portfolio
 import { SystemDemandDashboardComponent } from './system-demand-dashboard/system-demand-dashboard.component';
 import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
 import { ChangePasswordComponent } from './change-password/change-password/change-password.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './_guard/auth.interceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -93,7 +96,8 @@ import { ChangePasswordComponent } from './change-password/change-password/chang
     ColorPickerModule
   ],
   providers: [
-    EnvServiceProvider
+    EnvServiceProvider,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
