@@ -75,6 +75,10 @@ export class NavComponent implements OnInit {
       this.IsCam =false;
     }
 
+    setTimeout(() => {
+      this.idleService.startWatching();
+    }, 3000);
+    
     //interval(1000).subscribe(() => {
     //  this.now = moment().format('MMMM DD, YYYY HH:mm:ss');
    // });
@@ -90,6 +94,7 @@ export class NavComponent implements OnInit {
       this.currentUserInfo = info;
       localStorage.setItem('currentUserName',this.currentUserInfo.UserName);
       localStorage.setItem('isOperator', this.currentUserInfo.IsOperator);
+      localStorage.setItem('isTvAccess', this.currentUserInfo.IsTvAccess);
       localStorage.setItem('permissionID', this.currentUserInfo.PermissionID);
       localStorage.setItem('isSPDC', this.currentUserInfo.IsSPDC);
       this.isLoading = false;

@@ -148,7 +148,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('IsCam', 'false');
         localStorage.setItem('IN',this.currentUserInfo.IsNew);
         localStorage.setItem('IPE',this.currentUserInfo.IsPasswordExpired);
-
+        localStorage.setItem('isOperator', this.currentUserInfo.IsOperator);
+        localStorage.setItem('isTvAccess', this.currentUserInfo.IsTvAccess);
+        
         if(this.currentUserInfo.IsSPDC){
           this.router.navigate(['/spdc-monitoring']);
         }else{
@@ -271,10 +273,9 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('userToken', data.access_token);
       localStorage.setItem('rToken', data.refresh_token);
       localStorage.setItem('IsCam', 'false');
-      this.idleService.startWatching();
       setTimeout(() => {
         this.getCurrentUserInfo();
-      }, 3000);
+      }, 2000);
     }, 
     (error) => {
       this.isLoading = false;

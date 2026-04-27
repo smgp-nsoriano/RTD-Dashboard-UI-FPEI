@@ -1,15 +1,18 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { fromEvent, merge, Subscription, timer } from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class IdleService {
-  private idleTimeout = 15 * 60 * 1000; // 15 minutes
+export class IdleService implements OnDestroy {
 
-  private activitySubscription!: Subscription;
-  private timerSubscription!: Subscription;
+  private idleTimeout = 30 * 60 * 1000; // 5 minutes
+
+  private activitySubscription: Subscription = new Subscription();
+  private timerSubscription: Subscription = new Subscription();
+
+  private storageListener!: (event: StorageEvent) => void;
 
   private isWatching = false;
 
@@ -19,102 +22,163 @@ export class IdleService {
   ) {}
 
   startWatching() {
-      // ✅ skip if operator
-      if (this.authService.isOperator()) {
-        return;
-      }
-  
 
-    // ✅ prevent multiple initialization
+    console.log('IdleService: startWatching called');
+
+    if (this.authService.isOperator() === true || this.authService.isTvAccess() === true) {
+      console.log('IdleService: skipped (operator/tv)');
+      return;
+    }
+
     if (this.isWatching) return;
+
     this.isWatching = true;
 
-  
+    // ✅ Clear previous logout flag
+    localStorage.removeItem('logoutEvent');
+
+    // ✅ REAL AUTH CHECK
+    if (!this.authService.getAccessToken()) {
+      this.forceLogout(false);
+      return;
+    }
+
+    // ✅ Fix future timestamps on start
+    const now = Date.now();
+    const lastActivity = Number(localStorage.getItem('lastActivity') || 0);
+
+    if (lastActivity > now) {
+      //console.warn('IdleService: future timestamp detected, fixing...');
+      localStorage.setItem('lastActivity', now.toString());
+    }
+
     this.ngZone.runOutsideAngular(() => {
-      const events = [
-        'mousemove',
-        'click',
-        'keydown',
-        'scroll',
-        'touchstart'
-      ];
 
-      const activity$ = merge(
-        ...events.map(event => fromEvent(document, event))
-      );
+      const events = ['mousemove', 'click', 'keydown', 'scroll', 'touchstart'];
 
-      // ✅ USER activity (real activity)
-      this.activitySubscription = activity$.subscribe(() => {
-        this.resetTimer(true);
-      });
+      this.activitySubscription = merge(
+        ...events.map(e => fromEvent(document, e))
+      ).subscribe(() => this.resetTimer(true));
 
-      // ✅ SYNC activity across tabs
-      window.addEventListener('storage', (event) => {
-        if (event.key === 'lastActivity') {
-          this.resetTimer(false); // do NOT rebroadcast
-        }
+      // ✅ cross-tab sync
+      this.storageListener = (event: StorageEvent) => {
 
         if (event.key === 'logoutEvent') {
-          this.authService.logout();
+          this.forceLogout(false);
+        }
+
+        if (event.key === 'lastActivity') {
+          this.resetTimer(false);
+        }
+      };
+
+      window.addEventListener('storage', this.storageListener);
+
+      // ✅ tab focus check
+      window.addEventListener('focus', () => {
+        this.ngZone.run(() => this.checkIdleAcrossTabs());
+      });
+
+      // ✅ tab return from background
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          this.ngZone.run(() => this.checkIdleAcrossTabs());
         }
       });
 
-      // ✅ initialize timer
       this.resetTimer(true);
     });
   }
 
   stopWatching() {
+    console.log('IdleService: stopWatching');
+
     if (this.activitySubscription) {
       this.activitySubscription.unsubscribe();
     }
-    
+
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
+
+    if (this.storageListener) {
+      window.removeEventListener('storage', this.storageListener);
+    }
+
     this.isWatching = false;
   }
 
   private resetTimer(isFromUser: boolean) {
+
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
 
-    // ✅ broadcast ONLY if real user activity
     if (isFromUser) {
-      localStorage.setItem('lastActivity', Date.now().toString());
+      const now = Date.now();
+      localStorage.setItem('lastActivity', now.toString());
+      //console.log('IdleService: activity detected → reset timer');
     }
 
-    this.timerSubscription = timer(this.idleTimeout).subscribe(() => {
-      this.checkIdleAcrossTabs();
-    });
+    this.timerSubscription = timer(this.idleTimeout)
+      .subscribe(() => {
+        this.ngZone.run(() => this.checkIdleAcrossTabs());
+      });
   }
 
   private checkIdleAcrossTabs() {
-    if (this.authService.isOperator()) {
-      return; // operators never logged out
+
+    if (this.authService.isOperator() === true || this.authService.isTvAccess() === true) {
+      return;
     }
+
+    if (!this.authService.getAccessToken()) {
+      this.forceLogout(false);
+      return;
+    }
+
     const lastActivity = Number(localStorage.getItem('lastActivity') || 0);
     const now = Date.now();
 
+    console.log('IdleService check:', {
+      now: new Date(now),
+      lastActivity: new Date(lastActivity),
+      diffMs: now - lastActivity
+    });
+
+    // 🚨 FIX: handle future timestamps
+    if (lastActivity > now) {
+      //console.warn('IdleService: future timestamp detected during check, fixing...');
+      localStorage.setItem('lastActivity', now.toString());
+      return;
+    }
+
     if (now - lastActivity >= this.idleTimeout) {
-      this.logout();
+      //console.log('IdleService: timeout reached → logout');
+      this.forceLogout(true);
     } else {
-      // another tab is still active
       this.resetTimer(false);
     }
   }
 
-  private logout() {
-    // ✅ stop everything FIRST
-    this.stopWatching();
+  private forceLogout(showAlert: boolean) {
 
-    // ✅ notify all tabs
+    // 🔒 prevent duplicate logout across tabs
+    if (localStorage.getItem('logoutEvent')) return;
+
     localStorage.setItem('logoutEvent', Date.now().toString());
 
+    this.stopWatching();
+
     this.ngZone.run(() => {
-      alert('Session expired due to inactivity');
+      if (showAlert) {
+        alert('Session expired due to inactivity');
+      }
       this.authService.logout();
     });
+  }
+
+  ngOnDestroy() {
+    this.stopWatching();
   }
 }

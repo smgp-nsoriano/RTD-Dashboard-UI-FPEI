@@ -1046,7 +1046,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
     clearTimeout(this.timerAlarmOutsideLimit);
     clearInterval(this.timerAlarmNoConnection);
     this.alertMessage = null;
-    console.log("Energy Trader Refresh Triggered")
+    //console.log("Energy Trader Refresh Triggered")
     this.eventService.Refresh();//call to refresh the pages for RM,RR,RP
     this.RefreshData();
     this.PlotDAPChart();
@@ -1845,8 +1845,8 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
           }
           this.rtdRound1 = rtd[4].Value != null ? Math.round(rtd[4].Value) : null;
           this.rtdRound2 = rtd[5].Value != null ? Math.round(rtd[5].Value) : null;
-          console.log(this.rtdRound1)
-          console.log(this.rtdRound2)
+          //console.log(this.rtdRound1)
+          //console.log(this.rtdRound2)
           if(this.rtdRound1 != this.rtdRound2){
             this.alarmRTDChanged = true;
           }

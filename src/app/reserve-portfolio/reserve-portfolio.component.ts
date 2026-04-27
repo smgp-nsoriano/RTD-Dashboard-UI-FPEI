@@ -286,6 +286,7 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
       "03LUMBAN_BAT": "LUMBAN",
       "13SMC_U01": "MALITA CFB U1",
       "13SMC_U02": "MALITA CFB U2",
+      "09SANGALI_BAT": "SANGALI"
     }
     
     return typeof dictionary[unitNumber] === 'undefined' ? unitNumber : dictionary[unitNumber]

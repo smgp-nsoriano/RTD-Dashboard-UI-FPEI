@@ -50,6 +50,10 @@ export class AuthService {
   isOperator(): boolean {
     return JSON.parse(localStorage.getItem('isOperator') || 'false');
   }
+
+  isTvAccess(): boolean {
+    return JSON.parse(localStorage.getItem('isTvAccess') || 'false');
+  }
   
   logout() {
     localStorage.clear();

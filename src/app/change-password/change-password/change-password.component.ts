@@ -77,20 +77,36 @@ export class ChangePasswordComponent implements OnInit {
         localStorage.clear();
         this.router.navigate(['']); // redirect to login page
       },
-      error: (err: HttpErrorResponse) => {
+      error: (error: any) => {
         this.isLoading = false;
-  
-        let msg = "Something went wrong. Please try again.";
-  
-        // Handle status 400 with backend message
-        if (err.status === 400 && err.error) {
-          if (typeof err.error === "string") {
-            msg = err.error;
-          } else if ((err.error as any).message) {
-            msg = (err.error as any).message;
+      
+        console.log('RAW ERROR:', error);
+        console.log('TYPE:', typeof error);
+      
+        let msg = 'Something went wrong. Please try again.';
+      
+        // 🔴 STEP 1: normalize weird cases (your real issue)
+        const normalizedError =
+          typeof error === 'function' ? error() : error;
+      
+        // 🔴 STEP 2: extract backend message safely
+        if (normalizedError.error) {
+      
+          if (typeof normalizedError.error === 'string') {
+            msg = normalizedError.error;
           }
+          else if (normalizedError.error.message) {
+            msg = normalizedError.error.message;
+          }
+          else {
+            msg = JSON.stringify(normalizedError.error);
+          }
+      
+        } 
+        else if (normalizedError.message) {
+          msg = normalizedError.message;
         }
-  
+      
         alert(msg);
       }
     });
