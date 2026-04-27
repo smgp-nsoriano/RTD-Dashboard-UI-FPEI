@@ -87,9 +87,9 @@
         <td [class.neg-actual]="data.actual < 0" [attr.title]="data.actual">{{data.actual | number: '1.0-0'}}</td>
         <td>{{data.mop}}</td>
         <td>{{data.price_en | number: '1.0-0'}}</td>
-        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_ru | number: '1.0-0'}}</td>
-        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_rd | number: '1.0-0'}}</td>
-        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_cr | number: '1.0-0'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_ru | number: '1.2-2'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_rd | number: '1.2-2'}}</td>
+        <td *ngIf="maintable[i-1]?.region !== maintable[i].region" [attr.rowspan]="getNumberOfUnitsInRegion(data.region)">{{regionalPrices[maintable[i].region].price_cr | number: '1.2-2'}}</td>
         <td (mouseover)="data.unitIsHideEdit=false" (mouseleave)="data.unitIsHideEdit=true" style="min-width: 400px;">
           {{data.remarks}}
           <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.unitIsHideEdit"
