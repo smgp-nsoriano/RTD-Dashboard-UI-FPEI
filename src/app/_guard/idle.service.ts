@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 })
 export class IdleService implements OnDestroy {
 
-  private idleTimeout = 30 * 60 * 1000; // 5 minutes
+  private idleTimeout = 30 * 60 * 1000; // 30 minutes
 
   private activitySubscription: Subscription = new Subscription();
   private timerSubscription: Subscription = new Subscription();
