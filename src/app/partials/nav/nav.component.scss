@@ -1,3 +1,7 @@
+.custom-navbar {
+  background-color: #1f3b57; /* your preferred color */
+}
+
 .dropdown-toggle {
     &--no-arrow {
         &::after {
@@ -32,7 +36,7 @@
     z-index: 99;
     top: 0;
     right: 0;
-    background-color: #383c40;
+    background-color: #10283f;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;

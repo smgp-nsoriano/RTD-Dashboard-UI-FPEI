@@ -130,7 +130,7 @@
   border: 3.6px solid rgb(255, 254, 254) !important;
 }
 .current-interval {
-    background-color: #e40000;
+    background-color: #3a3268;
     color: white;
     td {
         padding: 0.1rem 0.1rem;
@@ -156,8 +156,8 @@
 }
 
 .flagged {
-    background-color: #ffd40e;
-    color: red !important;
+    background-color: #f4fffe  !important;
+    color: #ee1414 !important;
 }
 
 .btn {
@@ -228,4 +228,9 @@
   width: 23px !important;
   height: 23px !important;
   z-index: 999;
+}
+
+.btn-header{
+  background: #2c8143;
+  color: white;
 }

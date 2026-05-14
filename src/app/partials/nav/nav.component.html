@@ -1,13 +1,13 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark--lighter text-light border-bottom border-dark">
+<nav class="navbar navbar-expand-lg navbar-dark text-light border-bottom border-dark custom-navbar">
 
   <a class="navbar-brand" [routerLink]="['/home']" *ngIf="!IsCam && isOperator">
-    <img src="assets/images/RTDLogo.PNG" id="icon" alt="User Icon" width="60" height="55" />
-    <label class="ml-2">RTD DASHBOARD</label>
+    <img src="assets/images/FPEI-Logo.jpg" id="icon" alt="User Icon" width="150" height="55" style="border-radius: 8px;" />
+    <label class="ml-2">ENERGY TRADING</label>
   </a>
 
   <a class="navbar-brand" [routerLink]="['/trading']" *ngIf="!IsCam && !isOperator">
-    <img src="assets/images/RTDLogo.PNG" id="icon" alt="User Icon" width="60" height="55" />
-    <label class="ml-2">RTD DASHBOARD</label>
+    <img src="assets/images/FPEI-Logo.jpg" id="icon" alt="User Icon" width="150" height="55" style="border-radius: 8px;" />
+    <label class="ml-2">ENERGY TRADING</label>
   </a>
 
   <a class="navbar-brand" [routerLink]="['/ftphome']" *ngIf="IsCam">

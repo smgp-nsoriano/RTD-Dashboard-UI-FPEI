@@ -2126,7 +2126,7 @@ export class TraderDashboardComponent implements OnInit, OnDestroy {
       this.unitLuz = data['Luz'];
       this.unitViz = data['Vis'];
       this.unitMin = data['Min'];
-      this.portfolioCurrentInterval = this.unitLuz[0]['TimestampLabel'];
+      //this.portfolioCurrentInterval = this.unitMin[0]['TimestampLabel'];
 
       totalVis = 0;
       totalLuz = 0;

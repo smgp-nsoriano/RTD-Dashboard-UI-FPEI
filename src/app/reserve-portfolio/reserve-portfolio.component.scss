@@ -52,7 +52,7 @@
 }
 
 .table-header {
-  background-color: #e40000;
+  background-color: #2c8143;
   color: white;
   min-width: 80px;
   font-size: 5pt;
@@ -159,4 +159,9 @@
 .sched-req-mismatch {
   background-color: yellow;
   color: red !important; 
+}
+
+.bg-header{
+  background: #2c8143;
+  color: white;
 }

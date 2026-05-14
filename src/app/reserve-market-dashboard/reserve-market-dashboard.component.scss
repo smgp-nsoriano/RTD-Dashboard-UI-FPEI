@@ -36,7 +36,7 @@
   border: 3.6px solid rgb(255, 254, 254) !important;
 }
 .current-interval {
-    background-color: #e40000;
+    background-color: #3a3268;
     color: white;
     min-width: 80px;
     td {
@@ -64,8 +64,8 @@
 }
 
 .flagged {
-    background-color: #ffd40e;
-    color: red !important;
+  background-color: #2e7d32  !important;
+  color: #ffffff !important;
 }
 
 .btn {
@@ -148,4 +148,9 @@
 @keyframes blinkGreen {
   0% { background: red; }
   100% { background: green; }
+}
+
+.bg-header{
+  background: #346832;
+  color: white;
 }

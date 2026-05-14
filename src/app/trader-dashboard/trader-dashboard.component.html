@@ -31,8 +31,8 @@
       </div>
      </div>
     <div class="col-lg-7 col-md-6 col-sm-12 text-right text-warning">
-      <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'system-demand'">System Demand</button>
-      <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'system-demand'" (click)="TabActive('system-demand')">System Demand</button> | 
+      <!-- <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'system-demand'">System Demand</button> -->
+      <!-- <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'system-demand'" (click)="TabActive('system-demand')">System Demand</button> |  -->
       <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'reserve-market'">Reserve Market</button>
       <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'reserve-market'" (click)="TabActive('reserve-market')">Reserve Market</button> | 
       <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'reserve-req'">Reserve Requirements</button>
@@ -46,9 +46,9 @@
       <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'pbreason'">PB Reason</button>
       <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'pbreason'" (click)="TabActive('pbreason')" [disabled]="isPbReason != 'true'">PB Reason</button>
       <ng-container *ngIf="userPermission?.IsShowBidlogs">
-        |
-        <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'bidlogs'">Bid Logs</button>
-        <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'bidlogs'" (click)="TabActive('bidlogs')">Bid Logs</button>
+        
+        <!-- <button class="btn btn-default text-white font-weight-bold" *ngIf="dashboardType == 'bidlogs'">Bid Logs</button>
+        <button class="btn btn-default text-warning font-weight-bold" *ngIf="dashboardType != 'bidlogs'" (click)="TabActive('bidlogs')">Bid Logs</button> -->
       </ng-container>
     </div>
 
@@ -83,7 +83,7 @@
                         <h6>LEGEND :</h6> 
                       </div>
                       <div class="col-4">
-                        <div class="border border-1 border-white text-center bg-warning text-danger font-weight-bold" style="font-size: 18px;">NC</div>
+                        <div class="border border-1 border-white text-center flagged font-weight-bold" style="font-size: 18px;">NC</div>
                         <div class="border border-1 border-white text-center text-warning font-weight-bold" style="font-size: 18px;">ACTUAL</div>
                       </div>
                       <div class="col-8">
@@ -132,11 +132,11 @@
                           <th rowspan="2">PRICE Php/MWh</th>
                           <th colspan="2">
                             <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name == ''">
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name == ''">
                                 SELECT UNIT
                               </button>
           
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name !== ''" >
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1.name !== ''" >
                                 {{ currentUnit1.name }}
                               </button>
 
@@ -154,11 +154,11 @@
                           </th>
                           <th colspan="2">
                             <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name === ''">
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name === ''">
                                 SELECT UNIT
                               </button>
             
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name !== ''">
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2.name !== ''">
                                 {{ currentUnit2.name }}
                               </button>
             
@@ -173,13 +173,13 @@
                               </div>
                             </div>
                           </th>
-                          <th colspan="2">
+                          <!-- <th colspan="2">
                             <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name === ''">
+                              <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name === ''">
                                 SELECT UNIT
                               </button>
             
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name !== ''">
+                              <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3.name !== ''">
                                 {{ currentUnit3.name }}
                               </button>
             
@@ -196,11 +196,11 @@
                           </th>
                           <th colspan="2">
                             <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name === ''">
+                              <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name === ''">
                                 SELECT UNIT
                               </button>
             
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name !== ''">
+                              <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentUnit4.name !== ''">
                                 {{ currentUnit4.name }}
                               </button>
             
@@ -214,11 +214,11 @@
                                 </button>
                               </div>
                             </div>
-                          </th>
+                          </th> -->
                         </tr>
                         <tr>
                           <th>
-                            <button class="btn btn-sm btn-primary" style="width: 100%;" 
+                            <button class="btn btn-sm btn-warning" style="width: 100%;" 
                             (click)="OpenOverridModal(Override,currentUnit1.name)" 
                             [disabled]="isOverrideShow == 'false' || currentUnit1.name=='' || currentUnit1.name=='SELECT UNIT'">
                             <span *ngIf="currentUnit1.name == '13SMC_U01' || currentUnit1.name == '13SMC_U02'">
@@ -236,7 +236,7 @@
                             <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit1.name=='' || currentUnit1.name=='SELECT UNIT'">BID</button>
                           </th>
                           <th>
-                            <button class="btn btn-sm btn-primary" style="width: 100%;" 
+                            <button class="btn btn-sm btn-warning " style="width: 100%;" 
                             (click)="OpenOverridModal(Override,currentUnit2.name)" 
                             [disabled]="isOverrideShow == 'false' || currentUnit2.name=='' || currentUnit2.name=='SELECT UNIT'">
                             <span *ngIf="currentUnit2.name == '13SMC_U01' || currentUnit2.name == '13SMC_U02'">
@@ -253,8 +253,8 @@
                             </a>
                             <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit2.name=='' || currentUnit2.name=='SELECT UNIT'">BID</button>
                           </th>
-                          <th>
-                            <button class="btn btn-sm btn-primary" style="width: 100%;" 
+                          <!-- <th>
+                            <button class="btn btn-sm btn-warning" style="width: 100%;" 
                             (click)="OpenOverridModal(Override,currentUnit3.name)" 
                             [disabled]="isOverrideShow == 'false' || currentUnit3.name=='' || currentUnit3.name=='SELECT UNIT'">
                             <span *ngIf="currentUnit3.name == '13SMC_U01' || currentUnit3.name == '13SMC_U02'">
@@ -272,7 +272,7 @@
                             <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit3.name=='' || currentUnit3.name=='SELECT UNIT'">BID</button>
                           </th>
                           <th>
-                            <button class="btn btn-sm btn-primary" style="width: 100%;" 
+                            <button class="btn btn-sm btn-warning" style="width: 100%;" 
                             (click)="OpenOverridModal(Override,currentUnit4.name)" 
                             [disabled]="isOverrideShow == 'false' || currentUnit4.name=='' || currentUnit4.name=='SELECT UNIT'">
                             <span *ngIf="currentUnit4.name == '13SMC_U01' || currentUnit4.name == '13SMC_U02'">
@@ -288,16 +288,16 @@
                               BID
                             </a>
                             <button class="btn btn-sm btn-light" style="width: 100%;" disabled *ngIf="isShowBid=='false' || currentUnit4.name=='' || currentUnit4.name=='SELECT UNIT'">BID</button>
-                          </th>
+                          </th> -->
                         </tr>
                         <tr>
                           <th>
                             <div class="btn-group" style="width: 100% !important" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''" [disabled]="isShowPrice != 'true'">
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name === ''" [disabled]="isShowPrice != 'true'">
                                 SELECT UNIT
                               </button>
             
-                              <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name !== ''">
+                              <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnitPrice.name !== ''">
                                 {{ currentUnitPrice.name }}
                               </button>
             
@@ -316,23 +316,23 @@
                           <th class="text-warning">ACTUAL,MW</th>
                           <th>SCHED,MW</th>
                           <th class="text-warning">ACTUAL,MW</th>
-                          <th>SCHED,MW</th>
+                          <!-- <th>SCHED,MW</th>
                           <th class="text-warning">ACTUAL,MW</th>
                           <th>SCHED,MW</th>
-                          <th class="text-warning">ACTUAL,MW</th>
+                          <th class="text-warning">ACTUAL,MW</th> -->
                         </tr>
                       </thead>
                       <tbody>
                         <tr *ngFor="let data of dbValues; let i = index">
                           <td *ngIf="i==0" class="text-center" rowspan="4" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">HAP</td>
-                          <td *ngIf="i==4" class="text-center bg-danger" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
+                          <td *ngIf="i==4" class="text-center" style="background-color: #3a3268;writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">RTD</td>
                           
                           <td *ngIf="i&lt;4" class="text-center">{{data.TimestampLabel}}</td>
                           <td *ngIf="i&lt;4" class="text-center">{{data.PriceSched | number: '1.0-0'}}</td>
                           <td *ngIf="i&lt;4" colspan="2" class="text-center">{{data.U1Sched | number: '1.0-0'}}</td>
                           <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U2Sched | number: '1.0-0'}}</td>
-                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U3Sched | number: '1.0-0'}}</td>
-                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U4Sched | number: '1.0-0'}}</td>
+                          <!-- <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U3Sched | number: '1.0-0'}}</td>
+                          <td *ngIf="i&lt;4"  colspan="2" class="text-center">{{data.U4Sched | number: '1.0-0'}}</td> -->
   
                           <td *ngIf="i==4" class="current-interval">{{ getCurrentInterval(data.TimestampLabel) }}</td>
                           <td *ngIf="i==4" class="current-interval">{{data.PriceSched | number: '1.0-0'}}</td>
@@ -348,7 +348,7 @@
                               {{data.U2Status}}
                             </div>
                           </td>
-                          <td *ngIf="i==4" colspan="2" class="current-interval">
+                          <!-- <td *ngIf="i==4" colspan="2" class="current-interval">
                             {{data.U3Sched | number: '1.0-0'}}
                             <div class="badge bg-light text-danger data-status" *ngIf="currentUnit3.name!='' && currentUnit3.name!='SELECT UNIT'">
                               {{data.U3Status}}
@@ -359,7 +359,7 @@
                             <div class="badge bg-light text-danger data-status" *ngIf="currentUnit4.name!='' && currentUnit4.name!='SELECT UNIT'">
                               {{data.U4Status}}
                             </div>
-                          </td>
+                          </td> -->
                           
                           <td *ngIf="i==5" class="text-center" rowspan="10" style="writing-mode: vertical-rl; text-orientation: upright; width: 4%; vertical-align: middle !important;">COMPLIANCE</td>
                           <td *ngIf="i>4" class="text-center">{{data.TimestampLabel}}</td>
@@ -368,10 +368,10 @@
                           <td *ngIf="i>4" [class.actual]="data.U1IsLimit" [class.flagged]="data.U1IsLimit==false">{{data.U1Actual | number: '1.0-0'}}</td>
                           <td *ngIf="i>4">{{data.U2Sched | number: '1.0-0'}}</td>
                           <td *ngIf="i>4" [class.actual]="data.U2IsLimit" [class.flagged]="data.U2IsLimit==false">{{data.U2Actual | number: '1.0-0'}}</td>
-                          <td *ngIf="i>4">{{data.U3Sched | number: '1.0-0'}}</td>
+                          <!-- <td *ngIf="i>4">{{data.U3Sched | number: '1.0-0'}}</td>
                           <td *ngIf="i>4" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false">{{data.U3Actual | number: '1.0-0'}}</td>
                           <td *ngIf="i>4">{{data.U4Sched | number: '1.0-0'}}</td>
-                          <td *ngIf="i>4" [class.actual]="data.U4IsLimit" [class.flagged]="data.U4IsLimit==false">{{data.U4Actual | number: '1.0-0'}}</td>
+                          <td *ngIf="i>4" [class.actual]="data.U4IsLimit" [class.flagged]="data.U4IsLimit==false">{{data.U4Actual | number: '1.0-0'}}</td> -->
                         </tr>
                        
                       </tbody>
@@ -447,7 +447,7 @@
                 <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 mt-2">
                   <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                      <span class="input-group-text bg-danger text-light font-weight-bold" style="font-size: 18px;">INTERVAL </span>
+                      <span class="input-group-text btn-header text-light font-weight-bold" style="font-size: 18px;">INTERVAL </span>
                     </div>
                     <div class="input-group-prepend">
                       <span class="input-group-text bg-dark text-warning font-weight-bold" style="font-size: 24px;">{{portfolioCurrentInterval}}</span>
@@ -502,7 +502,7 @@
                  <div class="table-responsive">
                    <table class="table table-sm table-bordered">
                      <thead>
-                       <tr class="bg-danger">
+                       <tr class="btn-header">
                          <th style="width: 6%;">REGION</th>
                          <th style="width: 15%;">GENERATING UNIT</th>
                          <th style="width: 8%;">RTD, MW</th>
@@ -640,14 +640,14 @@
                 <table class="table table-sm table-bordered">
                   <thead>
                     <tr>
-                      <th style="width:12% !important" class="bg-danger">INTERVAL</th>
+                      <th style="width:12% !important; background-color: #3a3268;">INTERVAL</th>
                       <th colspan="2" style="width:22% !important">
                         <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name == ''">
+                          <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name == ''">
                             SELECT UNIT
                           </button>
       
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name !== ''">
+                          <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit1PB.name !== ''">
                             {{ currentUnit1PB.name }}
                           </button>
 
@@ -665,11 +665,11 @@
                       </th>
                       <th colspan="2" style="width:22% !important">
                         <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name == ''">
+                          <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name == ''">
                             SELECT UNIT
                           </button>
       
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name !== ''">
+                          <button class="btn btn-header font-weight-bold" ngbDropdownToggle *ngIf="currentUnit2PB.name !== ''">
                             {{ currentUnit2PB.name }}
                           </button>
 
@@ -685,7 +685,7 @@
                         </div>
                         
                       </th>
-                      <th colspan="2" style="width:22% !important">
+                      <!-- <th colspan="2" style="width:22% !important">
                         <div class="btn-group" style="width: 100% !important;" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
                           <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit3PB.name == ''">
                             SELECT UNIT
@@ -728,7 +728,7 @@
                           </div>
                         </div>
                         
-                      </th>
+                      </th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -748,7 +748,7 @@
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>
-                      <td style="width:5% !important" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">{{data.U3Actual | number: '1.0-2'}}</td>
+                      <!-- <td style="width:5% !important" [class.actual]="data.U3IsLimit" [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">{{data.U3Actual | number: '1.0-2'}}</td>
                       <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true"   [class.flagged]="data.U3IsLimit==false && data.U3Actual != null">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U3Remarks}}</span>
                         <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit && currentUnit3PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,data.TimestampLabel,data.U3Remarks,false,'U3',i)">
@@ -761,9 +761,9 @@
                         <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit && currentUnit4PB.name !== ''" (click)="OpenPBRemarksModal(PbRemarks,currentUnit4PB.name,data.TimestampLabel,data.U4Remarks,false,'U4',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
-                      </td>
+                      </td> -->
                     </tr>
-                    <tr *ngFor="let data of genRemarks; let i = index" class="bg-danger">
+                    <tr *ngFor="let data of genRemarks; let i = index" style="background-color: #3a3268;">
                       <td>General Remarks</td>
                       <td (mouseover)="data.U1IsHideEdit=false" (mouseleave)="data.U1IsHideEdit=true" colspan="2">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U1Remarks}}</span>
@@ -777,7 +777,7 @@
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
                       </td>
-                      <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true" colspan="2">
+                      <!-- <td (mouseover)="data.U3IsHideEdit=false" (mouseleave)="data.U3IsHideEdit=true" colspan="2">
                         <span style="font-size: small !important; font-weight: normal !important;">{{data.U3Remarks}}</span>
                         <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U3IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit3PB.name,'',data.U3Remarks,true,'U3',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
@@ -788,7 +788,7 @@
                         <button class="btn btn-sm btn-primary pb-edit" *ngIf="!data.U4IsHideEdit" (click)="OpenPBRemarksModal(PbRemarks,currentUnit4PB.name,'',data.U4Remarks,true,'U4',i)">
                         <fa-icon [icon]="faEdit" size="sm"></fa-icon>
                         </button>
-                      </td>
+                      </td> -->
                     </tr>
                   </tbody>
                 </table>

@@ -189,6 +189,7 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
 
 
   ngOnInit() {
+    this.RefreshData();
     let sessStore = JSON.parse(sessionStorage.getItem("reserveMarket"))
     if (sessStore !== null) {
       if (sessStore['region']) {
@@ -220,7 +221,7 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
     
-    this.RefreshData();
+   
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');

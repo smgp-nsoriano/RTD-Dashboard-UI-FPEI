@@ -199,8 +199,8 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
       this.SetTimeFromServer();
     }, 15000);
     
-    this.GetInterval();
-
+    //this.GetInterval();
+    this.RefreshDashboard();
   }
 
   ngAfterViewInit(){
@@ -261,31 +261,13 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
 
   GetInterval() {
     this.ReservePortfolioService.getUnitRegion().subscribe(data => {
-      this.interval = data['Luz'][0].TimestampLabel
+      //this.interval = data['Min'][0].TimestampLabel
       this.RefreshDashboard();
     });
   }
 
   displayNames(unitNumber:string) {
     let dictionary = {
-      "01CNCEP_BAT": "CONCEPCION",
-      "01LAMAO_BAT": "LAMAO",
-      "01LIMAY_BAT": "LIMAY",
-      "01MAGAPIT_BAT": "MAGAPIT",
-      "01MSINLO_BAT": "MASINLOC",
-      "01SNMAN_BAT": "SAN MANUEL",
-      "04ORMOC_BAT": "ORMOC",
-      "05TOLEDO_BAT": "TOLEDO",
-      "06KABAN_BAT": "KABANKALAN",
-      "07UBAY_BAT": "UBAY",
-      "11JASA_BAT": "JASAAN",
-      "11VILLA_BAT": "VILLANUEVA",
-      "13MACO_BAT": "MACO",
-      "13MALITA_BAT": "MALITA",
-      "01GAMU_BAT": "GAMU",
-      "03LUMBAN_BAT": "LUMBAN",
-      "13SMC_U01": "MALITA CFB U1",
-      "13SMC_U02": "MALITA CFB U2",
       "09SANGALI_BAT": "SANGALI"
     }
     
@@ -384,23 +366,23 @@ export class ReservePortfolioComponent implements OnInit,AfterViewInit,OnDestroy
       });
   
       // ✅ Ensure Magapit is always in the table
-      let magapitIndex = this.maintable.findIndex(el => el.unitNumber === "01MAGAPIT_BAT");
-      if (magapitIndex === -1) {
-        this.maintable.push({
-          ...this.maintableRow,
-          unitNumber: "01MAGAPIT_BAT",
-          unitDisplayName: this.displayNames("01MAGAPIT_BAT"),
-          rtd_en: null,
-          rtd_ru: null,
-          rtd_rd: null,
-          rtd_cr: null,
-          actual: null,
-          mop: null,
-          price_en: null,
-          remarks: null,
-          region: 0, // or whichever region Magapit belongs to
-        });
-      }
+      // let magapitIndex = this.maintable.findIndex(el => el.unitNumber === "01MAGAPIT_BAT");
+      // if (magapitIndex === -1) {
+      //   this.maintable.push({
+      //     ...this.maintableRow,
+      //     unitNumber: "01MAGAPIT_BAT",
+      //     unitDisplayName: this.displayNames("01MAGAPIT_BAT"),
+      //     rtd_en: null,
+      //     rtd_ru: null,
+      //     rtd_rd: null,
+      //     rtd_cr: null,
+      //     actual: null,
+      //     mop: null,
+      //     price_en: null,
+      //     remarks: null,
+      //     region: 0, // or whichever region Magapit belongs to
+      //   });
+      // }
     }, err => {
       // do nothing
     });

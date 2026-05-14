@@ -2,8 +2,8 @@
   window.__env = window.__env || {};
 
   // API URL
-  window.__env.apiUrl = 'https://smcgphtrading.sanmiguel.com.ph/TradingAPIV2_Staging';
-  window.__env.apiUrlV1 = 'https://smcgphtrading.sanmiguel.com.ph/';
+  window.__env.apiUrl = 'https://203.177.86.161/tradingapifpei';
+  window.__env.apiUrlV1 = 'https://203.177.86.161/';
 
   // Whether or not to enable debug mode
   // Setting this to false will disable console output
