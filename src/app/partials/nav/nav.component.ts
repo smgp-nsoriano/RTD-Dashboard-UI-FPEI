@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { interval, Observable, observable } from 'rxjs';
-import { faCog, faUserCircle, faList, faSignOutAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faUserCircle, faList, faSignOutAlt, faSpinner,faBars } from '@fortawesome/free-solid-svg-icons';
 import { UsersService } from 'src/app/users/users.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -25,6 +25,7 @@ export class NavComponent implements OnInit {
   faList = faList;
   faSignOutAlt = faSignOutAlt;
   faSpinner = faSpinner;
+  faBars=faBars;
   navShow:boolean;
 
   currentUserInfo;

@@ -36,6 +36,8 @@ export class DashboardComponent implements OnInit, OnDestroy{
   isOperator: boolean;
   permissionID: any;
   errorMessage:any;
+  singleForecast:any
+  rrStandard:any
   operatorUnit;
   faClock=faClock;
   faTimesCircle=faTimesCircle;
@@ -45,6 +47,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
     title: '',
     chart: {
       backgroundColor: 'transparent',
+      reflow: true,
+      width: null,
+      height: null,
       style: {
         fontFamily: 'Roboto Condensed'
       }
@@ -77,13 +82,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
       labels: {
          format: '{value} MW',
          style: {
-           color: 'yellow',
+           color: 'black',
          }
       },
       title: {
          text: '',
          style: {
-           color: 'yellow',
+           color: 'black',
          }
       },
       
@@ -94,7 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
       gridLineWidth: 1,
       labels: {
         style: {
-          color: '#fff'
+          color: 'black'
         }
       },
     },
@@ -120,10 +125,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
       align: 'right',
       verticalAlign: 'top',
       itemStyle: {
-        color: '#fff'
+        color: 'black'
       },
       itemHoverStyle: {
-        color: '#fff'
+        color: 'black'
       }
     },
 
@@ -134,6 +139,9 @@ export class DashboardComponent implements OnInit, OnDestroy{
     title: '',
     chart: {
       backgroundColor: 'transparent',
+      reflow: true,
+      width: null,
+      height: null,
       style: {
         fontFamily: 'Roboto Condensed'
       }
@@ -144,7 +152,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
       gridLineWidth: 1,
       labels: {
         style: {
-          color: '#fff'
+          color: 'black'
         }
       },
     },
@@ -153,13 +161,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
          labels: {
             format: '{value} MW',
             style: {
-              color: 'yellow',
+              color: 'black',
             }
          },
          title: {
             text: '',
             style: {
-              color: 'yellow',
+              color: 'black',
             }
          },
          
@@ -168,13 +176,13 @@ export class DashboardComponent implements OnInit, OnDestroy{
         labels: {
            format: '{value} Php',
            style: {
-            color: 'yellow',
+            color: 'black',
            }
         },
         title: {
            text: '',
            style: {
-            color: 'yellow',
+            color: 'black',
            }
         },
         opposite: true
@@ -185,10 +193,10 @@ export class DashboardComponent implements OnInit, OnDestroy{
      align: 'right',
      verticalAlign: 'top',
      itemStyle: {
-       color: '#fff'
+       color: 'black'
      },
      itemHoverStyle: {
-       color: '#fff'
+       color: 'black'
      }
    },
 
@@ -396,9 +404,11 @@ export class DashboardComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.IsNetLoad = false;
     this.isWithDecimal = false; 
-    this.bodyTag.classList.add('bg-dark');
+    
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.current = [];
+    this.singleForecast = {};
+    this.rrStandard = {};
     this.pasts = [];
     this.forecasts = [];
     this.getData();
@@ -701,6 +711,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
 
     this.dashboardService.getAheadRTD(+this.currentSite.id, +this.currentUnit.id).subscribe(data => {
       this.forecasts = data;
+      this.singleForecast = data[0];
     }, error => {
       console.log(error.message);
     });
@@ -751,7 +762,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
         this.HADseriesOptions.push(
           {
             name: 'HAP',
-            color: 'yellow',
+            color: 'red',
             data: rtd
           },
         );
@@ -781,7 +792,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
         this.DAHseriesOptions.push(
           {
             name: 'DAP',
-            color: 'yellow',
+            color: 'red',
             data: rtd,
           });
       });
@@ -856,8 +867,14 @@ export class DashboardComponent implements OnInit, OnDestroy{
       this.currentSite.name = unit.SiteCode;
     }
     this.getData();
-   
+    this.getRRStandard(this.currentUnit.name);
     this.setData();
+  }
+
+  getRRStandard(unitNumber){
+    this.dashboardService.getRRStandard(unitNumber).subscribe(data=>{
+      this.rrStandard = data;
+    });
   }
 
   getCurrentUserInfo() {
@@ -972,9 +989,7 @@ export class DashboardComponent implements OnInit, OnDestroy{
     return wholeNumber;
   }
 
-
   ngOnDestroy() {
-    this.bodyTag.classList.remove('bg-dark');
     this.unsubscribe.next();
     this.unsubscribe.complete();
     if(this.timerDT) clearInterval(this.timerDT);

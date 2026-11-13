@@ -2,410 +2,255 @@
   <app-nav></app-nav>
 </header>
 
+<div class="top-header">
+  <div class="unit">
 
-<div class="alert alert-light alert-dismissible fade show alarm-top text-center" role="alert" *ngIf="alarmRTDMessage != null">
-  <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
-  <h5 class="text-danger">{{alarmRTDMessage}}</h5>
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="stopAlarm()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+    <div class="row">
+      <div class="col-12 mt-3">
+        <div class="btn-group mr-3" *ngIf ="!isOperator">
+          <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
+            <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name === ''">
+              SELECT PLANT
+            </button>
 
-<main class="container-fluid py-3">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card bg-dark border-dark text-light">
-        <div class="card-body">
-          <div class="row g-4">
-            <div class="col-md-8">
-              <div class="row g-3">
-                <div class="col-md-4">
-                  <div class="col-sm-6 col-md-4">
-                    <div class="d-flex align-items-center text-warning current-time mb-3 ">
-                      <span class="small">{{ FormatClock() }}</span>
-                      <button class="btn btn-outline-success ms-2 text-white" (click)="ManualRefresh()">
-                        <fa-icon [icon]="faRetweet" size="lg"></fa-icon>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-12 mt-3">
-                      <div class="btn-group mr-3" *ngIf ="!isOperator">
-                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" >
-                          <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name === ''">
-                            SELECT PLANT
-                          </button>
-        
-                          <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name !== ''">
-                            {{ currentSite.name }}
-                          </button>
-        
-                          <div class="dropdown-menu" ngbDropdownMenu>
-                            <button class="dropdown-item font-weight-bold"
-                              ngbDropdownItem
-                              *ngFor="let site of sites; let i = index"
-                              (click)="selectedSite(site.SiteID, false)"
-                              [class.active]="site.SiteID === currentSite.id">
-                              {{ site.SiteName }}
-                            </button>
-                          </div>
-                        </div>
-        
-                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" *ngIf="units !== 'undefined'">
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name === ''">
-                            SELECT UNIT
-                          </button>
-        
-                          <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name !== ''">
-                            {{ currentUnit.name }}
-                          </button>
-        
-                          <div class="dropdown-menu" ngbDropdownMenu>
-                            <button class="dropdown-item font-weight-bold"
-                              ngbDropdownItem
-                              *ngFor="let unit of units; let i = index"
-                              (click)="selectedUnit(unit.UnitID, false, null)"
-                              [class.active]="unit.UnitID === currentUnit.id">
-                              {{ unit.UnitNumber }}
-                            </button>
-                          </div>
-                        </div> 
-                      </div>
-                      <div class="btn-group mr-3" *ngIf="isOperator">
-                        <h3 class="text-warning font-weight-bold">UNIT : {{ operatorUnit?.UnitNumber }}</h3>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- LEGEND -->
-                  <div class="row mt-5">
-                    <div class="col-sm-12 mb-1">
-                      LEGEND:
-                    </div>
-  
-                    <div class="col-12 mt-1">
-                      <div class="p-2 mb-1 text-center font-weight-bold bg-current" style="font-size: 18px;">
-                        CURRENT INTERVAL
-                      </div>
-                    </div>
-                    <div class="col-12 mt-1">
-                      <div class="p-2 mb-1 text-center font-weight-bold bg-warning text-danger" style="font-size: 18px;">
-                        ACTUAL MW OUTSIDE LIMITS
-                      </div>
-                    </div>
-                    <div class="col-12 mt-1">
-                      <div class="p-2 mb-1 text-center font-weight-bold text-warning border border-white" style="font-size: 18px;">
-                        ACTUAL MW WITHIN LIMITS
-                      </div>
-                    </div>
-                    <div class="col-12 ml-2 mt-3">
-                      <h5><span class="badge bg-light text-danger legend-status" >R</span> - RTD in use</h5>
-                      <h5><span class="badge bg-light text-danger legend-status" >H</span> - HAP in use</h5>
-                      <h5><span class="badge bg-light text-danger legend-status" >O</span> - Override in use</h5>
-                      <h5><span class="badge bg-light text-danger legend-status" >M</span> - MOT in use</h5>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- First Block if isBat is True -->
-                 <!-- testing for merging -->
-                <div *ngIf="isBat" class="col-8 mx-auto mb-2">
-                  <!-- Timestamp Box -->
-                  <div
-                    class="border border-white text-center font-weight-bold bg-current border-4"
-                    style="height: 120px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                    {{ formatDate(current?.TimeStamp) }}
-                  </div>
-    
-                  <!-- ENERGY Box -->
-                  <div
-                    class="border-4 border border-white text-center font-weight-bold parent-container"
-                    [class.bg-current]="!isRTDBlinking"
-                    [class.bg-warning]="isRTDBlinking"
-                    [ngStyle]="{
-                      height: '280px',
-                      verticalAlign: 'middle',
-                      fontSize: '220px',
-                      fontFamily: '\'Open Sans\', sans-serif',
-                      lineHeight: '1.2',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap'
-                    }">
-                    <div class="data-label">ENERGY</div>
-                    <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
-                
-                    <!-- Badge: Data Status -->
-                    <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2" *ngIf="currentUnit.name != ''">
-                      {{ current?.DataStatus }}
-                    </div>
-                
-                    <!-- Badge: Decimal -->
-                    <div class="badge bg-light text-danger data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">
-                      {{ current?.RTDValue != null ? '.' + getDecimal(current?.RTDValue) : '' }}
-                    </div>
-                  </div>
-                
-                  <!-- Reserve Blocks -->
-                  <div class="d-flex">
-                
-                    <!-- RR-UP Box -->
-                     <!-- testing for merging -->
-                     <div
-                     class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
-                     [ngClass]="{
-                       'blink-green': isRRUBlinking,
-                       'bg-current': !isRRUBlinking
-                     }"
-                     style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                     <div class="data-label">RR-UP</div>
-                     <span *ngIf="isWithDecimal">{{ current?.RRU == null ? '' : getWholeNumber(current?.RRU) }}</span>
-                     <span *ngIf="!isWithDecimal">{{ current?.RRU == null ? '' : (current?.RRU | number:'1.0-0') }}</span>
-                     <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RUDataStatus }}</div>
-                     <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.RRU == null ? '' : getDecimal(current?.RRU) }}</div>
-                   </div>
-                
-                    <!-- RR-DOWN Box -->
-                    <!-- testing for merging -->
-                    <div
-                      class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
-                      [ngClass]="{
-                        'blink-green': isRRDBlinking,
-                        'bg-current': !isRRDBlinking
-                      }"
-                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                      <div class="data-label">RR-DOWN</div>
-                      <span *ngIf="isWithDecimal">{{ current?.RRD == null ? '' :getWholeNumber(current?.RRD) }}</span>
-                      <span *ngIf="!isWithDecimal">{{ current?.RRD == null ? '' : (current?.RRD | number:'1.0-0') }}</span>
-                      <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.RDDataStatus }}</div>
-                      <div class="badge bg-light text-danger reserve-data-decimal" *ngIf="currentUnit.name != '' && isWithDecimal">.{{ current?.RRD == null ? '' : getDecimal(current?.RRD) }}</div>
-                    </div>
-                
-                    <!-- CONTINGENCY Box -->
-                    <!-- testing for merging -->
-                    <div
-                      class="flex-grow-1 border border-white text-center font-weight-bold border-4 parent-container"
-                      [ngClass]="{
-                        'blink-green': isContingencyBlinking,
-                        'bg-current': !isContingencyBlinking
-                      }"
-                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                      <div class="data-label">CONTINGENCY</div>
-                      <span *ngIf="isWithDecimal">{{ current?.Contingency === null || current?.Contingency === undefined ? '' : getWholeNumber(current?.Contingency) }}</span>
-                      <span *ngIf="!isWithDecimal">{{ current?.Contingency == null ? '' : (current?.Contingency | number:'1.0-0') }}</span>
-                      <div class="badge bg-light text-danger reserve-data-status" *ngIf="currentUnit.name != ''">{{ current?.ConDataStatus }}</div>
-                      <div class="badge bg-light text-danger reserve-data-decimal"*ngIf="currentUnit.name != '' && isWithDecimal && current?.Contingency !== null && current?.Contingency !== undefined"> .{{ getDecimal(current?.Contingency) }}
-                 </div>
-                    </div>
-                  </div>
-                </div>
-    
-                <!-- Second Block if isBat is false -->
-                <div *ngIf="!isBat" class="col-8 mx-auto mb-2">
-                  <!-- Timestamp Box -->
-                  <div class="border border-white text-center font-weight-bold bg-current border-4"
-                      style="height: 130px; vertical-align: middle; font-size: 85px; font-family: 'Open Sans', sans-serif;">
-                    {{ formatDate(current?.TimeStamp) }}
-                  </div>
+            <button class="btn btn-danger font-weight-bold" ngbDropdownToggle *ngIf="currentSite.name !== ''">
+              {{ currentSite.name }}
+            </button>
 
-                  <!-- RTDValue BOX -->
-                  <div class="border-4 border-white text-center font-weight-bold parent-container"
-                    [class.bg-current]="!isRTDBlinking"
-                    [class.bg-warning]="isRTDBlinking"
-                    [ngStyle]="{
-                      height: IsNetLoad ? '300px' : '400px',
-                      verticalAlign: 'middle',
-                      fontSize: '280px',
-                      fontFamily: '\'Open Sans\', sans-serif',
-                      position: 'relative',
-                      lineHeight: IsNetLoad ? '1' : null,
-                      overflow: IsNetLoad ? 'hidden' : null,
-                      whiteSpace: IsNetLoad ? 'nowrap' : null
-                      
-                    }">
-
-                    <!-- <span *ngIf="isWithDecimal">{{  getWholeNumber(current?.RTDValue) }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue | number: '1.0-0' }}</span> -->
-
-                    <span *ngIf="isWithDecimal">{{ current?.RTDValue != null ? getWholeNumber(current?.RTDValue) : '' }}</span>
-                    <span *ngIf="!isWithDecimal">{{ current?.RTDValue != null ? (current?.RTDValue | number:'1.0-0') : '' }}</span>
-
-                    <!-- BADGE DATA STATUS - UPPER RIGHT -->
-                    <div class="badge bg-light text-danger data-status position-absolute top-0 end-0 m-2"
-                      *ngIf="currentUnit.name !== ''">
-                      {{ current?.DataStatus }}
-                    </div>
-
-                    <!-- BADGE DECIMAL PLACES -->
-                    <div class="badge bg-light text-danger data-decimal"
-                    *ngIf="currentUnit.name != '' && isWithDecimal && current?.RTDValue != null">
-                      {{ getDecimal(current?.RTDValue) }}
-                    </div>
-                  </div>
-
-                  <!-- CURRENT NET LOAD -->
-                  <div *ngIf="isNetloadUnit() && IsNetLoad" 
-                  class="border border-white border-4 d-flex" 
-                  style="height: 90px; font-family: 'Open Sans', sans-serif; font-weight: bold; font-size: 20px;">
-
-                  <div style="flex: 2; background: white; color: #3a3268; display: flex; align-items: center; justify-content: center;font-size: 2vw;">
-                    Current Net Load:
-                  </div>
-                  <div
-                    [ngStyle]="current?.NetLoadValue == null ? {
-                      'font-weight': 'bold',
-                      'font-size': '30px',
-                      'font-family': 'Courier New'
-                    } : {}"
-                    style="flex: 2; background: #3a3268; font-size: 60px; color: #f4f9ff; display: flex; align-items: center; justify-content: center;">
-                    {{ current?.NetLoadValue != null ? (current.NetLoadValue | number: '1.2-2') : 'I/O Timeout' }}
-                  </div>
-                </div>
-                  
-                </div>  
-              </div>
-            </div>
-            
-            <div class="col-12 col-md-4"> <!-- Ensure full width on mobile -->
-              <div class="row align-items-center h-100 ms-3">
-                
-                <!-- Hour Ahead Chart -->
-                <div class="col-sm-12 border border-white p-2 border-4 d-flex flex-column">
-                  <h4 class="text-warning font-weight-bold">HOUR AHEAD</h4>
-                  <highcharts-chart
-                    [Highcharts]="Highcharts"
-                    [constructorType]="'chart'"
-                    [options]="HADOptions"
-                    [(update)]="updateFlag"
-                    [oneToOne]="true"
-                    class="highcharts-container"
-                    style="width: 100%; height: 200px; display: block;"></highcharts-chart>
-                </div>
-            
-                <!-- Day Ahead Chart -->
-                <div class="col-sm-12 border border-white p-2 border-4 d-flex flex-column">
-                  <h4 class="text-warning font-weight-bold">DAY AHEAD</h4>
-                  <highcharts-chart
-                    [Highcharts]="Highcharts"
-                    [constructorType]="'chart'"
-                    [options]="DAHOptions"
-                    [(update)]="updateFlag"
-                    [oneToOne]="true"
-                    class="highcharts-container"
-                    style="width: 100%; height: 200px; display: block;"></highcharts-chart>
-                </div>
-              </div>
+            <div class="dropdown-menu" ngbDropdownMenu>
+              <button class="dropdown-item font-weight-bold"
+                ngbDropdownItem
+                *ngFor="let site of sites; let i = index"
+                (click)="selectedSite(site.SiteID, false)"
+                [class.active]="site.SiteID === currentSite.id">
+                {{ site.SiteName }}
+              </button>
             </div>
           </div>
-          <div class="row align-items-center h-100 mt-3">
-            <div class="table-responsive">
-              <!-- lower hap-actual table for BESS units -->
-              <table *ngIf="isBat" class="table table-sm table-bordered">
-                <thead>
-                  <tr>
-                    <td class="text-center">Schedule</td>
-                    <td *ngFor="let past of pasts" class="text-center">
-                      {{ formatDate(past.TimeStamp) }}
-                    </td>
-                    <td class="text-center">INTERVAL</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center">
-                      {{ formatDate(forecast.TimeStamp) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">RU</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RRU | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center" rowspan="4">HAP →</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ forecast.RRU | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">RD</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RRD | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center">HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ forecast.RRD | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">CR</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.Contingency | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center">HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ forecast.Contingency | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">EN</td>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;" >
-                      {{ past.RTDValue | number: '1.0-0' }}
-                    </td>
-                    <!-- <td class="text-center" >HAP →</td> -->
-                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                      {{ forecast.RTDValue | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">ACTUAL</td>
-                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false" style="font-size: 2.8em !important;" >
-                      {{ past.ActualValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center actual">← ACTUAL</td>
-                  </tr>
-                </thead>
-              </table>
-              <!-- lower hap-actual table for generator units -->
-              <table *ngIf="!isBat" class="table table-sm table-bordered">
-                <thead>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center">
-                      {{ formatDate(past.TimeStamp) }}
-                    </td>
-                    <td class="text-center">INTERVAL</td>
-                    <td *ngFor="let forecast of forecasts" class="text-center">
-                      {{ formatDate(forecast.TimeStamp) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center" style="font-size: 2.8em !important;">
-                      {{ past.RTDValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center">HAP ></td>
-                    <td *ngFor="let forecast of forecasts" class="text-center" rowspan="2" style="font-size: 5em !important;">
-                      {{ forecast.RTDValue | number: '1.0-0' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td *ngFor="let past of pasts" class="text-center" [class.actual]="past.IsLimit" [class.flagged]="past.IsLimit==false"
-                      style="font-size: 2.8em !important;">
-                      {{ past.ActualValue | number: '1.0-0' }}
-                    </td>
-                    <td class="text-center actual">&lt; ACTUAL</td>
-                  </tr>
-                </thead>
-              </table>
+
+          <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown" *ngIf="units !== 'undefined'">
+            <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name === ''">
+              SELECT UNIT
+            </button>
+
+            <button class="btn btn-warning font-weight-bold" ngbDropdownToggle *ngIf="currentUnit.name !== ''">
+              {{ currentUnit.name }}
+            </button>
+
+            <div class="dropdown-menu" ngbDropdownMenu>
+              <button class="dropdown-item font-weight-bold"
+                ngbDropdownItem
+                *ngFor="let unit of units; let i = index"
+                (click)="selectedUnit(unit.UnitID, false, null)"
+                [class.active]="unit.UnitID === currentUnit.id">
+                {{ unit.UnitNumber }}
+              </button>
             </div>
+          </div> 
+        </div>
+        <div *ngIf="isOperator">
+          UNIT : {{ operatorUnit?.UnitNumber }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="interval">Current Interval: {{ formatDate(current?.TimeStamp) }}H 
+    <button class="btn btn-default btn-lg ms-2 text-success" (click)="ManualRefresh()">
+        <fa-icon [icon]="faRetweet" size="2x">  
+    </fa-icon>
+  </button></div>
+  <div class="timer">{{ FormatClock() }}</div>
+</div>
+
+<!-- TOP PANELS -->
+<div class="dashboard-grid">
+
+  <div class="panel">
+      <div class="panel-title">Energy</div>
+
+      <div class="panel-content">
+          <div class="label-box">
+              Capacity<br>(MW)
+          </div>
+
+          <div class="value-box-header">
+              <div class="schedule-label">Schedule</div>
+          </div>
+
+          <div class="label-box-value">
+              
+          </div>
+
+          <div class="value-box">
+            <div class="schedule-value">{{ current?.RTDValue != null ? (current?.RTDValue | number:'1.1-1') : '' }}</div>
+          </div>
+      </div>
+  </div>
+
+  <div class="panel">
+      <div class="panel-title">Regulation Up (Ru)</div>
+
+      <div class="panel-content">
+          <div class="label-box">
+              Capacity<br>(MW)
+          </div>
+
+          <div class="value-box-header">
+              <div class="schedule-label">Schedule</div>
+              
+          </div>
+
+          <div class="label-box-value">
+            {{rrStandard.AS_cpblt_RR|number:'1.1-1'}}
+          </div>
+
+          <div class="value-box">
+            <div class="schedule-value">
+              {{ current?.RRU == null ? '' : current?.RRU  | number:'1.1-1'}}
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="panel">
+      <div class="panel-title">Regulation Down (Rd)</div>
+
+      <div class="panel-content">
+          <div class="label-box">
+              Capacity<br>(MW)
+          </div>
+
+          <div class="value-box-header">
+              <div class="schedule-label">Schedule</div>
+              
+          </div>
+
+          <div class="label-box-value">
+              {{rrStandard.AS_cpblt_RR|number:'1.1-1'}}
+          </div>
+
+          <div class="value-box">
+            <div class="schedule-value">
+              {{ current?.RRD == null ? '' : current?.RRD  | number:'1.1-1'}}
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="panel">
+      <div class="panel-title">Contingency (Cr)</div>
+
+      <div class="panel-content">
+        <div class="label-box">
+            Capacity<br>(MW):
+        </div>
+
+        <div class="value-box-header">
+            <div class="schedule-label">Schedule</div>
+        </div>
+
+        <div class="label-box-value">
+          {{rrStandard.AS_cpblt_CR|number:'1.1-1'}}
+        </div>
+
+        <div class="value-box">
+          <div class="schedule-value">
+            {{ current?.Contingency == null ? '' : current?.Contingency | number:'1.1-1'}}
           </div>
         </div>
     </div>
   </div>
+
+</div>
+
+<!-- PROJECTIONS -->
+<div class="projection-grid">
+
+  <div class="projection-card">
+      <div class="projection-title">Projection for En</div>
+      <div class="projection-time">{{formatDate(singleForecast.TimeStamp)}}H</div>
+      <div class="projection-value">
+        {{singleForecast.RTDValue | number: '1.1-1'}}
+      </div>
   </div>
-</main>
 
-
-
-<ng-template #alarmModal let-modal>
-  <div class="modal-body text-center" style="background-color: #f4f9ff;">
-    <img src="assets/images/alarm.gif" id="icon" alt="User Icon" width="130" height="100" class="img-thumbnail" />
-    <h5 class="mt-1">{{alarmMessage}}</h5>
-    <h5 class="mt-1">{{alarmRTDMessage}}</h5>
-    <button (click)="stopAlarm()" class="btn btn-danger ml-2" *ngIf="isAcknowledgeAlarm"> <fa-icon [icon]="faTimesCircle" size="sm"></fa-icon> STOP ALARM</button>
+  <div class="projection-card">
+      <div class="projection-title">Projection for Ru</div>
+      <div class="projection-time">{{formatDate(singleForecast.TimeStamp)}}H</div>
+      <div class="projection-value">
+        {{singleForecast.RRU | number: '1.1-1'}}
+      </div>
   </div>
-</ng-template>
+
+  <div class="projection-card">
+      <div class="projection-title">Projection for Rd</div>
+      <div class="projection-time">{{formatDate(singleForecast.TimeStamp)}}H</div>
+      <div class="projection-value">
+        {{singleForecast.RRD | number: '1.1-1'}}
+      </div>
+  </div>
+
+  <div class="projection-card">
+      <div class="projection-title">Projection for Cr</div>
+      <div class="projection-time">{{formatDate(singleForecast.TimeStamp)}}H</div>
+      <div class="projection-value">
+        {{singleForecast.Contingency | number: '1.1-1'}}
+      </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom-grid">
+
+  <!-- ACTUAL -->
+  <div class="bottom-card">
+      <div class="bottom-title">Actual</div>
+
+      <div class="actual-grid">
+           <!-- TIME -->
+          <div class="time-cell text-center" *ngFor="let past of pasts| slice:0:5">
+              {{ formatDate(past.TimeStamp) }}H
+          </div>
+
+          <!-- VALUE -->
+          <div class="actual-cell text-center" *ngFor="let past of pasts| slice:0:5">
+              {{ past.ActualValue | number: '1.1-1' }}
+          </div>
+      </div>
+  </div>
+
+  <!-- HOUR AHEAD -->
+  <div class="bottom-card">
+      <div class="bottom-title">Hour-Ahead</div>
+
+      <div class="chart-placeholder">
+        <highcharts-chart
+        [Highcharts]="Highcharts"
+        [constructorType]="'chart'"
+        [options]="HADOptions"
+        [(update)]="updateFlag"
+        [oneToOne]="true"
+        class="highcharts-container"
+        style="width: 100%; display: block;"></highcharts-chart>
+      </div>
+  </div>
+
+  <!-- DAY AHEAD -->
+  <div class="bottom-card">
+      <div class="bottom-title">Day-ahead</div>
+
+      <div class="chart-placeholder">
+        <highcharts-chart
+        [Highcharts]="Highcharts"
+        [constructorType]="'chart'"
+        [options]="DAHOptions"
+        [(update)]="updateFlag"
+        [oneToOne]="true"
+        class="highcharts-container"
+        style="width: 100%; display: block;"></highcharts-chart>
+      </div>
+  </div>
+
+</div>

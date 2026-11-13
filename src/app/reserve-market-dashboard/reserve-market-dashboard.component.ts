@@ -7,6 +7,8 @@ import { EventService } from '../trader-dashboard/EventService';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { keys } from 'highcharts';
+import { faRetweet } from '@fortawesome/free-solid-svg-icons';
+import { TraderDashboardService } from '../trader-dashboard/trader-dashboard.service';
 @Component({
   selector: 'app-reserve-market-dashboard',
   templateUrl: './reserve-market-dashboard.component.html',
@@ -14,8 +16,15 @@ import { keys } from 'highcharts';
 })
 export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterViewInit{
   private destroy$ = new Subject<void>();
-   constructor(private eventService: EventService,private RMDashboardService: ReserveMarketDashboardServiceService, private userService: UsersService, private modalService: NgbModal,) { }
-   isAlarmDisable:boolean;
+  bodyTag: HTMLBodyElement = document.getElementsByTagName('body')[0];
+
+  constructor(private eventService: EventService,
+    private RMDashboardService: ReserveMarketDashboardServiceService,
+    private userService: UsersService,
+    private modalService: NgbModal,
+    private traderDashboardService:TraderDashboardService) { }
+
+  isAlarmDisable:boolean;
   tempValue: any;
   timeoutId:any;
   isWithAlarmDisable:string;
@@ -28,7 +37,8 @@ export class ReserveMarketDashboardComponent implements OnInit, OnDestroy,AfterV
   timerAlarmOutsideLimit:any;
   timerAlarmNoConnection:any;
   timerAlarmHAP:any;
-
+  faRecycle= faRetweet;
+  
   previewCleared = false;
   private lastClearedMinute: number | null = null;
   lastUnitNumber: string | null = null; // Add to your component class
@@ -132,20 +142,20 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
   });
   
   RMRegion = [
+    // {
+    //   UnitNumber: 'RESERVE PRICES - LUZON',
+    //   UnitID: 'CLUZ',
+    //   bColor:'',
+    //   fColor:''
+    // },
+    // {
+    //   UnitNumber: 'RESERVE PRICES - VISAYAS',
+    //   UnitID: 'CVIS',
+    //   bColor:'',
+    //   fColor:''
+    // },
     {
-      UnitNumber: 'RESERVE PRICES - LUZON',
-      UnitID: 'CLUZ',
-      bColor:'',
-      fColor:''
-    },
-    {
-      UnitNumber: 'RESERVE PRICES - VISAYAS',
-      UnitID: 'CVIS',
-      bColor:'',
-      fColor:''
-    },
-    {
-      UnitNumber: 'RESERVE PRICES - MINDANAO',
+      UnitNumber: 'RESERVE PRICES MINDANAO',
       UnitID: 'CMIN',
       bColor:'',
       fColor:''
@@ -186,9 +196,13 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
     bColor:'',
     fColor:''
   }
-
-
+  currentUnitBids: any = { id: null, name: '' }; // used by Bids tab
+  selectedDate: string | null = null;
+  loading: boolean = false;
+  bidLogs: any[] = [];
+  
   ngOnInit() {
+    
     this.RefreshData();
     let sessStore = JSON.parse(sessionStorage.getItem("reserveMarket"))
     if (sessStore !== null) {
@@ -220,8 +234,9 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
     } else {
       sessionStorage.setItem("reserveMarket", JSON.stringify({}))
     }
-    
-   
+    this.selectedDate = new Date().toISOString().split('T')[0];
+    this.TabActive('reserve-market');
+    this.bodyTag.classList.add('bg-dark');
     this.isShowBid = localStorage.getItem('IsShowBid');
     this.now = moment("","MM/DD/YYYY HH:mm:ss");
     this.isWithAlarmDisable = localStorage.getItem('IsAlarmDisable');
@@ -231,8 +246,7 @@ blinkEN3 = false; blinkRU3 = false; blinkRD3 = false; blinkCR3 = false;
     .subscribe(() => {
       this.ManualRefresh();
     }); 
-
-    this.dashboardType = "reserveMarket";
+    
     this.SetTimeFromServer();
     this.timerDT = setInterval(() => {
       this.SetTimeFromServer();
@@ -850,9 +864,6 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
 }
 
 
-  
-  
-  
   selectedPrice(id:number, units, currentUnit, unitType:string) {
     const selected = units.find(unit => unit.UnitID === id);
 
@@ -923,7 +934,6 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
 }
 
 
-
   OpenOverridModal(content: NgbModal, unitNumber:string){
     this.selectedUnitNumber = unitNumber;
     this.RMDashboardService.getOverrideValue(unitNumber).subscribe(data => {
@@ -946,6 +956,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     
     this.modalReference = this.modalService.open(content, { size: 'sm', centered: true });
   }
+
   TimerGetData(){        
     this.timerData = setInterval(() => {  
         if (+moment(this.now).second() === 3 || +moment(this.now).second() === 5 || +moment(this.now).second() === 10) {
@@ -1014,8 +1025,6 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     audio.load();
     audio.play();
   }
- 
-
 
   OverrideValueRM(){
     if(this.isOverride && this.overrideValues.cr == null && this.overrideValues.ru == null && this.overrideValues.rd == null && this.overrideValues.en == null){
@@ -1076,6 +1085,7 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
   // }
 
   ngOnDestroy(){
+    this.bodyTag.classList.remove('bg-dark');
     clearInterval(this.timerData);
     clearInterval(this.timerDT);
     clearTimeout(this.timerAlarmOutsideLimit);
@@ -1093,5 +1103,77 @@ SetReserveMarketValue(unitNumber: string, unitType: string) {
     }
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  TabActive(type: string){
+    this.dashboardType = type;
+  }
+
+  FormatClock(){
+    //console.log(moment(this.now).format('HH'));
+    return this.now.format('MMMM DD, YYYY HH:mm:ss');
+  }
+
+  buildViewerUrl(log: any): string {
+    let unit = 'unknown';
+  
+    if (log && log.UnitNumber) {
+      unit = log.UnitNumber;
+    } else if (this.currentUnitBids && this.currentUnitBids.name) {
+      unit = this.currentUnitBids.name;
+    }
+  
+    if (!unit || unit === 'unknown' || unit === 'SELECT UNIT') {
+      return '';
+    }
+  
+    const bidHistoryId = log && log.BidHistoryID ? log.BidHistoryID : 0;
+    const uploadedBy = log && log.UploadedBy ? log.UploadedBy : 'unknown';
+    const transactionId = log && log.TransactionID ? log.TransactionID : 'unknown';
+    const dateUploaded = log && log.DateUploaded ? log.DateUploaded : new Date().toISOString();
+    const transactionDate = log && log.TransactionDate ? log.TransactionDate : new Date().toISOString();
+    const status = log && log.Status ? log.Status : 'unknown';
+  
+    const baseElement = document.getElementsByTagName('base')[0];
+    const baseHref = baseElement && baseElement.getAttribute('href') ? baseElement.getAttribute('href') : '/';
+  
+    return `${baseHref}bids-viewer/${bidHistoryId}/${unit}/${uploadedBy}/${transactionId}/${dateUploaded}/${transactionDate}/${status}`;
+  }
+  
+  selectedLogsUnit(id: number, units: any[], currentUnit: any): void {
+    const selected = units.find(unit => unit.UnitID === id);
+    if (selected) {
+      const clone = { id: selected.UnitID, name: selected.UnitNumber };
+      this.currentUnitBids = clone;
+  
+      if (clone.name !== 'SELECT UNIT' && this.selectedDate) {
+        this.BidLogsHistory();
+      }
+    }
+  }
+  
+  onDateChange(): void {
+    if (this.currentUnitBids.name && this.currentUnitBids.name !== 'SELECT UNIT' && this.selectedDate) {
+      this.BidLogsHistory();
+    }
+  }
+  
+  BidLogsHistory(): void {
+    if (this.currentUnitBids.name !== '' && this.selectedDate) {
+      this.loading = true;
+      this.traderDashboardService
+        .getBidLogsHistory(this.currentUnitBids.name, this.selectedDate)
+        .subscribe({
+          next: (res: any) => {
+            this.bidLogs = res.data ? res.data : res;
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Bid log fetch error:', err);
+            this.bidLogs = [];
+            this.loading = false;
+          }
+        });
+    }
   }
 }

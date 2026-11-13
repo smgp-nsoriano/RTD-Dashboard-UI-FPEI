@@ -26,12 +26,13 @@ import {PBReasonComponent} from './pbreason/pbreason.component';
 import { BidsViewerComponent } from './bids-Viewer/bids-viewer.component';
 import { BidsViewerExportComponent } from './bidshistory-export/bids-viewer-export.component';
 import { ChangePasswordComponent } from './change-password/change-password/change-password.component';
+import { ReserveMarketDashboardComponent } from './reserve-market-dashboard/reserve-market-dashboard.component';
 const routes: Routes = [
   //{ path: '', component: TestComponent},
   { path: '', component: LoginComponent },
   { path: 'home', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'change-password', component: ChangePasswordComponent, canActivate:[ChangePasswordGuard] },
-  { path: 'trading', component: TraderDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'trading', component: ReserveMarketDashboardComponent, canActivate: [AuthGuard] },
   { path: 'portfolio', component: PortfolioComponent, canActivate: [AuthGuard] },
   { path: 'pbreason', component: PBReasonComponent, canActivate: [AuthGuard] },
   { path: 'ftphome', component: FtpConfigComponent, canActivate: [AuthGuard] },

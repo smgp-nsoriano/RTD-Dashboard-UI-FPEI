@@ -25,15 +25,15 @@
         <thead>
           <tr>
             <th rowspan="2">Reserve Type</th>
-            <th colspan="2">Luzon</th>
-            <th colspan="2">Visayas</th>
+            <!-- <th colspan="2">Luzon</th>
+            <th colspan="2">Visayas</th> -->
             <th colspan="2">Mindanao</th>
           </tr>
           <tr>
-            <th>Requirement</th>
+            <!-- <th>Requirement</th>
             <th>Schedule</th>
             <th>Requirement</th>
-            <th>Schedule</th>
+            <th>Schedule</th> -->
             <th>Requirement</th>
             <th>Schedule</th>
           </tr>
@@ -41,10 +41,10 @@
         <tbody>
           <tr *ngFor="let data of reqtSched; let i = index">
             <th>{{data.header}}</th>
-            <td>{{data.cluz_reqt}}</td>
+            <!-- <td>{{data.cluz_reqt}}</td>
             <td [class.sched-req-mismatch]="data.cluz_reqt !== data.cluz_sched">{{data.cluz_sched}}</td>
             <td>{{data.cvis_reqt}}</td>
-            <td [class.sched-req-mismatch]="data.cvis_reqt !== data.cvis_sched">{{data.cvis_sched}}</td>
+            <td [class.sched-req-mismatch]="data.cvis_reqt !== data.cvis_sched">{{data.cvis_sched}}</td> -->
             <td>{{data.cmin_reqt}}</td>
             <td [class.sched-req-mismatch]="data.cmin_reqt !== data.cmin_sched">{{data.cmin_sched}}</td>
           </tr>

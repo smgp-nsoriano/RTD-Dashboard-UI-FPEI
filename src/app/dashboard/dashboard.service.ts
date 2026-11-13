@@ -63,4 +63,8 @@ export class DashboardService {
   checkConnection(){
     return this.http.get(`${this.env.apiUrl}/Trading/Interval`);
   }
+
+  getRRStandard(unitNumber:string){
+    return this.http.get(`${this.env.apiUrl}/MarketData/GetRRStandard?UnitNumber=${unitNumber}`);
+  }
 }

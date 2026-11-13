@@ -50,7 +50,7 @@
       </li>-->
 
       <li class="navbar-text pl-3 mt-3 text-white font-weight-bolder" *ngIf="currentUserInfo">
-        {{ currentUserInfo.UserName }} / <span class="text-warning">{{ currentUserInfo.UserType }}</span>
+        {{ currentUserInfo.UserName| uppercase }}
       </li>
 
       <li ngbDropdown placement="bottom-right" class="nav-item dropdown pl-3 mt-3">
@@ -60,7 +60,7 @@
         </a>-->
 
         <a id="navbarDropdown" role="button" class="text-light nav-link dropdown-toggle--no-arrow" (click)="openNav()">
-          <fa-icon [icon]="faCog" size="lg" ></fa-icon>
+          <fa-icon [icon]="faBars" size="lg" ></fa-icon>
         </a>  
 
         <!--<div ngbDropdownMenu class="dropdown-menu" aria-labelledby="navbarDropdown" *ngIf="!IsCam">

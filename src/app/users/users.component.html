@@ -9,35 +9,43 @@
         <div class="card-header maindivheader">
           <div class="row">
             <div class="col-sm-6">
-              <h4>User Account</h4>
-            </div>
-            <div class="col-sm-6 text-right">
-                <button class="btn btn-sm btn-light" (click)="modal(user,false,null)">
-                    <fa-icon [icon]="faPlus"></fa-icon>
-                    New Account
-                  </button>
+              <h4>Accounts</h4>
             </div>
           </div>
         </div>
         <div class="card-body">
         
           <ngb-alert *ngIf="alert.type === 'success'" [type]="alert.type" (close)="clearAlert()">{{ alert.message }}</ngb-alert>
-
-          <div class="col-lg-12 d-flex justify-content-end align-items-center mb-3">
-
-            <button 
-              class="btn btn-success btn-sm mr-1" 
-              (click)="exportToExcel()">
-              <fa-icon [icon]="faFileExcel"></fa-icon> Export
-            </button>
           
-            <input 
-              type="text" 
-              class="form-control form-control-sm" 
-              [(ngModel)]="src" 
-              placeholder="Search"
-              style="max-width: 250px;"
-            >
+          <div class="row mb-3">
+
+            <div class="col-lg-4 col-md-6 mb-2">
+              <button 
+                class="btn btn-sm btn-primary" 
+                (click)="modal(user,false,null)">
+                <fa-icon [icon]="faPlus"></fa-icon>
+                New Account
+              </button>
+            </div>
+          
+            <div class="col-lg-8 col-md-6 d-flex justify-content-md-end align-items-center gap-2">
+          
+              <button 
+                class="btn btn-danger btn-sm mr-2" 
+                (click)="exportToExcel()">
+                <fa-icon [icon]="faFileExcel"></fa-icon>
+                Export
+              </button>
+          
+              <input 
+                type="text" 
+                class="form-control form-control-sm" 
+                [(ngModel)]="src" 
+                placeholder="Search"
+                style="max-width: 250px;"
+              >
+          
+            </div>
           
           </div>
           <div class="table-responsive table-scroll">
@@ -67,29 +75,29 @@
                   <td>{{ rec.DateDisabled | date:'short' }}</td>
                   <td class="text-center">
                     <!-- enable/disable user -->
-                    <button *ngIf="rec.IsActive" class="btn btn-sm btn-default btn-xs font-sm text-danger" 
+                    <button *ngIf="rec.IsActive" class="btn btn-sm btn-danger btn-xs font-sm" 
                     (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)"
                       title="Deactivate">
                       <fa-icon [icon]="faTimes"></fa-icon>
                     </button>
-                    <button *ngIf="!rec.IsActive" class="btn btn-sm btn-default text-success btn-xs font-sm" 
+                    <button *ngIf="!rec.IsActive" class="btn btn-sm btn-danger btn-xs font-sm" 
                     (click)="disable_confirmation_open(disableConfirm, rec.IsActive, rec)"
                       title="Activate">
                       <fa-icon [icon]="faCheck"></fa-icon>
                     </button>
-                    <button class="btn btn-sm btn-default text-secondary btn-xs font-sm ml-1" 
+                    <button class="btn btn-sm btn-danger btn-xs font-sm ml-1" 
                       (click)="modal(user, true, rec)" title="Edit">
                       <fa-icon [icon]="faEdit"></fa-icon>
                     </button>
-                    <button class="btn btn-sm btn-default text-danger btn-xs font-sm ml-1" 
+                    <button class="btn btn-sm btn-danger btn-xs font-sm ml-1" 
                       (click)="otherModal(delete, true ,rec)" title="Delete">
                       <fa-icon [icon]="faTrash"></fa-icon>
                     </button>
-                    <button class="btn btn-sm btn-default text-warning btn-xs font-sm ml-1" 
+                    <button class="btn btn-sm btn-danger btn-xs font-sm ml-1" 
                       (click)="otherModal(delete, false ,rec)" title="Reset Password">
                       <fa-icon [icon]="faKey"></fa-icon>
                     </button>
-                    <button *ngIf="rec.IsLocked || rec.Status == 'Expired'" class="btn btn-sm btn-default text-warning btn-xs font-sm ml-1" 
+                    <button *ngIf="rec.IsLocked || rec.Status == 'Expired'" class="btn btn-sm btn-warning btn-xs font-sm ml-1" 
                       (click)="unlockModal(unlock,rec)" title="Unlock/Activate Account">
                       <fa-icon [icon]="faUnlock"></fa-icon>
                     </button>

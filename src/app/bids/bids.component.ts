@@ -156,10 +156,13 @@ export class BidsComponent implements OnInit {
       return
     }
 
-    if(this.rrUp > this.rrmax || this.rrDown > this.rrmax){
+    const rrUp = Number(this.rrUp);
+    const rrDown = Number(this.rrDown);
+    const rrMax = Number(this.rrmax);
+    
+    if (rrUp > rrMax || rrDown > rrMax) {
       this.rrError = "Standard must not exceed Ramprate Max.!";
-      this.GetRRStandard();
-      return
+      return;
     }
 
     const payload = {
@@ -1591,17 +1594,18 @@ export class BidsComponent implements OnInit {
       this.dateUploaded = this.offer.DateTimeSubmitted;
       this.uploadedBy = this.offer.UploadedBy;
       this.ShowPrintPDFAfterUpload(printPDFmodal)
+      this.unitService.logBid(this.unitId, this.unitNumber, this.offers, this.controlModeValue).subscribe(data => {
+        console.log(this.offer)
+      }, error => {
+        this.bidLoading = false;
+        console.log(error.message);
+      });
     }, error => {
       this.bidLoading = false;
       console.log(error.message);
     });
 
-    this.unitService.logBid(this.unitId, this.unitNumber, this.offers, this.controlModeValue).subscribe(data => {
-      console.log(this.offer)
-    }, error => {
-      this.bidLoading = false;
-      console.log(error.message);
-    });
+    
   }
 
   formatDate(date) {
